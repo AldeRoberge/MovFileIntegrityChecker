@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MovFileIntegrityChecker
 {
@@ -35,6 +37,8 @@ public class MovIntegrityChecker
         public List<AtomInfo> Atoms          { get; set; } = new List<AtomInfo>();
         public long           FileSize       { get; set; }
         public long           BytesValidated { get; set; }
+        public double         TotalDuration  { get; set; }
+        public double         PlayableDuration { get; set; }
     }
 
     private static FileCheckResult CheckFileIntegrity(string filePath)
@@ -201,6 +205,20 @@ public class MovIntegrityChecker
             {
                 result.Issues.Add("File structure is invalid or incomplete");
             }
+
+            // Get video duration using ffprobe
+            result.TotalDuration = GetVideoDuration(filePath);
+            
+            // Estimate playable duration based on bytes validated
+            if (result.TotalDuration > 0 && result.FileSize > 0)
+            {
+                double completionRatio = (double)result.BytesValidated / result.FileSize;
+                result.PlayableDuration = result.TotalDuration * completionRatio;
+            }
+            else
+            {
+                result.PlayableDuration = 0;
+            }
         }
         catch (Exception ex)
         {
@@ -220,6 +238,46 @@ public class MovIntegrityChecker
         Console.WriteLine($"   File Size: {result.FileSize:N0} bytes");
         Console.WriteLine($"   Atoms Found: {result.Atoms.Count}");
         Console.WriteLine($"   Bytes Validated: {result.BytesValidated:N0} / {result.FileSize:N0} ({(result.BytesValidated * 100.0 / Math.Max(1, result.FileSize)):F1}%)");
+
+        // Display duration timeline if available
+        if (result.TotalDuration > 0)
+        {
+            Console.WriteLine($"\n⏱️  Duration Timeline:");
+            Console.WriteLine($"   Total Duration: {FormatDuration(result.TotalDuration)}");
+            
+            if (result.HasIssues && result.PlayableDuration < result.TotalDuration)
+            {
+                Console.WriteLine($"   Playable Duration: {FormatDuration(result.PlayableDuration)}");
+                double playablePercent = (result.PlayableDuration / result.TotalDuration) * 100.0;
+                
+                // Create visual timeline bar (50 chars wide)
+                int barWidth = 50;
+                int greenWidth = (int)(barWidth * playablePercent / 100.0);
+                int redWidth = barWidth - greenWidth;
+                
+                string greenBar = new string('█', greenWidth);
+                string redBar = new string('█', redWidth);
+                
+                Console.Write($"   ");
+                WriteSuccess($"{greenBar}");
+                Console.Write($"");
+                WriteError($"{redBar}\n");
+                Console.WriteLine($"   |");
+                Console.WriteLine($"   {FormatDuration(0)}          {FormatDuration(result.PlayableDuration)} (break)          {FormatDuration(result.TotalDuration)}");
+                Console.WriteLine($"   Start           Missing: {FormatDuration(result.TotalDuration - result.PlayableDuration)}           End");
+            }
+            else
+            {
+                Console.WriteLine($"   Status: Complete playback expected");
+                int barWidth = 50;
+                string greenBar = new string('█', barWidth);
+                Console.Write($"   ");
+                WriteSuccess($"{greenBar}\n");
+                Console.WriteLine($"   |");
+                Console.WriteLine($"   {FormatDuration(0)}                                      {FormatDuration(result.TotalDuration)}");
+                Console.WriteLine($"   Start                                   End");
+            }
+        }
 
         if (result.Atoms.Count > 0)
         {
@@ -275,6 +333,17 @@ public class MovIntegrityChecker
     private static bool IsAsciiPrintable(string str)
     {
         return str.All(c => c >= 32 && c <= 126);
+    }
+
+    private static string FormatDuration(double seconds)
+    {
+        if (seconds <= 0) return "00:00:00";
+        
+        int hours = (int)(seconds / 3600);
+        int minutes = (int)((seconds % 3600) / 60);
+        int secs = (int)(seconds % 60);
+        
+        return $"{hours:D2}:{minutes:D2}:{secs:D2}";
     }
 
     // --- Added helpers for extracting a random frame using ffprobe/ffmpeg ---
@@ -687,6 +756,80 @@ public class MovIntegrityChecker
             sb.AppendLine("            font-weight: bold;");
             sb.AppendLine("            font-size: 0.85em;");
             sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-container {");
+            sb.AppendLine("            margin-top: 30px;");
+            sb.AppendLine("            padding: 20px;");
+            sb.AppendLine("            background: #222222;");
+            sb.AppendLine("            border-radius: 12px;");
+            sb.AppendLine("            border: 1px solid #333;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-title {");
+            sb.AppendLine("            font-size: 1.2em;");
+            sb.AppendLine("            color: #ffffff;");
+            sb.AppendLine("            margin-bottom: 15px;");
+            sb.AppendLine("            font-weight: 600;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-bar {");
+            sb.AppendLine("            width: 100%;");
+            sb.AppendLine("            height: 40px;");
+            sb.AppendLine("            background: #2a2a2a;");
+            sb.AppendLine("            border-radius: 8px;");
+            sb.AppendLine("            overflow: hidden;");
+            sb.AppendLine("            display: flex;");
+            sb.AppendLine("            border: 2px solid #444;");
+            sb.AppendLine("            margin: 15px 0;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-good {");
+            sb.AppendLine("            background: linear-gradient(90deg, #00aa00 0%, #00cc00 100%);");
+            sb.AppendLine("            display: flex;");
+            sb.AppendLine("            align-items: center;");
+            sb.AppendLine("            justify-content: center;");
+            sb.AppendLine("            color: #ffffff;");
+            sb.AppendLine("            font-weight: bold;");
+            sb.AppendLine("            font-size: 0.9em;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-bad {");
+            sb.AppendLine("            background: linear-gradient(90deg, #cc0000 0%, #aa0000 100%);");
+            sb.AppendLine("            display: flex;");
+            sb.AppendLine("            align-items: center;");
+            sb.AppendLine("            justify-content: center;");
+            sb.AppendLine("            color: #ffffff;");
+            sb.AppendLine("            font-weight: bold;");
+            sb.AppendLine("            font-size: 0.9em;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-labels {");
+            sb.AppendLine("            display: flex;");
+            sb.AppendLine("            justify-content: space-between;");
+            sb.AppendLine("            margin-top: 10px;");
+            sb.AppendLine("            color: #ccc;");
+            sb.AppendLine("            font-size: 0.9em;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-label {");
+            sb.AppendLine("            display: flex;");
+            sb.AppendLine("            flex-direction: column;");
+            sb.AppendLine("            align-items: center;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-label.start { align-items: flex-start; }");
+            sb.AppendLine("        .timeline-label.end { align-items: flex-end; }");
+            sb.AppendLine("        .timeline-label .time {");
+            sb.AppendLine("            font-weight: bold;");
+            sb.AppendLine("            color: #ffffff;");
+            sb.AppendLine("            font-size: 1.1em;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-info {");
+            sb.AppendLine("            margin-top: 15px;");
+            sb.AppendLine("            padding: 15px;");
+            sb.AppendLine("            background: #1a1a1a;");
+            sb.AppendLine("            border-radius: 8px;");
+            sb.AppendLine("            border-left: 3px solid #ff8c00;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-info div {");
+            sb.AppendLine("            color: #ccc;");
+            sb.AppendLine("            margin: 5px 0;");
+            sb.AppendLine("        }");
+            sb.AppendLine("        .timeline-info strong {");
+            sb.AppendLine("            color: #ffffff;");
+            sb.AppendLine("        }");
             sb.AppendLine("        .preview img { max-width: 100%; border-radius: 8px; display: block; margin: 15px auto; }");
             sb.AppendLine("    </style>");
             sb.AppendLine("</head>");
@@ -754,8 +897,65 @@ public class MovIntegrityChecker
 
             double validationPercent = result.FileSize > 0 ? (result.BytesValidated * 100.0 / result.FileSize) : 0;
             sb.AppendLine("                <div class=\"progress-bar\">");
-            sb.AppendLine($"                    <div class=\"progress-fill\" style=\"width: {validationPercent:F1}%\">\n                        {validationPercent:F1}% validé\n                    </div>");
+            sb.AppendLine($"                    <div class=\"progress-fill\" style=\"width: {validationPercent.ToString("F1", CultureInfo.InvariantCulture)}%\">\n                        {validationPercent:F1}% validé\n                    </div>");
             sb.AppendLine("                </div>");
+
+            // Add duration timeline if available
+            if (result.TotalDuration > 0)
+            {
+                sb.AppendLine("                <div class=\"timeline-container\">");
+                sb.AppendLine("                    <div class=\"timeline-title\">⏱️ Chronologie de la Vidéo</div>");
+                
+                double playablePercent = result.TotalDuration > 0 ? (result.PlayableDuration / result.TotalDuration) * 100.0 : 0;
+                double brokenPercent = 100.0 - playablePercent;
+                
+                sb.AppendLine("                    <div class=\"timeline-bar\">");
+                if (playablePercent > 0)
+                {
+                    sb.AppendLine($"                        <div class=\"timeline-good\" style=\"width: {playablePercent.ToString("F1", CultureInfo.InvariantCulture)}%\">");
+                    sb.AppendLine($"                            ✓ Lecture OK");
+                    sb.AppendLine("                        </div>");
+                }
+                if (brokenPercent > 0)
+                {
+                    sb.AppendLine($"                        <div class=\"timeline-bad\" style=\"width: {brokenPercent.ToString("F1", CultureInfo.InvariantCulture)}%\">");
+                    sb.AppendLine($"                            ✗ Corrompu");
+                    sb.AppendLine("                        </div>");
+                }
+                sb.AppendLine("                    </div>");
+                
+                sb.AppendLine("                    <div class=\"timeline-labels\">");
+                sb.AppendLine("                        <div class=\"timeline-label start\">");
+                sb.AppendLine("                            <div class=\"time\">00:00:00</div>");
+                sb.AppendLine("                            <div>Début</div>");
+                sb.AppendLine("                        </div>");
+                
+                if (result.HasIssues && result.PlayableDuration < result.TotalDuration)
+                {
+                    sb.AppendLine("                        <div class=\"timeline-label\">");
+                    sb.AppendLine($"                            <div class=\"time\">{System.Security.SecurityElement.Escape(FormatDuration(result.PlayableDuration))}</div>");
+                    sb.AppendLine("                            <div style=\"color: #ff8c00;\">⚠️ Point de rupture</div>");
+                    sb.AppendLine("                        </div>");
+                }
+                
+                sb.AppendLine("                        <div class=\"timeline-label end\">");
+                sb.AppendLine($"                            <div class=\"time\">{System.Security.SecurityElement.Escape(FormatDuration(result.TotalDuration))}</div>");
+                sb.AppendLine("                            <div>Fin</div>");
+                sb.AppendLine("                        </div>");
+                sb.AppendLine("                    </div>");
+                
+                sb.AppendLine("                    <div class=\"timeline-info\">");
+                sb.AppendLine($"                        <div><strong>Durée totale:</strong> {System.Security.SecurityElement.Escape(FormatDuration(result.TotalDuration))}</div>");
+                sb.AppendLine($"                        <div><strong>Durée lisible:</strong> {System.Security.SecurityElement.Escape(FormatDuration(result.PlayableDuration))} ({playablePercent:F1}%)</div>");
+                if (result.HasIssues && result.PlayableDuration < result.TotalDuration)
+                {
+                    double missingDuration = result.TotalDuration - result.PlayableDuration;
+                    sb.AppendLine($"                        <div style=\"color: #ff8c00;\"><strong>Durée manquante:</strong> {System.Security.SecurityElement.Escape(FormatDuration(missingDuration))} ({brokenPercent:F1}%)</div>");
+                }
+                sb.AppendLine("                    </div>");
+                sb.AppendLine("                </div>");
+            }
+            
             sb.AppendLine("            </div>");
 
             if (result.Issues.Count > 0)
