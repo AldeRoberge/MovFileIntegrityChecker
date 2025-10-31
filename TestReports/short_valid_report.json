@@ -1,0 +1,48 @@
+{
+  "reportVersion": "1.0",
+  "generatedByTool": "MovFileIntegrityChecker v1.0",
+  "evaluationTimeUtc": "2025-10-31T14:36:30.0000000Z",
+  "evaluationTimeLocal": "2025-10-31T10:36:30.0000000-04:00",
+  "fileMetadata": {
+    "fileName": "short_valid.mp4",
+    "fullPath": "T:\\Test\\short_valid.mp4",
+    "fileSizeBytes": 104857600,
+    "fileSizeMB": 100.0,
+    "creationTimeUtc": "2025-10-31T10:00:00.0000000Z",
+    "lastModifiedTimeUtc": "2025-10-31T11:00:00.0000000Z",
+    "lastAccessTimeUtc": "2025-10-31T14:36:30.0000000Z",
+    "fileExtension": ".mp4",
+    "isReadOnly": false,
+    "attributes": "Archive"
+  },
+  "videoDuration": {
+    "totalDurationSeconds": 180.0,
+    "totalDurationFormatted": "00:03:00",
+    "playableDurationSeconds": 180.0,
+    "playableDurationFormatted": "00:03:00",
+    "missingDurationSeconds": 0.0,
+    "missingDurationFormatted": "00:00:00",
+    "playablePercentage": 100.0,
+    "corruptedPercentage": 0.0
+  },
+  "integrityAnalysis": {
+    "bytesValidated": 104857600,
+    "validationPercentage": 100.0,
+    "atomsFound": 15,
+    "hasStructuralIssues": false,
+    "issues": [],
+    "atoms": [],
+    "hasRequiredAtoms": {
+      "ftyp": true,
+      "moov": true,
+      "mdat": true
+    }
+  },
+  "status": {
+    "isCorrupted": false,
+    "isComplete": true,
+    "severity": "OK",
+    "recommendation": "File structure appears valid and complete."
+  }
+}
+

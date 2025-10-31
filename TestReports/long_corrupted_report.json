@@ -1,0 +1,51 @@
+{
+  "reportVersion": "1.0",
+  "generatedByTool": "MovFileIntegrityChecker v1.0",
+  "evaluationTimeUtc": "2025-10-31T14:38:00.0000000Z",
+  "evaluationTimeLocal": "2025-10-31T10:38:00.0000000-04:00",
+  "fileMetadata": {
+    "fileName": "long_corrupted.mov",
+    "fullPath": "T:\\Test\\long_corrupted.mov",
+    "fileSizeBytes": 2147483648,
+    "fileSizeMB": 2048.0,
+    "creationTimeUtc": "2025-10-28T08:00:00.0000000Z",
+    "lastModifiedTimeUtc": "2025-10-29T12:30:00.0000000Z",
+    "lastAccessTimeUtc": "2025-10-31T14:38:00.0000000Z",
+    "fileExtension": ".mov",
+    "isReadOnly": false,
+    "attributes": "Archive"
+  },
+  "videoDuration": {
+    "totalDurationSeconds": 950.0,
+    "totalDurationFormatted": "00:15:50",
+    "playableDurationSeconds": 712.5,
+    "playableDurationFormatted": "00:11:52",
+    "missingDurationSeconds": 237.5,
+    "missingDurationFormatted": "00:03:57",
+    "playablePercentage": 75.0,
+    "corruptedPercentage": 25.0
+  },
+  "integrityAnalysis": {
+    "bytesValidated": 1610612736,
+    "validationPercentage": 75.0,
+    "atomsFound": 18,
+    "hasStructuralIssues": true,
+    "issues": [
+      "Incomplete atom 'mdat' at offset 2,500,000",
+      "File structure is invalid or incomplete"
+    ],
+    "atoms": [],
+    "hasRequiredAtoms": {
+      "ftyp": true,
+      "moov": true,
+      "mdat": true
+    }
+  },
+  "status": {
+    "isCorrupted": true,
+    "isComplete": false,
+    "severity": "ERROR",
+    "recommendation": "File appears to be corrupted or incomplete. Review in VLC to verify playback."
+  }
+}
+

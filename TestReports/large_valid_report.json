@@ -1,0 +1,48 @@
+{
+  "reportVersion": "1.0",
+  "generatedByTool": "MovFileIntegrityChecker v1.0",
+  "evaluationTimeUtc": "2025-10-31T14:32:12.0000000Z",
+  "evaluationTimeLocal": "2025-10-31T10:32:12.0000000-04:00",
+  "fileMetadata": {
+    "fileName": "large_valid.mov",
+    "fullPath": "T:\\Test\\large_valid.mov",
+    "fileSizeBytes": 5368709120,
+    "fileSizeMB": 5120.0,
+    "creationTimeUtc": "2025-10-29T12:00:00.0000000Z",
+    "lastModifiedTimeUtc": "2025-10-30T15:30:00.0000000Z",
+    "lastAccessTimeUtc": "2025-10-31T14:32:12.0000000Z",
+    "fileExtension": ".mov",
+    "isReadOnly": false,
+    "attributes": "Archive"
+  },
+  "videoDuration": {
+    "totalDurationSeconds": 1850.0,
+    "totalDurationFormatted": "00:30:50",
+    "playableDurationSeconds": 1850.0,
+    "playableDurationFormatted": "00:30:50",
+    "missingDurationSeconds": 0.0,
+    "missingDurationFormatted": "00:00:00",
+    "playablePercentage": 100.0,
+    "corruptedPercentage": 0.0
+  },
+  "integrityAnalysis": {
+    "bytesValidated": 5368709120,
+    "validationPercentage": 100.0,
+    "atomsFound": 25,
+    "hasStructuralIssues": false,
+    "issues": [],
+    "atoms": [],
+    "hasRequiredAtoms": {
+      "ftyp": true,
+      "moov": true,
+      "mdat": true
+    }
+  },
+  "status": {
+    "isCorrupted": false,
+    "isComplete": true,
+    "severity": "OK",
+    "recommendation": "File structure appears valid and complete."
+  }
+}
+
