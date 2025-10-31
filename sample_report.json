@@ -1,0 +1,73 @@
+﻿{
+  "reportVersion": "1.0",
+  "generatedByTool": "MovFileIntegrityChecker v1.0",
+  "evaluationTimeUtc": "2025-10-31T14:30:45.1234567Z",
+  "evaluationTimeLocal": "2025-10-31T10:30:45.1234567-04:00",
+  "fileMetadata": {
+    "fileName": "video_sample.mov",
+    "fullPath": "T:\\SPT\\SP\\Mont\\Prod1\\2_COU\\_DL\\video_sample.mov",
+    "fileSizeBytes": 524288000,
+    "fileSizeMB": 500.0,
+    "creationTimeUtc": "2025-10-30T18:22:15.0000000Z",
+    "lastModifiedTimeUtc": "2025-10-31T08:15:30.0000000Z",
+    "lastAccessTimeUtc": "2025-10-31T14:30:45.0000000Z",
+    "fileExtension": ".mov",
+    "isReadOnly": false,
+    "attributes": "Archive"
+  },
+  "videoDuration": {
+    "totalDurationSeconds": 330.5,
+    "totalDurationFormatted": "00:05:30",
+    "playableDurationSeconds": 225.25,
+    "playableDurationFormatted": "00:03:45",
+    "missingDurationSeconds": 105.25,
+    "missingDurationFormatted": "00:01:45",
+    "playablePercentage": 68.15,
+    "corruptedPercentage": 31.85
+  },
+  "integrityAnalysis": {
+    "bytesValidated": 357564928,
+    "validationPercentage": 68.2,
+    "atomsFound": 12,
+    "hasStructuralIssues": true,
+    "issues": [
+      "Incomplete atom 'mdat' at offset 1,234,567: Expected 450,000,000 bytes, available 300,000,000 bytes, missing 150,000,000 bytes (33.3%)",
+      "File structure is invalid or incomplete"
+    ],
+    "atoms": [
+      {
+        "type": "ftyp",
+        "sizeBytes": 32,
+        "offsetBytes": 0,
+        "isComplete": true,
+        "isKnownType": true
+      },
+      {
+        "type": "moov",
+        "sizeBytes": 125648,
+        "offsetBytes": 32,
+        "isComplete": true,
+        "isKnownType": true
+      },
+      {
+        "type": "mdat",
+        "sizeBytes": 450000000,
+        "offsetBytes": 125680,
+        "isComplete": false,
+        "isKnownType": true
+      }
+    ],
+    "hasRequiredAtoms": {
+      "ftyp": true,
+      "moov": true,
+      "mdat": true
+    }
+  },
+  "status": {
+    "isCorrupted": true,
+    "isComplete": false,
+    "severity": "ERROR",
+    "recommendation": "File appears to be corrupted or incomplete. Review in VLC to verify playback."
+  }
+}
+

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -27,6 +27,163 @@ public class MovIntegrityChecker
         public long   Size       { get; set; }
         public long   Offset     { get; set; }
         public bool   IsComplete { get; set; }
+    }
+
+    // JSON Report Classes
+    public class JsonFileMetadata
+    {
+        [JsonPropertyName("fileName")]
+        public string FileName { get; set; } = string.Empty;
+        
+        [JsonPropertyName("fullPath")]
+        public string FullPath { get; set; } = string.Empty;
+        
+        [JsonPropertyName("fileSizeBytes")]
+        public long FileSizeBytes { get; set; }
+        
+        [JsonPropertyName("fileSizeMB")]
+        public double FileSizeMB { get; set; }
+        
+        [JsonPropertyName("creationTimeUtc")]
+        public DateTime CreationTimeUtc { get; set; }
+        
+        [JsonPropertyName("lastModifiedTimeUtc")]
+        public DateTime LastModifiedTimeUtc { get; set; }
+        
+        [JsonPropertyName("lastAccessTimeUtc")]
+        public DateTime LastAccessTimeUtc { get; set; }
+        
+        [JsonPropertyName("fileExtension")]
+        public string FileExtension { get; set; } = string.Empty;
+        
+        [JsonPropertyName("isReadOnly")]
+        public bool IsReadOnly { get; set; }
+        
+        [JsonPropertyName("attributes")]
+        public string Attributes { get; set; } = string.Empty;
+    }
+
+    public class JsonVideoDuration
+    {
+        [JsonPropertyName("totalDurationSeconds")]
+        public double TotalDurationSeconds { get; set; }
+        
+        [JsonPropertyName("totalDurationFormatted")]
+        public string TotalDurationFormatted { get; set; } = string.Empty;
+        
+        [JsonPropertyName("playableDurationSeconds")]
+        public double PlayableDurationSeconds { get; set; }
+        
+        [JsonPropertyName("playableDurationFormatted")]
+        public string PlayableDurationFormatted { get; set; } = string.Empty;
+        
+        [JsonPropertyName("missingDurationSeconds")]
+        public double MissingDurationSeconds { get; set; }
+        
+        [JsonPropertyName("missingDurationFormatted")]
+        public string MissingDurationFormatted { get; set; } = string.Empty;
+        
+        [JsonPropertyName("playablePercentage")]
+        public double PlayablePercentage { get; set; }
+        
+        [JsonPropertyName("corruptedPercentage")]
+        public double CorruptedPercentage { get; set; }
+    }
+
+    public class JsonAtomInfo
+    {
+        [JsonPropertyName("type")]
+        public string Type { get; set; } = string.Empty;
+        
+        [JsonPropertyName("sizeBytes")]
+        public long SizeBytes { get; set; }
+        
+        [JsonPropertyName("offsetBytes")]
+        public long OffsetBytes { get; set; }
+        
+        [JsonPropertyName("isComplete")]
+        public bool IsComplete { get; set; }
+        
+        [JsonPropertyName("isKnownType")]
+        public bool IsKnownType { get; set; }
+    }
+
+    public class JsonIntegrityAnalysis
+    {
+        [JsonPropertyName("bytesValidated")]
+        public long BytesValidated { get; set; }
+        
+        [JsonPropertyName("validationPercentage")]
+        public double ValidationPercentage { get; set; }
+        
+        [JsonPropertyName("atomsFound")]
+        public int AtomsFound { get; set; }
+        
+        [JsonPropertyName("hasStructuralIssues")]
+        public bool HasStructuralIssues { get; set; }
+        
+        [JsonPropertyName("issues")]
+        public List<string> Issues { get; set; } = new List<string>();
+        
+        [JsonPropertyName("atoms")]
+        public List<JsonAtomInfo> Atoms { get; set; } = new List<JsonAtomInfo>();
+        
+        [JsonPropertyName("hasRequiredAtoms")]
+        public JsonRequiredAtoms HasRequiredAtoms { get; set; } = new JsonRequiredAtoms();
+    }
+
+    public class JsonRequiredAtoms
+    {
+        [JsonPropertyName("ftyp")]
+        public bool Ftyp { get; set; }
+        
+        [JsonPropertyName("moov")]
+        public bool Moov { get; set; }
+        
+        [JsonPropertyName("mdat")]
+        public bool Mdat { get; set; }
+    }
+
+    public class JsonCorruptionReport
+    {
+        [JsonPropertyName("reportVersion")]
+        public string ReportVersion { get; set; } = "1.0";
+        
+        [JsonPropertyName("generatedByTool")]
+        public string GeneratedByTool { get; set; } = "MovFileIntegrityChecker";
+        
+        [JsonPropertyName("evaluationTimeUtc")]
+        public DateTime EvaluationTimeUtc { get; set; }
+        
+        [JsonPropertyName("evaluationTimeLocal")]
+        public DateTime EvaluationTimeLocal { get; set; }
+        
+        [JsonPropertyName("fileMetadata")]
+        public JsonFileMetadata FileMetadata { get; set; } = new JsonFileMetadata();
+        
+        [JsonPropertyName("videoDuration")]
+        public JsonVideoDuration? VideoDuration { get; set; }
+        
+        [JsonPropertyName("integrityAnalysis")]
+        public JsonIntegrityAnalysis IntegrityAnalysis { get; set; } = new JsonIntegrityAnalysis();
+        
+        [JsonPropertyName("status")]
+        public JsonFileStatus Status { get; set; } = new JsonFileStatus();
+    }
+
+    public class JsonFileStatus
+    {
+        [JsonPropertyName("isCorrupted")]
+        public bool IsCorrupted { get; set; }
+        
+        [JsonPropertyName("isComplete")]
+        public bool IsComplete { get; set; }
+        
+        [JsonPropertyName("severity")]
+        public string Severity { get; set; } = string.Empty;
+        
+        [JsonPropertyName("recommendation")]
+        public string Recommendation { get; set; } = string.Empty;
     }
 
     public class FileCheckResult
@@ -540,6 +697,123 @@ public class MovIntegrityChecker
         catch
         {
             return null;
+        }
+    }
+
+    private static void CreateJsonReport(FileCheckResult result)
+    {
+        try
+        {
+            string filePath = result.FilePath;
+            FileInfo fileInfo = new FileInfo(filePath);
+            
+            // Create JSON report directory if it doesn't exist
+            string jsonReportDir = @"T:\SPT\SP\Mont\Projets\3_PRJ\9-ALEXANDRE_DEMERS-ROBERGE\Fichiers Corrompus";
+            
+            if (!Directory.Exists(jsonReportDir))
+            {
+                Directory.CreateDirectory(jsonReportDir);
+            }
+
+            string baseName = Path.GetFileNameWithoutExtension(filePath);
+            string jsonFileName = $"{baseName}_report.json";
+            string jsonReportPath = Path.Combine(jsonReportDir, jsonFileName);
+
+            DateTime evaluationTime = DateTime.UtcNow;
+
+            // Build the comprehensive JSON report
+            var jsonReport = new JsonCorruptionReport
+            {
+                ReportVersion = "1.0",
+                GeneratedByTool = "MovFileIntegrityChecker v1.0",
+                EvaluationTimeUtc = evaluationTime,
+                EvaluationTimeLocal = evaluationTime.ToLocalTime(),
+                
+                FileMetadata = new JsonFileMetadata
+                {
+                    FileName = fileInfo.Name,
+                    FullPath = fileInfo.FullName,
+                    FileSizeBytes = fileInfo.Length,
+                    FileSizeMB = fileInfo.Length / (1024.0 * 1024.0),
+                    CreationTimeUtc = fileInfo.CreationTimeUtc,
+                    LastModifiedTimeUtc = fileInfo.LastWriteTimeUtc,
+                    LastAccessTimeUtc = fileInfo.LastAccessTimeUtc,
+                    FileExtension = fileInfo.Extension,
+                    IsReadOnly = fileInfo.IsReadOnly,
+                    Attributes = fileInfo.Attributes.ToString()
+                },
+                
+                IntegrityAnalysis = new JsonIntegrityAnalysis
+                {
+                    BytesValidated = result.BytesValidated,
+                    ValidationPercentage = result.FileSize > 0 ? (result.BytesValidated * 100.0 / result.FileSize) : 0,
+                    AtomsFound = result.Atoms.Count,
+                    HasStructuralIssues = result.HasIssues,
+                    Issues = new List<string>(result.Issues),
+                    Atoms = result.Atoms.Select(a => new JsonAtomInfo
+                    {
+                        Type = a.Type,
+                        SizeBytes = a.Size,
+                        OffsetBytes = a.Offset,
+                        IsComplete = a.IsComplete,
+                        IsKnownType = ValidAtomTypes.Contains(a.Type)
+                    }).ToList(),
+                    HasRequiredAtoms = new JsonRequiredAtoms
+                    {
+                        Ftyp = result.Atoms.Any(a => a.Type == "ftyp"),
+                        Moov = result.Atoms.Any(a => a.Type == "moov"),
+                        Mdat = result.Atoms.Any(a => a.Type == "mdat")
+                    }
+                },
+                
+                Status = new JsonFileStatus
+                {
+                    IsCorrupted = result.HasIssues,
+                    IsComplete = !result.HasIssues,
+                    Severity = result.HasIssues ? "ERROR" : "OK",
+                    Recommendation = result.HasIssues 
+                        ? "File appears to be corrupted or incomplete. Review in VLC to verify playback." 
+                        : "File structure appears valid and complete."
+                }
+            };
+
+            // Add video duration if available
+            if (result.TotalDuration > 0)
+            {
+                double missingDuration = result.TotalDuration - result.PlayableDuration;
+                double playablePercent = (result.PlayableDuration / result.TotalDuration) * 100.0;
+                double corruptedPercent = 100.0 - playablePercent;
+
+                jsonReport.VideoDuration = new JsonVideoDuration
+                {
+                    TotalDurationSeconds = result.TotalDuration,
+                    TotalDurationFormatted = FormatDuration(result.TotalDuration),
+                    PlayableDurationSeconds = result.PlayableDuration,
+                    PlayableDurationFormatted = FormatDuration(result.PlayableDuration),
+                    MissingDurationSeconds = missingDuration,
+                    MissingDurationFormatted = FormatDuration(missingDuration),
+                    PlayablePercentage = playablePercent,
+                    CorruptedPercentage = corruptedPercent
+                };
+            }
+
+            // Serialize to JSON with pretty formatting
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+
+            string jsonContent = JsonSerializer.Serialize(jsonReport, options);
+            File.WriteAllText(jsonReportPath, jsonContent, Encoding.UTF8);
+
+            WriteSuccess($"✅ JSON report saved: {jsonReportPath}");
+        }
+        catch (Exception ex)
+        {
+            WriteWarning($"⚠️ Unable to create JSON report: {ex.Message}");
         }
     }
 
@@ -1125,8 +1399,14 @@ public class MovIntegrityChecker
                 var result = CheckFileIntegrity(path);
                 results.Add(result);
 
+                // Always create JSON report
+                CreateJsonReport(result);
+                
+                // Create HTML report only for corrupted files
                 if (result.HasIssues)
+                {
                     CreateErrorReport(result);
+                }
 
                 if (!summaryOnly)
                     PrintDetailedResult(result);
@@ -1166,8 +1446,14 @@ public class MovIntegrityChecker
                     var result = CheckFileIntegrity(file);
                     results.Add(result);
 
+                    // Always create JSON report
+                    CreateJsonReport(result);
+                    
+                    // Create HTML report only for corrupted files
                     if (result.HasIssues)
+                    {
                         CreateErrorReport(result);
+                    }
 
                     if (!summaryOnly)
                         PrintDetailedResult(result);
