@@ -14,13 +14,19 @@ A comprehensive tool for analyzing MOV/MP4 video file integrity, detecting corru
 
 ### 📊 Global Analysis
 - **Aggregate reporting** across all analyzed files
-- **Interactive charts** showing:
+- **🆕 Enhanced Interactive Dashboard** with 7 visualizations:
   - Complete vs. Incomplete files (Pie Chart)
   - Corrupted vs. Valid files (Pie Chart)
   - Corruption rate by file size (Bar Chart)
   - Corruption rate by video duration (Bar Chart)
-- **Key insights** and statistics
-- **Correlation analysis** between file characteristics and corruption
+  - **🕐 Hourly Heatmap** - Transfer failure frequency by hour (identifies maintenance windows!)
+  - **📈 Scatter Plots** - File size vs playable % (now includes all files: green=valid, red=corrupted)
+  - **📅 Timeline Chart** - Creation vs modification times (detects abrupt interruptions)
+- **🔍 Smart Insights** with automatic root cause detection
+- **📋 Complete File Table** - All files visible (not just top 20), color-coded by status
+- **💡 Actionable Recommendations** based on detected patterns
+
+**📖 [Read the Dashboard Guide](DASHBOARD_GUIDE.md) for detailed visualization examples and usage tips**
 
 ### 🎯 Interactive Menu System
 When run without arguments, the tool presents an interactive menu with three options:

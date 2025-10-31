@@ -1685,15 +1685,28 @@ namespace MovFileIntegrityChecker
                     hourlyFailures[hour]++;
             }
             
-            // Scatter plot data: file size vs playable percentage
-            var scatterData = reportsWithDuration
+            // Scatter plot data: file size vs playable percentage (all files)
+            var scatterDataCorrupted = reportsWithDuration
                 .Where(r => r.Status.IsCorrupted)
                 .Select(r => new {
                     SizeMB = r.FileMetadata.FileSizeMB,
                     PlayablePercent = r.VideoDuration!.PlayablePercentage,
-                    FileName = r.FileMetadata.FileName
+                    FileName = r.FileMetadata.FileName,
+                    IsCorrupted = true
                 })
                 .ToList();
+
+            var scatterDataValid = reportsWithDuration
+                .Where(r => !r.Status.IsCorrupted)
+                .Select(r => new {
+                    SizeMB = r.FileMetadata.FileSizeMB,
+                    PlayablePercent = r.VideoDuration!.PlayablePercentage,
+                    FileName = r.FileMetadata.FileName,
+                    IsCorrupted = false
+                })
+                .ToList();
+
+            var scatterData = scatterDataCorrupted.Concat(scatterDataValid).ToList();
 
             // Timeline data: creation vs last modified times
             var timelineData = reports
@@ -1922,6 +1935,15 @@ namespace MovFileIntegrityChecker
             html.AppendLine("        .corrupted-row {");
             html.AppendLine("            color: #fca5a5;");
             html.AppendLine("        }");
+            html.AppendLine("        .valid-row {");
+            html.AppendLine("            color: #86efac;");
+            html.AppendLine("        }");
+            html.AppendLine("        .status-badge {");
+            html.AppendLine("            padding: 4px 8px;");
+            html.AppendLine("            border-radius: 4px;");
+            html.AppendLine("            font-size: 0.85em;");
+            html.AppendLine("            font-weight: 600;");
+            html.AppendLine("        }");
             html.AppendLine("        .footer {");
             html.AppendLine("            text-align: center;");
             html.AppendLine("            margin-top: 50px;");
@@ -2017,7 +2039,7 @@ namespace MovFileIntegrityChecker
 
             html.AppendLine("        </div>");
 
-            // Data table
+            // Data table - show all files sorted by corruption percentage (corrupted first)
             html.AppendLine("        <div class=\"chart-container\">");
             html.AppendLine("            <h2>📋 Detailed File Analysis</h2>");
             html.AppendLine("            <table class=\"data-table\">");
@@ -2029,31 +2051,34 @@ namespace MovFileIntegrityChecker
             html.AppendLine("                        <th>Playable %</th>");
             html.AppendLine("                        <th>Corruption %</th>");
             html.AppendLine("                        <th>Last Modified Hour</th>");
+            html.AppendLine("                        <th>Status</th>");
             html.AppendLine("                    </tr>");
             html.AppendLine("                </thead>");
             html.AppendLine("                <tbody>");
             
-            // Add top 20 corrupted files to the table
-            var topCorrupted = reports
-                .Where(r => r.Status.IsCorrupted)
-                .OrderByDescending(r => r.VideoDuration?.CorruptedPercentage ?? 0)
-                .Take(20)
+            // Add all files to the table, sorted by corruption (corrupted files first, then by corruption %)
+            var allFilesForTable = reports
+                .OrderByDescending(r => r.Status.IsCorrupted)
+                .ThenByDescending(r => r.VideoDuration?.CorruptedPercentage ?? 0)
                 .ToList();
 
-            foreach (var report in topCorrupted)
+            foreach (var report in allFilesForTable)
             {
                 var duration = report.VideoDuration?.TotalDurationFormatted ?? "N/A";
                 var playable = report.VideoDuration?.PlayablePercentage.ToString("F1") ?? "N/A";
                 var corruption = report.VideoDuration?.CorruptedPercentage.ToString("F1") ?? "N/A";
                 var hour = report.FileMetadata.LastModifiedTimeUtc.ToLocalTime().Hour;
+                var rowClass = report.Status.IsCorrupted ? "corrupted-row" : "valid-row";
+                var statusBadge = report.Status.IsCorrupted ? "❌ Corrupted" : "✅ Valid";
                 
-                html.AppendLine("                    <tr class=\"corrupted-row\">");
+                html.AppendLine($"                    <tr class=\"{rowClass}\">");
                 html.AppendLine($"                        <td>{System.Security.SecurityElement.Escape(report.FileMetadata.FileName)}</td>");
                 html.AppendLine($"                        <td>{report.FileMetadata.FileSizeMB:F2}</td>");
                 html.AppendLine($"                        <td>{duration}</td>");
                 html.AppendLine($"                        <td>{playable}%</td>");
                 html.AppendLine($"                        <td>{corruption}%</td>");
                 html.AppendLine($"                        <td>{hour:D2}:00</td>");
+                html.AppendLine($"                        <td><span class=\"status-badge\">{statusBadge}</span></td>");
                 html.AppendLine("                    </tr>");
             }
 
@@ -2397,15 +2422,26 @@ namespace MovFileIntegrityChecker
             // Scatter plot: File Size vs Playable %
             if (scatterData.Count > 0)
             {
-                var scatterPoints = string.Join(", ", scatterData.Select(d => 
+                var scatterPointsCorrupted = string.Join(", ", scatterDataCorrupted.Select(d => 
+                    $"{{x: {d.SizeMB.ToString("F2", CultureInfo.InvariantCulture)}, y: {d.PlayablePercent.ToString("F2", CultureInfo.InvariantCulture)}, label: '{System.Security.SecurityElement.Escape(d.FileName)}'}}"));
+                
+                var scatterPointsValid = string.Join(", ", scatterDataValid.Select(d => 
                     $"{{x: {d.SizeMB.ToString("F2", CultureInfo.InvariantCulture)}, y: {d.PlayablePercent.ToString("F2", CultureInfo.InvariantCulture)}, label: '{System.Security.SecurityElement.Escape(d.FileName)}'}}"));
 
                 html.AppendLine("        new Chart(document.getElementById('scatterSizePlayable'), {");
                 html.AppendLine("            type: 'scatter',");
                 html.AppendLine("            data: {");
-                html.AppendLine($"                datasets: [{{");
+                html.AppendLine("                datasets: [{");
+                html.AppendLine("                    label: 'Valid Files (100% Playable)',");
+                html.AppendLine($"                    data: [{scatterPointsValid}],");
+                html.AppendLine("                    backgroundColor: 'rgba(16, 185, 129, 0.6)',");
+                html.AppendLine("                    borderColor: 'rgba(16, 185, 129, 1)',");
+                html.AppendLine("                    borderWidth: 1,");
+                html.AppendLine("                    pointRadius: 6,");
+                html.AppendLine("                    pointHoverRadius: 8");
+                html.AppendLine("                }, {");
                 html.AppendLine("                    label: 'Corrupted Files',");
-                html.AppendLine($"                    data: [{scatterPoints}],");
+                html.AppendLine($"                    data: [{scatterPointsCorrupted}],");
                 html.AppendLine("                    backgroundColor: 'rgba(239, 68, 68, 0.6)',");
                 html.AppendLine("                    borderColor: 'rgba(239, 68, 68, 1)',");
                 html.AppendLine("                    borderWidth: 1,");
@@ -2421,7 +2457,7 @@ namespace MovFileIntegrityChecker
                 html.AppendLine("                    y: { title: { display: true, text: 'Playable Percentage (%)' }, beginAtZero: true, max: 100 }");
                 html.AppendLine("                },");
                 html.AppendLine("                plugins: {");
-                html.AppendLine("                    legend: { display: false },");
+                html.AppendLine("                    legend: { display: true, position: 'top' },");
                 html.AppendLine("                    tooltip: {");
                 html.AppendLine("                        callbacks: {");
                 html.AppendLine("                            label: function(context) {");
