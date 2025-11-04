@@ -1,9 +1,4 @@
-using System.Diagnostics;
-using System.Globalization;
-using System.Text;
-using System.Text.Json;
 using MovFileIntegrityChecker.Models;
-using static MovFileIntegrityChecker.Utilities.ConsoleHelper;
 
 namespace MovFileIntegrityChecker.Services
 {
