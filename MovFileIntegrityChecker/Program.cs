@@ -92,13 +92,14 @@ namespace MovFileIntegrityChecker
 
         private static void RunPerFileAnalysisInteractive()
         {
-            Console.Write("Enter the path to a file or folder: ");
+            Console.Write("Enter the path to a file or folder (default: DemoFiles\\Broken.mp4): ");
             string? path = Console.ReadLine()?.Trim().Trim('"');
 
             if (string.IsNullOrEmpty(path))
             {
-                WriteError("No path provided.");
-                return;
+                // Use relative path to DemoFiles (relative to bin output directory)
+                path = Path.Combine("..", "..", "..", "DemoFiles", "Broken.mp4");
+                Console.WriteLine($"Using default path: {path}");
             }
 
             Console.Write("Recursive search? (y/n, default: n): ");

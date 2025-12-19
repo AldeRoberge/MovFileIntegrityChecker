@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿﻿using System.Text;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
@@ -1389,12 +1389,14 @@ namespace MovFileIntegrityChecker
             Console.WriteLine();
 
             // Ask for the directory containing JSON reports
-            Console.Write("Enter the directory containing JSON reports\n(default: T:\\SPT\\SP\\Mont\\Projets\\3_PRJ\\9-ALEXANDRE_DEMERS-ROBERGE\\Fichiers Corrompus): ");
+            Console.Write("Enter the directory containing JSON reports\n(default: TestReports): ");
             string? jsonDir = Console.ReadLine()?.Trim().Trim('"');
 
             if (string.IsNullOrEmpty(jsonDir))
             {
-                jsonDir = @"T:\SPT\SP\Mont\Projets\3_PRJ\9-ALEXANDRE_DEMERS-ROBERGE\Fichiers Corrompus";
+                // Use relative path to TestReports (relative to bin output directory)
+                jsonDir = Path.Combine("..", "..", "..", "TestReports");
+                Console.WriteLine($"Using default path: {jsonDir}");
             }
 
             if (!Directory.Exists(jsonDir))
