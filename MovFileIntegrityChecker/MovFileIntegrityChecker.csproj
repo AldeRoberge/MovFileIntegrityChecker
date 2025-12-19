@@ -9,4 +9,15 @@
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Remove="DemoFiles\Broken.mp4" />
+      <Content Include="DemoFiles\Broken.mp4">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="DemoFiles\Working.mp4" />
+      <Content Include="DemoFiles\Working.mp4">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
