@@ -163,8 +163,11 @@ MovFileIntegrityChecker.exe --global-analysis
 ## Requirements
 
 - **.NET 9.0** or later
-- **ffprobe** (from FFmpeg) - must be in PATH for duration analysis
-- **ffmpeg** - must be in PATH for frame extraction
+- **FFmpeg** (ffmpeg and ffprobe) - **Automatic installation available!**
+  - The application will automatically detect if FFmpeg is installed
+  - If not found, it will offer to download and install it for you (Windows only)
+  - For Linux/macOS, manual installation instructions will be provided
+  - FFmpeg is used for video duration analysis and frame extraction
 
 ## Installation
 
@@ -174,6 +177,12 @@ MovFileIntegrityChecker.exe --global-analysis
    dotnet build
    ```
 3. Run the executable from `bin/Build/net9.0/MovFileIntegrityChecker.exe`
+4. On first run, the application will check for FFmpeg and offer to install it if needed
+
+### FFmpeg Installation
+- **Windows**: The application will automatically download and install FFmpeg if not found
+- **Linux**: Use your package manager (e.g., `sudo apt-get install ffmpeg`)
+- **macOS**: Use Homebrew (e.g., `brew install ffmpeg`)
 
 ## Technical Details
 

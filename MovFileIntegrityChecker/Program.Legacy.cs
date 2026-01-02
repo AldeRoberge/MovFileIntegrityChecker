@@ -1394,8 +1394,8 @@ namespace MovFileIntegrityChecker
 
             if (string.IsNullOrEmpty(jsonDir))
             {
-                // Use relative path to TestReports (relative to bin output directory)
-                jsonDir = Path.Combine("..", "..", "..", "TestReports");
+                // Use relative path to demo files
+                jsonDir = Path.Combine("..", "..", "..", "DemoFiles");
                 Console.WriteLine($"Using default path: {jsonDir}");
             }
 

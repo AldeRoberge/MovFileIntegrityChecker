@@ -11,9 +11,15 @@ namespace MovFileIntegrityChecker
     /// </summary>
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Console.WriteLine("=== MOV File Integrity Checker ===\n");
+
+            // Check if ffmpeg is installed, download if needed
+            if (!await FfmpegHelper.EnsureFfmpegInstalledAsync())
+            {
+                return; // Exit if ffmpeg is not available
+            }
 
             // Check for global analysis flag
             if (args.Any(a => a == "--global-analysis" || a == "-g"))
