@@ -1,224 +1,34 @@
-# MOV File Integrity Checker
+# Vérificateur de fichiers MOV / MP4
 
-A comprehensive tool for analyzing MOV/MP4 video file integrity, detecting corruption, and generating detailed reports.
+Cet outil vérifie si vos fichiers vidéo (.mov, .mp4, etc.) sont endommagés ou incomplets.
 
-## Features
+Il vous indique :
 
-### 🔍 Per-File Analysis
-- **Deep structural analysis** of MOV/MP4 file atoms
-- **Validation** of file completeness and integrity
-- **Duration analysis** with playable vs. corrupted segment detection
-- **Visual timeline** showing where corruption occurs
-- **JSON reports** for each analyzed file
-- **HTML reports** for corrupted files with detailed information
+* Si le fichier est valide
+* S’il est corrompu
+* Quelle portion de la vidéo est encore lisible
+* Où la corruption se produit
+* Pourquoi le fichier pourrait avoir échoué
 
-### 📊 Global Analysis
-- **Aggregate reporting** across all analyzed files
-- **🆕 Enhanced Interactive Dashboard** with 7 visualizations:
-  - Complete vs. Incomplete files (Pie Chart)
-  - Corrupted vs. Valid files (Pie Chart)
-  - Corruption rate by file size (Bar Chart)
-  - Corruption rate by video duration (Bar Chart)
-  - **🕐 Hourly Heatmap** - Transfer failure frequency by hour (identifies maintenance windows!)
-  - **📈 Scatter Plots** - File size vs playable % (now includes all files: green=valid, red=corrupted)
-  - **📅 Timeline Chart** - Creation vs modification times (detects abrupt interruptions)
-- **🔍 Smart Insights** with automatic root cause detection
-- **📋 Complete File Table** - All files visible (not just top 20), color-coded by status
-- **💡 Actionable Recommendations** based on detected patterns
+---
 
-**📖 [Read the Dashboard Guide](DASHBOARD_GUIDE.md) for detailed visualization examples and usage tips**
+# Ce que fait l’outil
 
-### 🎯 Interactive Menu System
-When run without arguments, the tool presents an interactive menu with three options:
-1. **Per-File Analysis** - Analyze individual video files in a folder
-2. **Global Analysis** - Generate aggregate reports from existing JSON data
-3. **Both** - Run per-file analysis followed by global analysis
+Pour chaque vidéo, l’outil :
 
-## Usage
+* Vérifie si la structure du fichier est correcte
+* Détecte les parties manquantes ou endommagées
+* Estime la portion encore lisible de la vidéo
+* Génère un rapport détaillé
 
-### Interactive Mode (Recommended)
+Si le fichier est corrompu, il crée également un rapport HTML visuel que vous pouvez ouvrir dans votre navigateur.
+
+---
+
+# Comment l’utiliser
+
+Exécutez simplement :
+
 ```bash
 MovFileIntegrityChecker.exe
 ```
-
-This will show a menu where you can select:
-- Per-file analysis
-- Global analysis
-- Both modes
-
-### Command-Line Mode
-
-#### Analyze a single file:
-```bash
-MovFileIntegrityChecker.exe <path_to_mov_file>
-```
-
-#### Analyze a folder:
-```bash
-MovFileIntegrityChecker.exe <path_to_folder>
-```
-
-#### Analyze with options:
-```bash
-MovFileIntegrityChecker.exe <path> -r -s -d
-```
-
-#### Run global analysis only:
-```bash
-MovFileIntegrityChecker.exe --global-analysis
-# or
-MovFileIntegrityChecker.exe -g
-```
-
-### Command-Line Options
-
-| Option | Description |
-|--------|-------------|
-| `-r`, `--recursive` | Check subfolders recursively |
-| `-s`, `--summary` | Show summary only (no detailed output) |
-| `-d`, `--delete-empty` | Delete empty folders after processing |
-| `-g`, `--global-analysis` | Generate global analysis report from JSON files |
-
-## Output Files
-
-### Per-File Analysis Outputs
-
-#### JSON Report (always generated)
-Location: `T:\SPT\SP\Mont\Projets\3_PRJ\9-ALEXANDRE_DEMERS-ROBERGE\Fichiers Corrompus\<filename>_report.json`
-
-Contains:
-- File metadata (size, dates, attributes)
-- Video duration information
-- Integrity analysis results
-- Atom structure details
-- Issues and recommendations
-
-#### HTML Report (only for corrupted files)
-Location: Same folder as the video file, named `<filename>-Incomplet.html`
-
-Contains:
-- Visual presentation of file issues
-- Duration timeline
-- Atom structure visualization
-- Sample frame extraction (if possible)
-
-### Global Analysis Output
-
-#### HTML Global Report
-Location: `T:\SPT\SP\Mont\Projets\3_PRJ\9-ALEXANDRE_DEMERS-ROBERGE\Fichiers Corrompus\global-report-<timestamp>.html`
-
-Contains:
-- Overall statistics
-- Interactive charts (using Chart.js)
-- Correlation analysis
-- Key insights and patterns
-- Automatically opens in default browser
-
-## Examples
-
-### Example 1: Check a single folder recursively
-```bash
-MovFileIntegrityChecker.exe "C:\Videos" -r
-```
-
-### Example 2: Check multiple folders with cleanup
-```bash
-MovFileIntegrityChecker.exe "C:\Videos1" "D:\Videos2" --recursive --delete-empty
-```
-
-### Example 3: Quick summary check
-```bash
-MovFileIntegrityChecker.exe "C:\Videos" -r -s
-```
-
-### Example 4: Generate global report
-After running per-file analysis, generate an aggregate report:
-```bash
-MovFileIntegrityChecker.exe --global-analysis
-```
-
-## Analysis Details
-
-### File Integrity Checks
-- ✅ Validates MOV/MP4 atom structure
-- ✅ Checks for required atoms (ftyp, moov, mdat)
-- ✅ Detects incomplete or truncated atoms
-- ✅ Identifies unknown atom types
-- ✅ Verifies atom alignment and file structure
-- ✅ Calculates validation percentage
-
-### Duration Analysis
-- Uses **ffprobe** to extract video duration
-- Calculates playable duration based on validated bytes
-- Identifies missing/corrupted segments
-- Shows percentage of playable content
-
-### Global Analysis Insights
-- **Completeness Analysis**: Shows ratio of complete vs. incomplete files
-- **Corruption Analysis**: Identifies corruption patterns
-- **Size Correlation**: Determines if larger files are more prone to corruption
-- **Duration Correlation**: Shows if longer videos have higher corruption rates
-- **Common Issues**: Identifies the most frequent problems across all files
-
-## Requirements
-
-- **.NET 9.0** or later
-- **FFmpeg** (ffmpeg and ffprobe) - **Automatic installation available!**
-  - The application will automatically detect if FFmpeg is installed
-  - If not found, it will offer to download and install it for you (Windows only)
-  - For Linux/macOS, manual installation instructions will be provided
-  - FFmpeg is used for video duration analysis and frame extraction
-
-## Installation
-
-1. Clone the repository
-2. Build the solution:
-   ```bash
-   dotnet build
-   ```
-3. Run the executable from `bin/Build/net9.0/MovFileIntegrityChecker.exe`
-4. On first run, the application will check for FFmpeg and offer to install it if needed
-
-### FFmpeg Installation
-- **Windows**: The application will automatically download and install FFmpeg if not found
-- **Linux**: Use your package manager (e.g., `sudo apt-get install ffmpeg`)
-- **macOS**: Use Homebrew (e.g., `brew install ffmpeg`)
-
-## Technical Details
-
-### Supported File Types
-- `.mov` - QuickTime Movie
-- `.mp4` - MPEG-4 Video
-- `.m4v` - iTunes Video
-- `.m4a` - MPEG-4 Audio
-
-### Atom Types Recognized
-The tool recognizes standard MOV/MP4 atoms including:
-- Container atoms: `moov`, `trak`, `mdia`, `minf`, `stbl`
-- Metadata atoms: `mvhd`, `tkhd`, `mdhd`, `hdlr`
-- Data atoms: `mdat`, `ftyp`, `free`, `skip`, `wide`
-- Stream atoms: `stsd`, `stts`, `stsc`, `stsz`, `stco`, `co64`
-
-## Chart Visualizations
-
-The global report includes interactive charts:
-
-1. **Completeness Pie Chart**: Visual breakdown of complete vs. incomplete files
-2. **Corruption Pie Chart**: Shows valid vs. corrupted file distribution
-3. **File Size Bar Chart**: Compares total files vs. corrupted files across size ranges
-4. **Duration Bar Chart**: Shows corruption rates across different video lengths
-
-Each chart is interactive with hover tooltips showing detailed statistics.
-
-## License
-
-[Add your license information here]
-
-## Contributing
-
-[Add contribution guidelines here]
-
-## Support
-
-For issues or questions, please [create an issue](https://github.com/your-repo/issues) in the repository.
-
