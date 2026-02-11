@@ -108,8 +108,8 @@ namespace MovFileIntegrityChecker
                 Console.WriteLine($"Using default path: {path}");
             }
 
-            Console.Write("Recursive search? (y/n, default: n): ");
-            bool recursive = Console.ReadLine()?.Trim().ToLower() == "y";
+            Console.Write("Recursive search? (y/n, default: y): ");
+            bool recursive = Console.ReadLine()?.Trim().ToLower() != "n";
 
             Console.Write("Delete empty folders? (y/n, default: n): ");
             bool deleteEmpty = Console.ReadLine()?.Trim().ToLower() == "y";
