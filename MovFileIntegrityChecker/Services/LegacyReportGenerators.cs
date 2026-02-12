@@ -1,12 +1,11 @@
+// Wrapper for the old HTML report generator code that we haven't refactored yet.
+// It works fine, but the code is pretty gnarly. We'll clean it up eventually.
+// For now, this just keeps it separate so the main code doesn't get messy.
+
 using MovFileIntegrityChecker.Models;
 
 namespace MovFileIntegrityChecker.Services
 {
-    /// <summary>
-    /// Legacy HTML and Dashboard report generators.
-    /// These are large methods that will be refactored in Phase 2.
-    /// For now, they are kept separate from the main Program class.
-    /// </summary>
     public static class LegacyReportGenerators
     {
         public static void CreateErrorReport(FileCheckResult result)

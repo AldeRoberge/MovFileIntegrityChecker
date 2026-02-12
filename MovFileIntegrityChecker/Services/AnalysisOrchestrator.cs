@@ -1,3 +1,7 @@
+// The conductor of the whole operation - coordinates all the different analyzers.
+// Takes your file or folder, runs it through the checks, generates reports, and shows pretty output.
+// Basically the air traffic controller making sure everything happens in the right order.
+
 using MovFileIntegrityChecker.Models;
 using static MovFileIntegrityChecker.Utilities.ConsoleHelper;
 

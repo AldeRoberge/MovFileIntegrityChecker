@@ -1,3 +1,7 @@
+// Makes sure ffmpeg is installed and ready to go.
+// If it's not found, this offers to download it for you automatically.
+// Because manually installing dependencies is a pain and nobody wants to do that.
+
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
@@ -5,9 +9,6 @@ using static MovFileIntegrityChecker.Utilities.ConsoleHelper;
 
 namespace MovFileIntegrityChecker.Utilities
 {
-    /// <summary>
-    /// Helper class to check for ffmpeg installation and download if needed.
-    /// </summary>
     public static class FfmpegHelper
     {
         private static readonly string FfmpegFolder = Path.Combine(

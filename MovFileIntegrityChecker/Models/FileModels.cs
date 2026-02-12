@@ -1,3 +1,7 @@
+// Data structures for storing file analysis results.
+// AtomInfo holds info about each chunk of the video file.
+// FileCheckResult bundles everything together - issues, atoms, duration, the whole nine yards.
+
 namespace MovFileIntegrityChecker.Models
 {
     public class AtomInfo

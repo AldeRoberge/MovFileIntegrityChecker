@@ -1,3 +1,7 @@
+// Talks to ffprobe to figure out how long a video actually is.
+// Sometimes corrupted files still have duration info, which is super useful
+// for calculating how much of the video is actually playable vs missing.
+
 using System.Diagnostics;
 using System.Globalization;
 

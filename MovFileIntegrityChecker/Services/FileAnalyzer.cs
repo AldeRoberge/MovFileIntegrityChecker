@@ -1,5 +1,10 @@
+// This is where the magic happens - we dig into the MOV/MP4 file structure.
+// It reads the atoms (the building blocks of video files) and checks if everything's intact.
+// Think of it like a health checkup for your video files, but without the waiting room.
+
 using System.Text;
 using MovFileIntegrityChecker.Models;
+using MovFileIntegrityChecker.Utilities;
 
 namespace MovFileIntegrityChecker.Services
 {
@@ -28,7 +33,15 @@ namespace MovFileIntegrityChecker.Services
 
             try
             {
-                using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                // Check if the file is locked by another process before we try to read it
+                if (!FileSecurityHelper.TryOpenFile(filePath, out string? lockError))
+                {
+                    result.Issues.Add($"File is in use or locked: {lockError}");
+                    return result;
+                }
+
+                // Open in read-only mode with sharing allowed - we're just looking, not touching
+                using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 long fileLength = fs.Length;
                 result.FileSize = fileLength;
 
@@ -218,4 +231,3 @@ namespace MovFileIntegrityChecker.Services
         }
     }
 }
-

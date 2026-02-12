@@ -21,7 +21,23 @@ namespace MovFileIntegrityChecker.Services
             try
             {
                 string filePath = result.FilePath;
+                
+                // Security check - make sure the file is safe to access
+                if (!File.Exists(filePath))
+                {
+                    WriteWarning($"⚠️ Cannot create report: File not found - {filePath}");
+                    return;
+                }
+
+                // Get file info in a read-only, safe manner
                 FileInfo fileInfo = new FileInfo(filePath);
+                
+                // Make extra sure we're not trying to read something sketchy
+                if (!fileInfo.Exists)
+                {
+                    WriteWarning($"⚠️ Cannot create report: File info unavailable - {filePath}");
+                    return;
+                }
 
                 if (!Directory.Exists(outputDirectory))
                 {

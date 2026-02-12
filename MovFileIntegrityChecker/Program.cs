@@ -1,13 +1,13 @@
+// Hey, this is the main program file that kicks everything off.
+// Basically handles user input, shows the menu, and routes everything to the right service.
+// We refactored this to keep things clean - no more giant spaghetti code in one file.
+
 using MovFileIntegrityChecker.Services;
 using MovFileIntegrityChecker.Utilities;
 using static MovFileIntegrityChecker.Utilities.ConsoleHelper;
 
 namespace MovFileIntegrityChecker
 {
-    /// <summary>
-    /// Main entry point for the MOV File Integrity Checker application.
-    /// This class has been refactored to use a service-oriented architecture.
-    /// </summary>
     public class Program
     {
         public static async Task Main(string[] args)
@@ -57,7 +57,6 @@ namespace MovFileIntegrityChecker
             // Load user preferences
             var preferences = UserPreferences.Load();
             
-            Console.Clear();
             Console.WriteLine("╔════════════════════════════════════════════════════════════════╗");
             Console.WriteLine("║        MOV File Integrity Checker - Analysis Mode             ║");
             Console.WriteLine("╚════════════════════════════════════════════════════════════════╝");
