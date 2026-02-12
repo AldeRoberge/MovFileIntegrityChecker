@@ -1,4 +1,3 @@
-using MovFileIntegrityChecker.Models;
 using MovFileIntegrityChecker.Services;
 using MovFileIntegrityChecker.Utilities;
 using static MovFileIntegrityChecker.Utilities.ConsoleHelper;

@@ -5,20 +5,8 @@ namespace MovFileIntegrityChecker.Services
 {
     public class AnalysisOrchestrator
     {
-        private readonly FileAnalyzer _fileAnalyzer;
-        private readonly JsonReportGenerator _jsonReportGenerator;
-
-        public AnalysisOrchestrator()
-        {
-            _fileAnalyzer = new FileAnalyzer();
-            _jsonReportGenerator = new JsonReportGenerator();
-        }
-
-        public AnalysisOrchestrator(string jsonReportOutputDir)
-        {
-            _fileAnalyzer = new FileAnalyzer();
-            _jsonReportGenerator = new JsonReportGenerator(jsonReportOutputDir);
-        }
+        private readonly FileAnalyzer _fileAnalyzer = new();
+        private readonly JsonReportGenerator _jsonReportGenerator = new();
 
         public List<FileCheckResult> AnalyzePaths(string[] paths, bool recursive, bool summaryOnly, bool deleteEmpty,
             Action<FileCheckResult>? htmlReportGenerator = null)
@@ -127,7 +115,7 @@ namespace MovFileIntegrityChecker.Services
             return results;
         }
 
-        public void PrintDetailedResult(FileCheckResult result)
+        private void PrintDetailedResult(FileCheckResult result)
         {
             Console.WriteLine($"\n{'='}{new string('=', 80)}");
             Console.WriteLine($"File: {Path.GetFileName(result.FilePath)}");
@@ -177,7 +165,7 @@ namespace MovFileIntegrityChecker.Services
                 Console.WriteLine($"   Playable Duration: {FormatDuration(result.PlayableDuration)}");
                 double playablePercent = (result.PlayableDuration / result.TotalDuration) * 100.0;
 
-                int barWidth = 50;
+                const int barWidth = 50;
                 int greenWidth = (int)(barWidth * playablePercent / 100.0);
                 int redWidth = barWidth - greenWidth;
 

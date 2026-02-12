@@ -6,7 +6,7 @@ using static MovFileIntegrityChecker.Utilities.ConsoleHelper;
 
 namespace MovFileIntegrityChecker.Services
 {
-    public class JsonReportGenerator
+    public class JsonReportGenerator(string outputDirectory = @"T:\SPT\SP\Mont\Projets\3_PRJ\9-ALEXANDRE_DEMERS-ROBERGE\Fichiers Corrompus")
     {
         private static readonly HashSet<string> ValidAtomTypes = new()
         {
@@ -16,13 +16,6 @@ namespace MovFileIntegrityChecker.Services
             "stsz", "stco", "co64", "edts", "elst", "udta", "meta"
         };
 
-        private readonly string _outputDirectory;
-
-        public JsonReportGenerator(string outputDirectory = @"T:\SPT\SP\Mont\Projets\3_PRJ\9-ALEXANDRE_DEMERS-ROBERGE\Fichiers Corrompus")
-        {
-            _outputDirectory = outputDirectory;
-        }
-
         public void CreateReport(FileCheckResult result)
         {
             try
@@ -30,14 +23,14 @@ namespace MovFileIntegrityChecker.Services
                 string filePath = result.FilePath;
                 FileInfo fileInfo = new FileInfo(filePath);
 
-                if (!Directory.Exists(_outputDirectory))
+                if (!Directory.Exists(outputDirectory))
                 {
-                    Directory.CreateDirectory(_outputDirectory);
+                    Directory.CreateDirectory(outputDirectory);
                 }
 
                 string baseName = Path.GetFileNameWithoutExtension(filePath);
                 string jsonFileName = $"{baseName}_report.json";
-                string jsonReportPath = Path.Combine(_outputDirectory, jsonFileName);
+                string jsonReportPath = Path.Combine(outputDirectory, jsonFileName);
 
                 DateTime evaluationTime = DateTime.UtcNow;
 

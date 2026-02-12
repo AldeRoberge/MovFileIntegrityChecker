@@ -1,11 +1,9 @@
-﻿﻿using System.Text;
+﻿using System.Text;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MovFileIntegrityChecker.Models;
-using MovFileIntegrityChecker.Services;
-using MovFileIntegrityChecker.Utilities;
 
 namespace MovFileIntegrityChecker
 {
@@ -1921,8 +1919,7 @@ namespace MovFileIntegrityChecker
 
             // Transfer interruption patterns
             var abruptStops = timelineData
-                .Where(x => x.IsCorrupted && x.DurationHours < 1)
-                .Count();
+                .Count(x => x.IsCorrupted && x.DurationHours < 1);
             
             if (abruptStops > 0)
             {
