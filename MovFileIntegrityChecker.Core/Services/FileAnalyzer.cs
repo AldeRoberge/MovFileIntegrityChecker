@@ -1,10 +1,12 @@
-// Analyzes MOV/MP4 file structure and atom integrity.
+// This is where the magic happens - we dig into the MOV/MP4 file structure.
+// It reads the atoms (the building blocks of video files) and checks if everything's intact.
+// Think of it like a health checkup for your video files, but without the waiting room.
 
 using System.Text;
-using MovFileIntegrityChecker.Models;
-using MovFileIntegrityChecker.Utilities;
+using MovFileIntegrityChecker.Core.Models;
+using MovFileIntegrityChecker.Core.Utilities;
 
-namespace MovFileIntegrityChecker.Services
+namespace MovFileIntegrityChecker.Core.Services
 {
     public class FileAnalyzer
     {

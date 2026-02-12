@@ -1,11 +1,12 @@
 // Main entry point for the MovFileIntegrityChecker application.
 // Handles user input and orchestration of analysis services.
 
-using MovFileIntegrityChecker.Services;
-using MovFileIntegrityChecker.Utilities;
-using static MovFileIntegrityChecker.Utilities.ConsoleHelper;
+using MovFileIntegrityChecker.Core.Services;
+using MovFileIntegrityChecker.Core.Utilities;
+using MovFileIntegrityChecker.CLI.Utilities;
+using static MovFileIntegrityChecker.CLI.Utilities.ConsoleHelper;
 
-namespace MovFileIntegrityChecker
+namespace MovFileIntegrityChecker.CLI
 {
     public class Program
     {

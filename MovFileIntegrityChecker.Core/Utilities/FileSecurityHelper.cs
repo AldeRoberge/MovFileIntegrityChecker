@@ -1,6 +1,8 @@
-// Helper methods for safe file access and locking checks.
+// Security helper to make sure we're not messing with files that are already open.
+// Nobody likes a "file is in use" error, so we check before we leap.
+// Read-only operations only - we're not here to modify anything.
 
-namespace MovFileIntegrityChecker.Utilities
+namespace MovFileIntegrityChecker.Core.Utilities
 {
     public static class FileSecurityHelper
     {

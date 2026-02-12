@@ -1,6 +1,4 @@
-// Makes sure ffmpeg is installed and ready to go.
-// If it's not found, this offers to download it for you automatically.
-// Because manually installing dependencies is a pain and nobody wants to do that.
+// Helper methods for checking and installing FFmpeg.
 
 using System.Diagnostics;
 using System.IO.Compression;
@@ -45,7 +43,7 @@ namespace MovFileIntegrityChecker.Utilities
             Console.WriteLine("FFmpeg is required to analyze video files.");
             Console.WriteLine();
             Console.Write("Would you like to download and install FFmpeg now? (y/n): ");
-            
+
             string? response = Console.ReadLine()?.Trim().ToLower();
             if (response != "y" && response != "yes")
             {
@@ -101,7 +99,7 @@ namespace MovFileIntegrityChecker.Utilities
         {
             string ffmpegExe = Path.Combine(FfmpegFolder, "bin", "ffmpeg.exe");
             string ffprobeExe = Path.Combine(FfmpegFolder, "bin", "ffprobe.exe");
-            
+
             return File.Exists(ffmpegExe) && File.Exists(ffprobeExe);
         }
 
@@ -112,7 +110,7 @@ namespace MovFileIntegrityChecker.Utilities
         {
             string binPath = Path.Combine(FfmpegFolder, "bin");
             string currentPath = Environment.GetEnvironmentVariable("PATH") ?? "";
-            
+
             if (!currentPath.Contains(binPath))
             {
                 Environment.SetEnvironmentVariable("PATH", $"{binPath};{currentPath}");
@@ -128,7 +126,7 @@ namespace MovFileIntegrityChecker.Utilities
             {
                 Console.WriteLine();
                 Console.WriteLine("Downloading FFmpeg...");
-                
+
                 // Determine the download URL based on the OS
                 string downloadUrl;
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -166,11 +164,11 @@ namespace MovFileIntegrityChecker.Utilities
                     using (var httpClient = new HttpClient())
                     {
                         httpClient.Timeout = TimeSpan.FromMinutes(10);
-                        
+
                         using (var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
                         {
                             response.EnsureSuccessStatusCode();
-                            
+
                             var totalBytes = response.Content.Headers.ContentLength ?? -1;
                             using (var contentStream = await response.Content.ReadAsStreamAsync())
                             using (var fileStream = new FileStream(tempZip, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -178,12 +176,12 @@ namespace MovFileIntegrityChecker.Utilities
                                 var buffer = new byte[8192];
                                 long totalRead = 0;
                                 int bytesRead;
-                                
+
                                 while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                                 {
                                     await fileStream.WriteAsync(buffer, 0, bytesRead);
                                     totalRead += bytesRead;
-                                    
+
                                     if (totalBytes > 0)
                                     {
                                         var progress = (int)((totalRead * 100) / totalBytes);
@@ -193,7 +191,7 @@ namespace MovFileIntegrityChecker.Utilities
                             }
                         }
                     }
-                    
+
                     Console.WriteLine();
                     Console.WriteLine("Download complete. Extracting...");
 
@@ -203,7 +201,7 @@ namespace MovFileIntegrityChecker.Utilities
                         Directory.Delete(tempExtract, true);
                     }
                     Directory.CreateDirectory(tempExtract);
-                    
+
                     ZipFile.ExtractToDirectory(tempZip, tempExtract);
 
                     // Find the bin folder in the extracted files (it's usually in a subfolder)
@@ -215,16 +213,16 @@ namespace MovFileIntegrityChecker.Utilities
                     }
 
                     string sourceBinFolder = binFolders[0];
-                    
+
                     // Create destination folder
                     Directory.CreateDirectory(FfmpegFolder);
                     string destBinFolder = Path.Combine(FfmpegFolder, "bin");
-                    
+
                     if (Directory.Exists(destBinFolder))
                     {
                         Directory.Delete(destBinFolder, true);
                     }
-                    
+
                     // Copy the bin folder
                     CopyDirectory(sourceBinFolder, destBinFolder);
 

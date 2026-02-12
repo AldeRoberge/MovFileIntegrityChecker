@@ -1,6 +1,8 @@
-// Helper methods for colored console output.
+// Just some simple helpers to make console output look pretty with colors.
+// Because staring at plain white text is boring, and color-coded messages
+// make it way easier to spot errors and successes at a glance.
 
-namespace MovFileIntegrityChecker.Utilities
+namespace MovFileIntegrityChecker.Core.Utilities
 {
     public static class ConsoleHelper
     {

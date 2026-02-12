@@ -1,8 +1,10 @@
-// Helper methods for file system operations.
+// Cleans up empty folders after we're done checking files.
+// Sometimes corrupt files get deleted or moved, leaving behind empty directories.
+// This just tidies things up so you don't have a bunch of empty folders cluttering your drive.
 
-using static MovFileIntegrityChecker.Utilities.ConsoleHelper;
+using static MovFileIntegrityChecker.Core.Utilities.ConsoleHelper;
 
-namespace MovFileIntegrityChecker.Utilities
+namespace MovFileIntegrityChecker.Core.Utilities
 {
     public static class FileSystemHelper
     {

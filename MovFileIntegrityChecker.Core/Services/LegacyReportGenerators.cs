@@ -1,8 +1,10 @@
-// Wrapper for legacy HTML report generation.
+// Wrapper for the old HTML report generator code that we haven't refactored yet.
+// It works fine, but the code is pretty gnarly. We'll clean it up eventually.
+// For now, this just keeps it separate so the main code doesn't get messy.
 
-using MovFileIntegrityChecker.Models;
+using MovFileIntegrityChecker.Core.Models;
 
-namespace MovFileIntegrityChecker.Services
+namespace MovFileIntegrityChecker.Core.Services
 {
     public static class LegacyReportGenerators
     {

@@ -1,8 +1,10 @@
-// Data models for JSON report serialization.
+// All the data models for JSON report output.
+// These classes get serialized into the JSON reports so everything is properly structured
+// and easy to parse if you're feeding this into another tool or dashboard.
 
 using System.Text.Json.Serialization;
 
-namespace MovFileIntegrityChecker.Models
+namespace MovFileIntegrityChecker.Core.Models
 {
     public class JsonFileMetadata
     {
