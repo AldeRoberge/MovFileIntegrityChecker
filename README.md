@@ -1,8 +1,6 @@
 # Vérificateur de fichiers MOV / MP4
 
-Cet outil vérifie si vos fichiers vidéo (.mov, .mp4, etc.) sont endommagés ou incomplets.
-
-Il vous indique :
+Cet outil vérifie si des fichiers vidéo (.mov, .mp4, etc.) sont endommagés ou incomplets :
 
 * Si le fichier est valide
 * S’il est corrompu
@@ -10,24 +8,11 @@ Il vous indique :
 * Où la corruption se produit
 * Pourquoi le fichier pourrait avoir échoué
 
----
-
-# Ce que fait l’outil
-
-Pour chaque vidéo, l’outil :
-
-* Vérifie si la structure du fichier est correcte
-* Détecte les parties manquantes ou endommagées
-* Estime la portion encore lisible de la vidéo
-* Génère un rapport détaillé
-
-Si le fichier est corrompu, il crée également un rapport HTML visuel que vous pouvez ouvrir dans votre navigateur.
+Si le fichier est corrompu, il crée également un rapport visuel.
 
 <img width="764" height="879" alt="image" src="https://github.com/user-attachments/assets/dfc91706-b4fe-428c-b161-d2de91083252" />
 <img width="1465" height="347" alt="image" src="https://github.com/user-attachments/assets/3c51f359-0147-407c-9b71-78593dd2e2f4" />
 
-
----
 
 # Comment l’utiliser
 
