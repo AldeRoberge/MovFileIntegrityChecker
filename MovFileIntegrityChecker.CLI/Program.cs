@@ -1,6 +1,7 @@
 // Main entry point for the MovFileIntegrityChecker application.
 // Handles user input and orchestration of analysis services.
 
+using MovFileIntegrityChecker.CLI.Services;
 using MovFileIntegrityChecker.Core.Services;
 using MovFileIntegrityChecker.Core.Utilities;
 using MovFileIntegrityChecker.CLI.Utilities;
@@ -107,7 +108,6 @@ namespace MovFileIntegrityChecker.CLI
         {
             // Determine default path to show
             string defaultPath = string.IsNullOrEmpty(preferences.LastPath)
-
                 ? Path.Combine("..", "..", "..", "DemoFiles", "Broken.mp4")
                 : preferences.LastPath;
 
@@ -129,9 +129,7 @@ namespace MovFileIntegrityChecker.CLI
             Console.Write($"Recursive search? (y/n, default: {(preferences.LastRecursive ? "y" : "n")}): ");
             string? recursiveInput = Console.ReadLine()?.Trim().ToLower();
             bool recursive = string.IsNullOrEmpty(recursiveInput)
-
                 ? preferences.LastRecursive
-
                 : recursiveInput == "y";
 
             Console.Write($"Delete empty folders? (y/n, default: {(preferences.LastDeleteEmpty ? "y" : "n")}): ");
@@ -161,7 +159,6 @@ namespace MovFileIntegrityChecker.CLI
                 paths,
                 recursive,
                 summaryOnly,
-
                 deleteEmpty,
                 htmlReportGenerator: LegacyReportGenerators.CreateErrorReport
             );
@@ -170,4 +167,3 @@ namespace MovFileIntegrityChecker.CLI
         }
     }
 }
-

@@ -4,7 +4,7 @@
 
 using MovFileIntegrityChecker.Core.Models;
 
-namespace MovFileIntegrityChecker.Core.Services
+namespace MovFileIntegrityChecker.CLI.Services
 {
     public static class LegacyReportGenerators
     {
@@ -23,4 +23,5 @@ namespace MovFileIntegrityChecker.Core.Services
         }
     }
 }
+
 
