@@ -1,10 +1,14 @@
 using MovFileIntegrityChecker.Web.Components;
+using MovFileIntegrityChecker.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<LogService>();
+builder.Services.AddSingleton<ScannerService>();
 
 var app = builder.Build();
 

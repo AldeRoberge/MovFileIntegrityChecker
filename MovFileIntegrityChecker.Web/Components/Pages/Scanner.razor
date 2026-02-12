@@ -1,0 +1,296 @@
+@page "/"
+@using MovFileIntegrityChecker.Web.Services
+@using MovFileIntegrityChecker.Core.Models
+@using MovFileIntegrityChecker.Core.Utilities
+@using System.Diagnostics
+@implements IDisposable
+@inject ScannerService ScannerService
+@inject LogService LogService
+@inject IJSRuntime JS
+
+<PageTitle>Scanner - MovFileIntegrityChecker</PageTitle>
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Scanner Dashboard</h1>
+            <div class="text-muted small">MovFileIntegrityChecker v1.0</div>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="badge @GetStatusBadgeClass() p-2 fs-6">
+                @ScannerService.Status
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Scan Path</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" @bind="_path" placeholder="C:\Videos" />
+                        <button class="btn btn-outline-secondary" @onclick="OpenFolderDialog" type="button">📂</button>
+                    </div>
+                </div>
+                 <div class="col-md-2">
+                    <label class="form-label">Options</label>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" @bind="_recursive" id="recursiveCheck">
+                        <label class="form-check-label" for="recursiveCheck">Recursive</label>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-end gap-2">
+                    @if (!ScannerService.IsScanning)
+                    {
+                        <button class="btn btn-primary flex-grow-1" @onclick="StartScan">
+                            <i class="bi bi-play-fill me-1"></i> Start Scan
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-danger flex-grow-1" @onclick="StopScan">
+                            <i class="bi bi-stop-fill me-1"></i> Stop Scan
+                        </button>
+                    }
+                </div>
+            </div>
+            
+            <hr class="my-3"/>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="autoScanSwitch" checked="@ScannerService.IsAutoScanEnabled" @onchange="ToggleAutoScan">
+                    <label class="form-check-label" for="autoScanSwitch">Automatic Mode</label>
+                </div>
+                <div class="input-group input-group-sm" style="width: 200px;">
+                    <span class="input-group-text">Every</span>
+                    <input type="number" class="form-control" @bind="_autoScanInterval" min="1" disabled="@(!ScannerService.IsAutoScanEnabled)">
+                    <span class="input-group-text">hours</span>
+                </div>
+                @if (ScannerService.IsAutoScanEnabled && ScannerService.NextAutoScanTime.HasValue)
+                {
+                    <span class="text-muted small">Next scan: @ScannerService.NextAutoScanTime.Value.ToString("g")</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Console Output -->
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <span class="small"><i class="bi bi-terminal me-2"></i>Console Output</span>
+                    <button class="btn btn-sm btn-outline-light py-0" @onclick="ClearLogs">Clear</button>
+                </div>
+                <div class="card-body bg-black p-0" style="height: 300px; overflow-y: auto;" id="console-window">
+                    <div class="p-2 font-monospace small">
+                        @foreach (var log in _logs)
+                        {
+                            <div class="@log.CssClass">
+                                <span class="text-secondary me-2">[@log.Timestamp.ToString("HH:mm:ss")]</span>
+                                @log.Message
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results -->
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-table me-2"></i>Results</span>
+                     <div>
+                        <span class="badge bg-secondary me-2">Total: @_results.Count</span>
+                         <button class="btn btn-sm btn-outline-secondary" @onclick="ClearResults">Clear</button>
+                     </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>File</th>
+                                <th>Size</th>
+                                <th>Status</th>
+                                <th>Validation</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (_results.Any())
+                            {
+                                @foreach (var result in _results.OrderByDescending(r => r.HasIssues))
+                                {
+                                    <tr class="@(result.HasIssues ? "table-danger" : "")">
+                                        <td>
+                                            <div class="fw-bold">@Path.GetFileName(result.FilePath)</div>
+                                            <div class="small text-muted">@Path.GetDirectoryName(result.FilePath)</div>
+                                        </td>
+                                        <td>@((result.FileSize / (1024.0 * 1024.0)).ToString("F2")) MB</td>
+                                        <td>
+                                            @if (result.HasIssues)
+                                            {
+                                                <span class="badge bg-danger">Corrupted</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Valid</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1" style="height: 6px;">
+                                                    <div class="progress-bar @(result.HasIssues ? "bg-danger" : "bg-success")" role="progressbar" 
+                                                         style="width: @((result.FileSize > 0 ? result.BytesValidated * 100.0 / result.FileSize : 0).ToString("F0", System.Globalization.CultureInfo.InvariantCulture))%"></div>
+                                                </div>
+                                                <span class="ms-2 small">@((result.FileSize > 0 ? result.BytesValidated * 100.0 / result.FileSize : 0).ToString("F0"))%</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary" @onclick="() => OpenReport(result)">
+                                                <i class="bi bi-file-earmark-text"></i> Report
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">No results yet. Start a scan to see data.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _path = @"C:\";
+    private bool _recursive = true;
+    private int _autoScanInterval = 24;
+    private List<LogEntry> _logs = new();
+    private List<FileCheckResult> _results = new();
+    private ElementReference _consoleWindow;
+
+    protected override void OnInitialized()
+    {
+        ScannerService.OnStatusChanged += UpdateState;
+        ScannerService.OnResultAdded += OnResultAdded;
+        LogService.OnLogAdded += UpdateLogs;
+        
+        _logs = LogService.GetLogs();
+        _results = ScannerService.RecentResults.ToList();
+    }
+
+    private async void UpdateState()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void UpdateLogs()
+    {
+        _logs = LogService.GetLogs();
+        await InvokeAsync(StateHasChanged);
+        // Scroll to bottom? Requires JS (omitted for now or added later)
+    }
+
+    private void OnResultAdded(FileCheckResult result)
+    {
+        _results = ScannerService.RecentResults.ToList();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task StartScan()
+    {
+        if (string.IsNullOrWhiteSpace(_path)) return;
+        
+        // Clear previous results? maybe not if we want history
+        // ScannerService.ClearResults(); 
+        
+        await ScannerService.StartScanAsync(_path, _recursive);
+    }
+
+    private void StopScan()
+    {
+        ScannerService.StopScan();
+    }
+    
+    private void ToggleAutoScan(ChangeEventArgs e)
+    {
+        bool enable = (bool)(e.Value ?? false);
+        ScannerService.ToggleAutoScan(enable, _autoScanInterval, _path);
+    }
+
+    private void ClearLogs()
+    {
+        LogService.Clear();
+    }
+
+    private void ClearResults()
+    {
+        ScannerService.ClearResults();
+        _results.Clear();
+    }
+    
+    // This only works in InteractiveServer mode on Windows/Localhost
+    private void OpenFolderDialog()
+    {
+        // Simple hack: open explorer to select path? 
+        // Real folder picker in web is hard. We'll skip for now or just open current path.
+        // Process.Start("explorer.exe", _path);
+    }
+
+    private void OpenReport(FileCheckResult result)
+    {
+        try
+        {
+            string folder = Path.GetDirectoryName(result.FilePath)!;
+            string baseName = Path.GetFileNameWithoutExtension(result.FilePath);
+            string reportPath = Path.Combine(folder, $"{baseName}-Incomplet.html");
+
+            if (File.Exists(reportPath))
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = reportPath,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            }
+            else
+            {
+                // Try JSON report? or just open folder?
+                Process.Start("explorer.exe", folder);
+            }
+        }
+        catch
+        {
+            // ignore
+        }
+    }
+
+    private string GetStatusBadgeClass() => ScannerService.Status switch
+    {
+        "Scanning..." => "bg-primary",
+        "Completed" => "bg-success",
+        "Error" => "bg-danger",
+        "Cancelled" => "bg-warning text-dark",
+        "Stopping..." => "bg-warning text-dark",
+        _ => "bg-secondary"
+    };
+
+    public void Dispose()
+    {
+        ScannerService.OnStatusChanged -= UpdateState;
+        ScannerService.OnResultAdded -= OnResultAdded;
+        LogService.OnLogAdded -= UpdateLogs;
+    }
+}
