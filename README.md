@@ -23,6 +23,10 @@ Pour chaque vidéo, l’outil :
 
 Si le fichier est corrompu, il crée également un rapport HTML visuel que vous pouvez ouvrir dans votre navigateur.
 
+<img width="764" height="879" alt="image" src="https://github.com/user-attachments/assets/dfc91706-b4fe-428c-b161-d2de91083252" />
+<img width="1465" height="347" alt="image" src="https://github.com/user-attachments/assets/3c51f359-0147-407c-9b71-78593dd2e2f4" />
+
+
 ---
 
 # Comment l’utiliser
