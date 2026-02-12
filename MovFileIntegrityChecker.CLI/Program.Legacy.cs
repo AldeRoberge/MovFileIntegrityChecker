@@ -4,195 +4,13 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MovFileIntegrityChecker.Core.Models;
+using MovFileIntegrityChecker.Core.Constants;
+using static MovFileIntegrityChecker.Core.Utilities.ConsoleHelper;
 
 namespace MovFileIntegrityChecker.CLI
 {
     public static class MovIntegrityChecker
     {
-        // Common MOV/MP4 atom types
-        private static readonly HashSet<string> ValidAtomTypes = new()
-        {
-            "ftyp", "moov", "mdat", "free", "skip", "wide", "pnot",
-            "mvhd", "trak", "tkhd", "mdia", "mdhd", "hdlr", "minf",
-            "vmhd", "smhd", "dinf", "stbl", "stsd", "stts", "stsc",
-            "stsz", "stco", "co64", "edts", "elst", "udta", "meta"
-        };
-
-
-        // JSON Report Classes
-        public class JsonFileMetadata
-        {
-            [JsonPropertyName("fileName")]
-            public string FileName { get; set; } = string.Empty;
-
-            [JsonPropertyName("fullPath")]
-            public string FullPath { get; set; } = string.Empty;
-
-            [JsonPropertyName("fileSizeBytes")]
-            public long FileSizeBytes { get; set; }
-
-            [JsonPropertyName("fileSizeMB")]
-            public double FileSizeMB { get; set; }
-
-            [JsonPropertyName("creationTimeUtc")]
-            public DateTime CreationTimeUtc { get; set; }
-
-            [JsonPropertyName("lastModifiedTimeUtc")]
-            public DateTime LastModifiedTimeUtc { get; set; }
-
-            [JsonPropertyName("lastAccessTimeUtc")]
-            public DateTime LastAccessTimeUtc { get; set; }
-
-            [JsonPropertyName("fileExtension")]
-            public string FileExtension { get; set; } = string.Empty;
-
-            [JsonPropertyName("isReadOnly")]
-            public bool IsReadOnly { get; set; }
-
-            [JsonPropertyName("attributes")]
-            public string Attributes { get; set; } = string.Empty;
-        }
-
-        public class JsonVideoDuration
-        {
-            [JsonPropertyName("totalDurationSeconds")]
-            public double TotalDurationSeconds { get; set; }
-
-            [JsonPropertyName("totalDurationFormatted")]
-            public string TotalDurationFormatted { get; set; } = string.Empty;
-
-            [JsonPropertyName("playableDurationSeconds")]
-            public double PlayableDurationSeconds { get; set; }
-
-            [JsonPropertyName("playableDurationFormatted")]
-            public string PlayableDurationFormatted { get; set; } = string.Empty;
-
-            [JsonPropertyName("missingDurationSeconds")]
-            public double MissingDurationSeconds { get; set; }
-
-            [JsonPropertyName("missingDurationFormatted")]
-            public string MissingDurationFormatted { get; set; } = string.Empty;
-
-            [JsonPropertyName("playablePercentage")]
-            public double PlayablePercentage { get; set; }
-
-            [JsonPropertyName("corruptedPercentage")]
-            public double CorruptedPercentage { get; set; }
-        }
-
-        public class JsonAtomInfo
-        {
-            [JsonPropertyName("type")]
-            public string Type { get; set; } = string.Empty;
-
-            [JsonPropertyName("sizeBytes")]
-            public long SizeBytes { get; set; }
-
-            [JsonPropertyName("offsetBytes")]
-            public long OffsetBytes { get; set; }
-
-            [JsonPropertyName("isComplete")]
-            public bool IsComplete { get; set; }
-
-            [JsonPropertyName("isKnownType")]
-            public bool IsKnownType { get; set; }
-        }
-
-        public class JsonIntegrityAnalysis
-        {
-            [JsonPropertyName("bytesValidated")]
-            public long BytesValidated { get; set; }
-
-            [JsonPropertyName("validationPercentage")]
-            public double ValidationPercentage { get; set; }
-
-            [JsonPropertyName("atomsFound")]
-            public int AtomsFound { get; set; }
-
-            [JsonPropertyName("hasStructuralIssues")]
-            public bool HasStructuralIssues { get; set; }
-
-            [JsonPropertyName("issues")]
-            public List<string> Issues { get; set; } = new();
-
-            [JsonPropertyName("atoms")]
-            public List<JsonAtomInfo> Atoms { get; set; } = new();
-
-            [JsonPropertyName("hasRequiredAtoms")]
-            public JsonRequiredAtoms HasRequiredAtoms { get; set; } = new();
-        }
-
-        public class JsonRequiredAtoms
-        {
-            [JsonPropertyName("ftyp")]
-            public bool Ftyp { get; set; }
-
-            [JsonPropertyName("moov")]
-            public bool Moov { get; set; }
-
-            [JsonPropertyName("mdat")]
-            public bool Mdat { get; set; }
-        }
-
-        public class JsonCorruptionReport
-        {
-            [JsonPropertyName("reportVersion")]
-            public string ReportVersion { get; set; } = "1.0";
-
-            [JsonPropertyName("generatedByTool")]
-            public string GeneratedByTool { get; set; } = "MovFileIntegrityChecker";
-
-            [JsonPropertyName("evaluationTimeUtc")]
-            public DateTime EvaluationTimeUtc { get; set; }
-
-            [JsonPropertyName("evaluationTimeLocal")]
-            public DateTime EvaluationTimeLocal { get; set; }
-
-            [JsonPropertyName("fileMetadata")]
-            public JsonFileMetadata FileMetadata { get; set; } = new();
-
-            [JsonPropertyName("videoDuration")]
-            public JsonVideoDuration? VideoDuration { get; set; }
-
-            [JsonPropertyName("integrityAnalysis")]
-            public JsonIntegrityAnalysis IntegrityAnalysis { get; set; } = new();
-
-            [JsonPropertyName("status")]
-            public JsonFileStatus Status { get; set; } = new();
-        }
-
-        public class JsonFileStatus
-        {
-            [JsonPropertyName("isCorrupted")]
-            public bool IsCorrupted { get; set; }
-
-            [JsonPropertyName("isComplete")]
-            public bool IsComplete { get; set; }
-
-            [JsonPropertyName("severity")]
-            public string Severity { get; set; } = string.Empty;
-
-            [JsonPropertyName("recommendation")]
-            public string Recommendation { get; set; } = string.Empty;
-        }
-
-        public static long ReadBigEndianUInt64(byte[] data)
-        {
-            return ((long)data[0] << 56) | ((long)data[1] << 48) | ((long)data[2] << 40) | ((long)data[3] << 32) |
-                   ((long)data[4] << 24) | ((long)data[5] << 16) | ((long)data[6] << 8) | data[7];
-        }
-
-        private static string FormatDuration(double seconds)
-        {
-            if (seconds <= 0) return "00:00:00";
-
-            int hours = (int)(seconds / 3600);
-            int minutes = (int)((seconds % 3600) / 60);
-            int secs = (int)(seconds % 60);
-
-            return $"{hours:D2}:{minutes:D2}:{secs:D2}";
-        }
-
         // --- Added helpers for extracting a random frame using ffprobe/ffmpeg ---
         private static double GetVideoDuration(string filePath)
         {
@@ -498,7 +316,7 @@ namespace MovFileIntegrityChecker.CLI
                             SizeBytes = a.Size,
                             OffsetBytes = a.Offset,
                             IsComplete = a.IsComplete,
-                            IsKnownType = ValidAtomTypes.Contains(a.Type)
+                            IsKnownType = AtomConstants.ValidAtomTypes.Contains(a.Type)
                         }).ToList(),
                         HasRequiredAtoms = new JsonRequiredAtoms
                         {
@@ -901,7 +719,7 @@ namespace MovFileIntegrityChecker.CLI
                     if (result.HasIssues && result.PlayableDuration < result.TotalDuration)
                     {
                         sb.AppendLine("                        <div style=\"text-align: center;\">");
-                    sb.AppendLine($"                            <div class=\"time\">{System.Security.SecurityElement.Escape(FormatDuration(result.PlayableDuration))}</div>");
+                        sb.AppendLine($"                            <div class=\"time\">{System.Security.SecurityElement.Escape(FormatDuration(result.PlayableDuration))}</div>");
                         sb.AppendLine("                            <div style=\"color: #cd5120;\">Point de rupture</div>");
                         sb.AppendLine("                        </div>");
                     }
@@ -1162,11 +980,12 @@ namespace MovFileIntegrityChecker.CLI
                 if (report.Status.IsCorrupted)
                     hourlyFailures[hour]++;
             }
-            
+
             // Scatter plot data: file size vs playable percentage (all files)
             var scatterDataCorrupted = reportsWithDuration
                 .Where(r => r.Status.IsCorrupted)
-                .Select(r => new {
+                .Select(r => new
+                {
                     SizeMB = r.FileMetadata.FileSizeMB,
                     PlayablePercent = r.VideoDuration!.PlayablePercentage,
                     FileName = r.FileMetadata.FileName,
@@ -1176,7 +995,8 @@ namespace MovFileIntegrityChecker.CLI
 
             var scatterDataValid = reportsWithDuration
                 .Where(r => !r.Status.IsCorrupted)
-                .Select(r => new {
+                .Select(r => new
+                {
                     SizeMB = r.FileMetadata.FileSizeMB,
                     PlayablePercent = r.VideoDuration!.PlayablePercentage,
                     FileName = r.FileMetadata.FileName,
@@ -1188,7 +1008,8 @@ namespace MovFileIntegrityChecker.CLI
 
             // Timeline data: creation vs last modified times
             var timelineData = reports
-                .Select(r => new {
+                .Select(r => new
+                {
                     FileName = r.FileMetadata.FileName,
                     CreationTime = r.FileMetadata.CreationTimeUtc.ToLocalTime(),
                     LastModifiedTime = r.FileMetadata.LastModifiedTimeUtc.ToLocalTime(),
@@ -1453,7 +1274,7 @@ namespace MovFileIntegrityChecker.CLI
 
             // Charts
             html.AppendLine("        <div class=\"charts-grid\">");
-            
+
             // Complete vs Incomplete pie chart
             html.AppendLine("            <div class=\"chart-container\">");
             html.AppendLine("                <h2>Statut de complétude</h2>");
@@ -1526,7 +1347,7 @@ namespace MovFileIntegrityChecker.CLI
             html.AppendLine("                    </tr>");
             html.AppendLine("                </thead>");
             html.AppendLine("                <tbody>");
-            
+
             // Add all files to the table, sorted by corruption (corrupted files first, then by corruption %)
             var allFilesForTable = reports
                 .OrderByDescending(r => r.Status.IsCorrupted)
@@ -1541,7 +1362,7 @@ namespace MovFileIntegrityChecker.CLI
                 var hour = report.FileMetadata.LastModifiedTimeUtc.ToLocalTime().Hour;
                 var rowClass = report.Status.IsCorrupted ? "corrupted-row" : "valid-row";
                 var statusBadge = report.Status.IsCorrupted ? "Corrompu" : "Valide";
-                
+
                 html.AppendLine($"                    <tr class=\"{rowClass}\">");
                 html.AppendLine($"                        <td>{System.Security.SecurityElement.Escape(report.FileMetadata.FileName)}</td>");
                 html.AppendLine($"                        <td>{report.FileMetadata.FileSizeMB:F2}</td>");
@@ -1584,9 +1405,9 @@ namespace MovFileIntegrityChecker.CLI
                         .Where(x => (double)x.Count / x.Total * 100 > corruptionRate * 1.1)
                         .Select(x => $"{x.Hour:D2}:00-{(x.Hour + 1) % 24:D2}:00")
                         .ToList();
-                    
+
                     html.AppendLine($"                <li><strong>Fenêtre à haut risque :</strong> {peakRate:F1}% des fichiers modifiés à {top.Hour:D2}:00-{(top.Hour + 1) % 24:D2}:00 sont corrompus (pic d'échecs)</li>");
-                    
+
                     if (timeRanges.Count > 1)
                     {
                         html.AppendLine($"                <li><strong>Fenêtres de risque additionnelles :</strong> {string.Join(", ", timeRanges.Skip(1))}</li>");
@@ -1599,7 +1420,7 @@ namespace MovFileIntegrityChecker.CLI
                 .Where(kvp => kvp.Value.total > 0)
                 .OrderByDescending(kvp => (double)kvp.Value.corrupted / kvp.Value.total)
                 .FirstOrDefault();
-            
+
             if (highestRiskSize.Key != null)
             {
                 double riskRate = (double)highestRiskSize.Value.corrupted / highestRiskSize.Value.total * 100;
@@ -1613,7 +1434,7 @@ namespace MovFileIntegrityChecker.CLI
                     .Where(kvp => kvp.Value.total > 0)
                     .OrderByDescending(kvp => (double)kvp.Value.corrupted / kvp.Value.total)
                     .FirstOrDefault();
-                
+
                 if (highestRiskDuration.Key != null)
                 {
                     double riskRate = (double)highestRiskDuration.Value.corrupted / highestRiskDuration.Value.total * 100;
@@ -1632,7 +1453,7 @@ namespace MovFileIntegrityChecker.CLI
             // Transfer interruption patterns
             var abruptStops = timelineData
                 .Count(x => x.IsCorrupted && x.DurationHours < 1);
-            
+
             if (abruptStops > 0)
             {
                 double abruptRate = (double)abruptStops / corruptedFiles * 100;
@@ -1643,9 +1464,9 @@ namespace MovFileIntegrityChecker.CLI
             var allIssues = reports
                 .SelectMany(r => r.IntegrityAnalysis.Issues)
                 .Where(i => !string.IsNullOrEmpty(i))
-                .GroupBy(i => i.Contains("Incomplete atom") ? "Atome incomplet" : 
-                              i.Contains("Missing") ? "Atome manquant" : 
-                              i.Contains("Gap") ? "Écart après le dernier atome" : i)
+                .GroupBy(i => i.Contains("Incomplete atom") ? "Atome incomplet" :
+                    i.Contains("Missing") ? "Atome manquant" :
+                    i.Contains("Gap") ? "Écart après le dernier atome" : i)
                 .OrderByDescending(g => g.Count())
                 .Take(3)
                 .ToList();
@@ -1660,7 +1481,7 @@ namespace MovFileIntegrityChecker.CLI
             // Root cause conclusion
             html.AppendLine("            <div class=\"conclusion\">");
             html.AppendLine("                <strong>Cause probable :</strong> ");
-            
+
             // Determine likely cause based on patterns
             if (peakHours.Any() && (double)peakHours[0].Count / peakHours[0].Total * 100 > corruptionRate * 1.5)
             {
@@ -1686,7 +1507,7 @@ namespace MovFileIntegrityChecker.CLI
             {
                 html.AppendLine("                Les transferts de fichiers sont interrompus avant leur achèvement, probablement en raison d'instabilité réseau, de problèmes de stockage ou de plantages d'application durant l'écriture.");
             }
-            
+
             html.AppendLine("            </div>");
             html.AppendLine("        </div>");
 
@@ -1746,7 +1567,7 @@ namespace MovFileIntegrityChecker.CLI
             var sizeLabels = string.Join(", ", fileSizeRanges.Keys.Select(k => $"'{k}'"));
             var sizeTotals = string.Join(", ", fileSizeRanges.Values.Select(v => v.total));
             var sizeCorrupted = string.Join(", ", fileSizeRanges.Values.Select(v => v.corrupted));
-            var sizePercentages = string.Join(", ", fileSizeRanges.Values.Select(v => 
+            var sizePercentages = string.Join(", ", fileSizeRanges.Values.Select(v =>
                 v.total > 0 ? ((double)v.corrupted / v.total * 100).ToString("F1") : "0"));
 
             html.AppendLine("        new Chart(document.getElementById('fileSizeChart'), {");
@@ -1793,7 +1614,7 @@ namespace MovFileIntegrityChecker.CLI
                 var durationLabels = string.Join(", ", durationRanges.Keys.Select(k => $"'{k}'"));
                 var durationTotals = string.Join(", ", durationRanges.Values.Select(v => v.total));
                 var durationCorrupted = string.Join(", ", durationRanges.Values.Select(v => v.corrupted));
-                var durationPercentages = string.Join(", ", durationRanges.Values.Select(v => 
+                var durationPercentages = string.Join(", ", durationRanges.Values.Select(v =>
                     v.total > 0 ? ((double)v.corrupted / v.total * 100).ToString("F1") : "0"));
 
                 html.AppendLine("        new Chart(document.getElementById('durationChart'), {");
@@ -1839,7 +1660,7 @@ namespace MovFileIntegrityChecker.CLI
             var hourLabels = string.Join(", ", Enumerable.Range(0, 24).Select(h => $"'{h:D2}:00'"));
             var hourFailureData = string.Join(", ", hourlyFailures);
             var hourTotalData = string.Join(", ", hourlyTotal);
-            var hourPercentages = string.Join(", ", hourlyTotal.Select((total, i) => 
+            var hourPercentages = string.Join(", ", hourlyTotal.Select((total, i) =>
                 total > 0 ? ((double)hourlyFailures[i] / total * 100).ToString("F1") : "0"));
 
             html.AppendLine("        new Chart(document.getElementById('hourlyHeatmap'), {");
@@ -1884,10 +1705,10 @@ namespace MovFileIntegrityChecker.CLI
             // Scatter plot: File Size vs Playable %
             if (scatterData.Count > 0)
             {
-                var scatterPointsCorrupted = string.Join(", ", scatterDataCorrupted.Select(d => 
+                var scatterPointsCorrupted = string.Join(", ", scatterDataCorrupted.Select(d =>
                     $"{{x: {d.SizeMB.ToString("F2", CultureInfo.InvariantCulture)}, y: {d.PlayablePercent.ToString("F2", CultureInfo.InvariantCulture)}, label: '{System.Security.SecurityElement.Escape(d.FileName)}'}}"));
-                
-                var scatterPointsValid = string.Join(", ", scatterDataValid.Select(d => 
+
+                var scatterPointsValid = string.Join(", ", scatterDataValid.Select(d =>
                     $"{{x: {d.SizeMB.ToString("F2", CultureInfo.InvariantCulture)}, y: {d.PlayablePercent.ToString("F2", CultureInfo.InvariantCulture)}, label: '{System.Security.SecurityElement.Escape(d.FileName)}'}}"));
 
                 html.AppendLine("        new Chart(document.getElementById('scatterSizePlayable'), {");
@@ -1931,7 +1752,8 @@ namespace MovFileIntegrityChecker.CLI
             // Scatter plot: Last Modified Hour vs Corruption
             var hourCorruptionData = reports
                 .GroupBy(r => r.FileMetadata.LastModifiedTimeUtc.ToLocalTime().Hour)
-                .Select(g => new {
+                .Select(g => new
+                {
                     Hour = g.Key,
                     Total = g.Count(),
                     Corrupted = g.Count(r => r.Status.IsCorrupted),
@@ -1939,7 +1761,7 @@ namespace MovFileIntegrityChecker.CLI
                 })
                 .ToList();
 
-            var hourScatterPoints = string.Join(", ", hourCorruptionData.Select(d => 
+            var hourScatterPoints = string.Join(", ", hourCorruptionData.Select(d =>
                 $"{{x: {d.Hour}, y: {d.Rate.ToString("F2", CultureInfo.InvariantCulture)}, r: {Math.Max(5, d.Total * 2)}}}"));
 
             html.AppendLine("        new Chart(document.getElementById('scatterHourCorruption'), {");
@@ -1974,9 +1796,9 @@ namespace MovFileIntegrityChecker.CLI
             html.AppendLine("        });");
 
             // Timeline chart: Creation vs Last Modified
-            var timelineCreationData = string.Join(", ", timelineData.Select(t => 
+            var timelineCreationData = string.Join(", ", timelineData.Select(t =>
                 $"{{x: '{t.CreationTime:yyyy-MM-dd HH:mm}', y: 1}}"));
-            var timelineModifiedData = string.Join(", ", timelineData.Where(t => t.IsCorrupted).Select(t => 
+            var timelineModifiedData = string.Join(", ", timelineData.Where(t => t.IsCorrupted).Select(t =>
                 $"{{x: '{t.LastModifiedTime:yyyy-MM-dd HH:mm}', y: 2}}"));
 
             html.AppendLine("        new Chart(document.getElementById('timelineChart'), {");

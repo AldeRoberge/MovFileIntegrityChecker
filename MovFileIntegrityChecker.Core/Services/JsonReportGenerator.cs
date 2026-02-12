@@ -2,19 +2,13 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MovFileIntegrityChecker.Core.Models;
+using MovFileIntegrityChecker.Core.Constants;
 using static MovFileIntegrityChecker.Core.Utilities.ConsoleHelper;
 
 namespace MovFileIntegrityChecker.Core.Services
 {
     public class JsonReportGenerator(string outputDirectory = @"T:\SPT\SP\Mont\Projets\3_PRJ\9-ALEXANDRE_DEMERS-ROBERGE\Fichiers Corrompus")
     {
-        private static readonly HashSet<string> ValidAtomTypes = new()
-        {
-            "ftyp", "moov", "mdat", "free", "skip", "wide", "pnot",
-            "mvhd", "trak", "tkhd", "mdia", "mdhd", "hdlr", "minf",
-            "vmhd", "smhd", "dinf", "stbl", "stsd", "stts", "stsc",
-            "stsz", "stco", "co64", "edts", "elst", "udta", "meta"
-        };
 
         public void CreateReport(FileCheckResult result)
         {
@@ -84,7 +78,7 @@ namespace MovFileIntegrityChecker.Core.Services
                             SizeBytes = a.Size,
                             OffsetBytes = a.Offset,
                             IsComplete = a.IsComplete,
-                            IsKnownType = ValidAtomTypes.Contains(a.Type)
+                            IsKnownType = AtomConstants.ValidAtomTypes.Contains(a.Type)
                         }).ToList(),
                         HasRequiredAtoms = new JsonRequiredAtoms
                         {

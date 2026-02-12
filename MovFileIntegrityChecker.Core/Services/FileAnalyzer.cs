@@ -5,18 +5,12 @@
 using System.Text;
 using MovFileIntegrityChecker.Core.Models;
 using MovFileIntegrityChecker.Core.Utilities;
+using MovFileIntegrityChecker.Core.Constants;
 
 namespace MovFileIntegrityChecker.Core.Services
 {
     public class FileAnalyzer
     {
-        private static readonly HashSet<string> ValidAtomTypes = new()
-        {
-            "ftyp", "moov", "mdat", "free", "skip", "wide", "pnot",
-            "mvhd", "trak", "tkhd", "mdia", "mdhd", "hdlr", "minf",
-            "vmhd", "smhd", "dinf", "stbl", "stsd", "stts", "stsc",
-            "stsz", "stco", "co64", "edts", "elst", "udta", "meta"
-        };
 
         public FileCheckResult CheckFileIntegrity(string filePath)
         {
@@ -70,7 +64,7 @@ namespace MovFileIntegrityChecker.Core.Services
                         break;
                     }
 
-                    long atomSize = ReadBigEndianUInt32(sizeBytes);
+                    long atomSize = ByteHelper.ReadBigEndianUInt32(sizeBytes);
 
                     // Read atom type (4 bytes)
                     byte[] typeBytes = new byte[4];
@@ -97,7 +91,7 @@ namespace MovFileIntegrityChecker.Core.Services
                             break;
                         }
 
-                        atomSize = ReadBigEndianUInt64(extSizeBytes);
+                        atomSize = ByteHelper.ReadBigEndianUInt64(extSizeBytes);
                         headerSize = 16;
                     }
                     // Handle size == 0 (atom extends to end of file)
@@ -136,7 +130,7 @@ namespace MovFileIntegrityChecker.Core.Services
                     }
 
                     // Warn about unknown atom types
-                    if (!ValidAtomTypes.Contains(atomType) && !IsAsciiPrintable(atomType))
+                    if (!AtomConstants.ValidAtomTypes.Contains(atomType) && !ByteHelper.IsAsciiPrintable(atomType))
                     {
                         result.Issues.Add($"Unknown/invalid atom type '{atomType}' at offset {position:N0}");
                     }
@@ -213,21 +207,6 @@ namespace MovFileIntegrityChecker.Core.Services
 
             return result;
         }
-
-        private static uint ReadBigEndianUInt32(byte[] data)
-        {
-            return ((uint)data[0] << 24) | ((uint)data[1] << 16) | ((uint)data[2] << 8) | data[3];
-        }
-
-        private static long ReadBigEndianUInt64(byte[] data)
-        {
-            return ((long)data[0] << 56) | ((long)data[1] << 48) | ((long)data[2] << 40) | ((long)data[3] << 32) |
-                   ((long)data[4] << 24) | ((long)data[5] << 16) | ((long)data[6] << 8) | data[7];
-        }
-
-        private static bool IsAsciiPrintable(string str)
-        {
-            return str.All(c => c >= 32 && c <= 126);
-        }
     }
 }
+

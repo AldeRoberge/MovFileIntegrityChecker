@@ -3,6 +3,7 @@
 // Basically the air traffic controller making sure everything happens in the right order.
 
 using MovFileIntegrityChecker.Core.Models;
+using MovFileIntegrityChecker.Core.Constants;
 using static MovFileIntegrityChecker.Core.Utilities.ConsoleHelper;
 
 namespace MovFileIntegrityChecker.Core.Services
@@ -199,19 +200,11 @@ namespace MovFileIntegrityChecker.Core.Services
 
         private void PrintAtomStructure(FileCheckResult result)
         {
-            var validAtomTypes = new HashSet<string>
-            {
-                "ftyp", "moov", "mdat", "free", "skip", "wide", "pnot",
-                "mvhd", "trak", "tkhd", "mdia", "mdhd", "hdlr", "minf",
-                "vmhd", "smhd", "dinf", "stbl", "stsd", "stts", "stsc",
-                "stsz", "stco", "co64", "edts", "elst", "udta", "meta"
-            };
-
             Console.WriteLine($"\n📦 Atom Structure:");
             foreach (var atom in result.Atoms)
             {
                 string status = atom.IsComplete ? "✅" : "❌";
-                string knownType = validAtomTypes.Contains(atom.Type) ? "" : " (unknown)";
+                string knownType = AtomConstants.ValidAtomTypes.Contains(atom.Type) ? "" : " (unknown)";
                 Console.WriteLine($"   {status} [{atom.Type}]{knownType} - Size: {atom.Size:N0} bytes, Offset: {atom.Offset:N0}");
             }
 
