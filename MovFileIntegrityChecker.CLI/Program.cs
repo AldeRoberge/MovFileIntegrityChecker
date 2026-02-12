@@ -5,7 +5,7 @@ using MovFileIntegrityChecker.CLI.Services;
 using MovFileIntegrityChecker.Core.Services;
 using MovFileIntegrityChecker.Core.Utilities;
 using MovFileIntegrityChecker.CLI.Utilities;
-using static MovFileIntegrityChecker.CLI.Utilities.ConsoleHelper;
+using static MovFileIntegrityChecker.Core.Utilities.ConsoleHelper;
 
 namespace MovFileIntegrityChecker.CLI
 {

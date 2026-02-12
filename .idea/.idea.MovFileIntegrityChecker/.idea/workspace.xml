@@ -9,10 +9,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eb20a909-6dc9-4813-8a15-f8d058c7983a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Services/LegacyReportGenerators.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Program.Legacy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Program.Legacy.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MovFileIntegrityChecker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MovFileIntegrityChecker/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/DemoFiles/Broken-Incomplet.html" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/DemoFiles/Broken-Incomplet.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/LegacyReportGenerators.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Utilities/ConsoleHelper.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/MovFileIntegrityChecker.Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/MovFileIntegrityChecker.Core.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/JsonReportGenerator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/JsonReportGenerator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.sln" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/DemoFiles/Broken-Incomplet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/DemoFiles/Broken.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/DemoFiles/Working.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Models/FileModels.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Models/JsonModels.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/MovFileIntegrityChecker.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Program.Legacy.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Program.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Services/AnalysisOrchestrator.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Services/FileAnalyzer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Services/JsonReportGenerator.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Services/LegacyReportGenerators.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Services/VideoAnalyzer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Tests/SecurityTests.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Utilities/ConsoleHelper.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Utilities/FfmpegHelper.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Utilities/FileSecurityHelper.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Utilities/FileSystemHelper.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker/Utilities/UserPreferences.cs" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +82,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;.NET Project.MovFileIntegrityChecker.CLI.executor&quot;: &quot;Run&quot;,
     &quot;.NET Project.MovFileIntegrityChecker.executor&quot;: &quot;Debug&quot;,
     &quot;Publish to folder.Publish MovFileIntegrityChecker to folder.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
@@ -79,7 +102,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected=".NET Project.MovFileIntegrityChecker">
+  <component name="RunManager" selected=".NET Project.MovFileIntegrityChecker.CLI">
     <configuration name="Publish MovFileIntegrityChecker to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish target_folder="$PROJECT_DIR$/MovFileIntegrityChecker/bin/net9.0/publish" target_framework="net9.0" uuid_high="-1064793404666786891" uuid_low="-5407014387979127373">
         <runtimes>
@@ -138,7 +161,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1770834511444</updated>
-      <workItem from="1770834512723" duration="5254000" />
+      <workItem from="1770834512723" duration="6001000" />
     </task>
     <servers />
   </component>

@@ -1,0 +1,533 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord d'analyse</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f6f9fc;
+            color: #1a1f36;
+            padding: 32px 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #ffffff;
+            padding: 48px 32px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            border: 1px solid #e6e6e6;
+        }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a2540;
+        }
+        .header .subtitle {
+            font-size: 15px;
+            color: #425466;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #e6e6e6;
+        }
+        .stat-card .label {
+            font-size: 13px;
+            color: #6b7c93;
+            margin-bottom: 8px;
+        }
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #0a2540;
+        }
+        .stat-card.success .value { color: #0cce6b; }
+        .stat-card.error .value { color: #cd5120; }
+        .stat-card.warning .value { color: #635bff; }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .chart-container {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #e6e6e6;
+        }
+        .chart-container h2 {
+            margin-bottom: 16px;
+            color: #0a2540;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .chart-container canvas {
+            max-height: 350px;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .insights {
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 8px;
+            border: 1px solid #e6e6e6;
+            margin-top: 24px;
+        }
+        .insights h2 {
+            margin-bottom: 16px;
+            color: #0a2540;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .insights ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .insights li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f6f9fc;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #425466;
+        }
+        .insights li:last-child {
+            border-bottom: none;
+        }
+        .insights li:before {
+            content: '• ';
+            color: #635bff;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .insights .conclusion {
+            margin-top: 16px;
+            padding: 16px;
+            background: #fff4ed;
+            border-left: 3px solid #cd5120;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #0a2540;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+        .data-table th {
+            background: #fafbfc;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #6b7c93;
+            border-bottom: 1px solid #e6e6e6;
+            font-size: 13px;
+        }
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f6f9fc;
+            color: #0a2540;
+        }
+        .data-table tr:hover {
+            background: #fafbfc;
+        }
+        .corrupted-row {
+            color: #cd5120;
+        }
+        .valid-row {
+            color: #0a2540;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            padding: 16px;
+            color: #6b7c93;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Tableau de bord d'analyse</h1>
+            <div class="subtitle">Généré le 12-02-2026 à 08:57:00 · 1 fichiers analysés</div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Fichiers totaux</div>
+                <div class="value">1</div>
+            </div>
+            <div class="stat-card success">
+                <div class="label">Fichiers complets</div>
+                <div class="value">0</div>
+            </div>
+            <div class="stat-card error">
+                <div class="label">Fichiers corrompus</div>
+                <div class="value">1</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="label">Taille totale</div>
+                <div class="value">500,00 MB</div>
+            </div>
+        </div>
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h2>Statut de complétude</h2>
+                <canvas id="completenessChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Statut de corruption</h2>
+                <canvas id="corruptionChart"></canvas>
+            </div>
+            <div class="chart-container full-width">
+                <h2>Taux de corruption par taille de fichier</h2>
+                <canvas id="fileSizeChart"></canvas>
+            </div>
+            <div class="chart-container full-width">
+                <h2>Taux de corruption par durée de vidéo</h2>
+                <canvas id="durationChart"></canvas>
+            </div>
+            <div class="chart-container full-width">
+                <h2>Fréquence des échecs par heure</h2>
+                <canvas id="hourlyHeatmap"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Taille vs % lisible</h2>
+                <canvas id="scatterSizePlayable"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Heure de modification vs Corruption</h2>
+                <canvas id="scatterHourCorruption"></canvas>
+            </div>
+            <div class="chart-container full-width">
+                <h2>Chronologie de création vs modification</h2>
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-container">
+            <h2>Analyse détaillée des fichiers</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Nom du fichier</th>
+                        <th>Taille (MB)</th>
+                        <th>Durée</th>
+                        <th>% lisible</th>
+                        <th>% corrompu</th>
+                        <th>Heure modif.</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="corrupted-row">
+                        <td>video_sample.mov</td>
+                        <td>500,00</td>
+                        <td>00:05:30</td>
+                        <td>68,2%</td>
+                        <td>31,9%</td>
+                        <td>04:00</td>
+                        <td><span class="status-badge">Corrompu</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="insights">
+            <h2>Aperçus et corrélations clés</h2>
+            <ul>
+                <li><strong>Taux de corruption global :</strong> 100,0% (1 sur 1 fichiers sont corrompus ou incomplets)</li>
+                <li><strong>Corrélation taille de fichier :</strong> La plage 500 MB-1 GB présente le plus haut risque de corruption à 100,0%</li>
+                <li><strong>Corrélation durée :</strong> Les vidéos de 5-15 min ont un taux de corruption de 100,0%</li>
+                <li><strong>Potentiel de récupération :</strong> Les fichiers corrompus conservent 68,2% de contenu lisible en moyenne</li>
+                <li><strong>Problème structurel le plus courant :</strong> "Atome incomplet" détecté dans 1 fichiers (100,0%)</li>
+            </ul>
+            <div class="conclusion">
+                <strong>Cause probable :</strong> 
+                Les fichiers volumineux sont disproportionnellement affectés, indiquant des problèmes de timeout réseau ou des tailles de buffer insuffisantes pour les gros transferts.
+            </div>
+        </div>
+        <div class="footer">
+            <p>Généré par MovFileIntegrityChecker</p>
+        </div>
+    </div>
+    <script>
+        Chart.defaults.color = '#6b7c93';
+        Chart.defaults.borderColor = '#e6e6e6';
+        new Chart(document.getElementById('completenessChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Complet (0)', 'Incomplet (1)'],
+                datasets: [{
+                    data: [0, 1],
+                    backgroundColor: ['#0cce6b', '#cd5120'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+        new Chart(document.getElementById('corruptionChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Valide (0)', 'Corrompu (1)'],
+                datasets: [{
+                    data: [0, 1],
+                    backgroundColor: ['#0cce6b', '#cd5120'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+        new Chart(document.getElementById('fileSizeChart'), {
+            type: 'bar',
+            data: {
+                labels: ['0-100 MB', '100-500 MB', '500 MB-1 GB', '1-5 GB', '5+ GB'],
+                datasets: [{
+                    label: 'Fichiers totaux',
+                    data: [0, 0, 1, 0, 0],
+                    backgroundColor: '#635bff',
+                    borderWidth: 0
+                }, {
+                    label: 'Fichiers corrompus',
+                    data: [0, 0, 1, 0, 0],
+                    backgroundColor: '#cd5120',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: { beginAtZero: true }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: function(context) {
+                                const percentages = [0, 0, 100,0, 0, 0];
+                                if (context.datasetIndex === 1) {
+                                    return 'Taux de corruption : ' + percentages[context.dataIndex] + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        new Chart(document.getElementById('durationChart'), {
+            type: 'bar',
+            data: {
+                labels: ['0-1 min', '1-5 min', '5-15 min', '15-30 min', '30+ min'],
+                datasets: [{
+                    label: 'Fichiers totaux',
+                    data: [0, 0, 1, 0, 0],
+                    backgroundColor: '#635bff',
+                    borderWidth: 0
+                }, {
+                    label: 'Fichiers corrompus',
+                    data: [0, 0, 1, 0, 0],
+                    backgroundColor: '#cd5120',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: { beginAtZero: true }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: function(context) {
+                                const percentages = [0, 0, 100,0, 0, 0];
+                                if (context.datasetIndex === 1) {
+                                    return 'Taux de corruption : ' + percentages[context.dataIndex] + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        new Chart(document.getElementById('hourlyHeatmap'), {
+            type: 'bar',
+            data: {
+                labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+                datasets: [{
+                    label: 'Fichiers modifiés',
+                    data: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: '#635bff',
+                    borderWidth: 0
+                }, {
+                    label: 'Fichiers corrompus',
+                    data: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: '#cd5120',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Nombre de fichiers' } },
+                    x: { title: { display: true, text: 'Heure de la journée' } }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: function(context) {
+                                const percentages = [0, 0, 0, 0, 100,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                                if (context.datasetIndex === 1) {
+                                    return 'Taux d\'échec : ' + percentages[context.dataIndex] + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        new Chart(document.getElementById('scatterSizePlayable'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Fichiers valides (100%)',
+                    data: [],
+                    backgroundColor: '#0cce6b',
+                    borderWidth: 0,
+                    pointRadius: 5
+                }, {
+                    label: 'Fichiers corrompus',
+                    data: [{x: 500.00, y: 68.15, label: 'video_sample.mov'}],
+                    backgroundColor: '#cd5120',
+                    borderWidth: 0,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: { title: { display: true, text: 'Taille (MB)' }, beginAtZero: true },
+                    y: { title: { display: true, text: 'Pourcentage lisible (%)' }, beginAtZero: true, max: 100 }
+                },
+                plugins: {
+                    legend: { display: true, position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw.label + ' : ' + context.parsed.y.toFixed(1) + '% lisible';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        new Chart(document.getElementById('scatterHourCorruption'), {
+            type: 'bubble',
+            data: {
+                datasets: [{
+                    label: 'Taux de corruption par heure',
+                    data: [{x: 4, y: 100.00, r: 5}],
+                    backgroundColor: 'rgba(99, 91, 255, 0.6)',
+                    borderColor: '#635bff',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: { title: { display: true, text: 'Heure (0-23)' }, min: 0, max: 23, ticks: { stepSize: 1 } },
+                    y: { title: { display: true, text: 'Taux de corruption (%)' }, beginAtZero: true, max: 100 }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Heure ' + context.parsed.x + ':00 - ' + context.parsed.y.toFixed(1) + '% corruption';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        new Chart(document.getElementById('timelineChart'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Création de fichier',
+                    data: [{x: '2025-10-30 14:22', y: 1}],
+                    backgroundColor: '#0cce6b',
+                    borderWidth: 0,
+                    pointRadius: 4,
+                    showLine: false
+                }, {
+                    label: 'Modification (corrompus)',
+                    data: [{x: '2025-10-31 04:15', y: 2}],
+                    backgroundColor: '#cd5120',
+                    borderWidth: 0,
+                    pointRadius: 4,
+                    showLine: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: { type: 'time', time: { unit: 'day' }, title: { display: true, text: 'Date et heure' } },
+                    y: { display: false, min: 0, max: 3 }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ' : ' + context.parsed.x;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
