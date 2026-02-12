@@ -12,10 +12,11 @@
   <component name="ChangeListManager">
     <list default="true" id="eb20a909-6dc9-4813-8a15-f8d058c7983a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MovFileIntegrityChecker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MovFileIntegrityChecker/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Program.Legacy.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Services/LegacyReportGenerators.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Services/LegacyReportGenerators.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/DemoFiles/Broken-Incomplet.html" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/DemoFiles/Broken-Incomplet.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/AnalysisOrchestrator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/AnalysisOrchestrator.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Utilities/ConsoleHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Utilities/ConsoleHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/MovFileIntegrityChecker.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/MovFileIntegrityChecker.Web.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/App.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/App.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Scanner.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Scanner.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -174,7 +175,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1770834511444</updated>
-      <workItem from="1770834512723" duration="7535000" />
+      <workItem from="1770834512723" duration="7734000" />
     </task>
     <servers />
   </component>

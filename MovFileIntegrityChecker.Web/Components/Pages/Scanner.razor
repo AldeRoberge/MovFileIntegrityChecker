@@ -7,6 +7,7 @@
 @inject ScannerService ScannerService
 @inject LogService LogService
 @inject IJSRuntime JS
+@rendermode RenderMode.InteractiveServer
 
 <PageTitle>Scanner - MovFileIntegrityChecker</PageTitle>
 
@@ -172,13 +173,58 @@
     </div>
 </div>
 
+
+
+@if (_showFolderPicker)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Folder</h5>
+                    <button type="button" class="btn-close" @onclick="ClosePicker"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-secondary" @onclick="NavigateUp" disabled="@(_currentPickerPath.Length <= 3)">
+                            <i class="bi bi-arrow-up"></i> Up
+                        </button>
+                        <input type="text" class="form-control" value="@_currentPickerPath" readonly>
+                    </div>
+                    <div class="list-group" style="max-height: 400px; overflow-y: auto;">
+                        @if (_folders.Count == 0)
+                        {
+                            <div class="text-muted p-3">No accessible folders found.</div>
+                        }
+                        @foreach (var folder in _folders)
+                        {
+                            <button type="button" class="list-group-item list-group-item-action" @onclick="() => NavigateTo(folder)">
+                                <i class="bi bi-folder-fill text-warning me-2"></i> @Path.GetFileName(folder)
+                            </button>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="ClosePicker">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="SelectFolder">Select Current</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
-    private string _path = @"C:\";
+    private string _path = @"T:\SPT\SP\Mont\Prod2\2_COU\_DL";
     private bool _recursive = true;
     private int _autoScanInterval = 24;
     private List<LogEntry> _logs = new();
     private List<FileCheckResult> _results = new();
     private ElementReference _consoleWindow;
+    
+    // Folder Picker State
+    private bool _showFolderPicker = false;
+    private string _currentPickerPath = "";
+    private List<string> _folders = new();
 
     protected override void OnInitialized()
     {
@@ -240,12 +286,66 @@
         _results.Clear();
     }
     
-    // This only works in InteractiveServer mode on Windows/Localhost
+    // Folder Picker Logic
     private void OpenFolderDialog()
     {
-        // Simple hack: open explorer to select path? 
-        // Real folder picker in web is hard. We'll skip for now or just open current path.
-        // Process.Start("explorer.exe", _path);
+        _currentPickerPath = Directory.Exists(_path) ? _path : @"C:\";
+        LoadFolders();
+        _showFolderPicker = true;
+    }
+
+    private void ClosePicker()
+    {
+        _showFolderPicker = false;
+    }
+
+    private void SelectFolder()
+    {
+        _path = _currentPickerPath;
+        _showFolderPicker = false;
+    }
+
+    private void NavigateUp()
+    {
+        try
+        {
+            var parent = Directory.GetParent(_currentPickerPath);
+            if (parent != null)
+            {
+                _currentPickerPath = parent.FullName;
+                LoadFolders();
+            }
+            else
+            {
+                // Verify if we are at root, maybe list drives?
+                // For simplicity, just stay at root or do nothing
+            }
+        }
+        catch { }
+    }
+
+    private void NavigateTo(string path)
+    {
+        _currentPickerPath = path;
+        LoadFolders();
+    }
+
+    private void LoadFolders()
+    {
+        _folders.Clear();
+        try
+        {
+            var options = new EnumerationOptions { IgnoreInaccessible = true };
+            _folders = Directory.GetDirectories(_currentPickerPath, "*", options).ToList();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // Ignore
+        }
+        catch (Exception)
+        {
+            // Fallback or empty
+        }
     }
 
     private void OpenReport(FileCheckResult result)

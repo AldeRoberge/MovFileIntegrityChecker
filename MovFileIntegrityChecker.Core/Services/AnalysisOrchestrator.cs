@@ -67,13 +67,8 @@ namespace MovFileIntegrityChecker.Core.Services
             WriteInfo($"\nChecking folder: {dirPath}");
             WriteInfo($"Recursive: {(recursive ? "Yes" : "No")}\n");
 
-            var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            var extensions = new[] { "*.mov", "*.mp4", "*.m4v", "*.m4a" };
-
-            var files = extensions
-                .SelectMany(ext => Directory.GetFiles(dirPath, ext, searchOption))
-                .OrderBy(f => f)
-                .ToList();
+            var extensions = new[] { ".mov", ".mp4", ".m4v", ".m4a" };
+            var files = SafeGetFiles(dirPath, extensions, recursive);
 
             if (files.Count == 0)
             {
@@ -89,7 +84,7 @@ namespace MovFileIntegrityChecker.Core.Services
                 current++;
 
                 if (summaryOnly)
-                    Console.Write($"\rProcessing: {current}/{files.Count} - {Path.GetFileName(file)}".PadRight(80));
+                    Write($"\rProcessing: {current}/{files.Count} - {Path.GetFileName(file)}".PadRight(80));
                 else
                     WriteInfo($"[{current}/{files.Count}] Checking: {Path.GetFileName(file)}");
 
@@ -110,7 +105,7 @@ namespace MovFileIntegrityChecker.Core.Services
             }
 
             if (summaryOnly)
-                Console.WriteLine("\n");
+                WriteLine("\n");
 
             if (deleteEmpty)
             {
@@ -120,16 +115,56 @@ namespace MovFileIntegrityChecker.Core.Services
             return results;
         }
 
+        private List<string> SafeGetFiles(string path, string[] extensions, bool recursive)
+        {
+            var files = new List<string>();
+
+            try
+            {
+                // Add files in current directory
+                foreach (var file in Directory.GetFiles(path))
+                {
+                    if (extensions.Contains(Path.GetExtension(file).ToLowerInvariant()))
+                    {
+                        files.Add(file);
+                    }
+                }
+
+                // Recurse if needed
+                if (recursive)
+                {
+                    foreach (var dir in Directory.GetDirectories(path))
+                    {
+                        files.AddRange(SafeGetFiles(dir, extensions, recursive));
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                WriteWarning($"Skipping inaccessible directory: {path}");
+            }
+            catch (PathTooLongException)
+            {
+                 WriteWarning($"Skipping directory with too long path: {path}");
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Error accessing directory {path}: {ex.Message}");
+            }
+
+            return files;
+        }
+
         private void PrintDetailedResult(FileCheckResult result)
         {
-            Console.WriteLine($"\n{'='}{new string('=', 80)}");
-            Console.WriteLine($"File: {Path.GetFileName(result.FilePath)}");
-            Console.WriteLine(new string('=', 80));
+            WriteLine($"\n{'='}{new string('=', 80)}");
+            WriteLine($"File: {Path.GetFileName(result.FilePath)}");
+            WriteLine(new string('=', 80));
 
-            Console.WriteLine($"\n📊 Analysis Summary:");
-            Console.WriteLine($"   File Size: {result.FileSize:N0} bytes");
-            Console.WriteLine($"   Atoms Found: {result.Atoms.Count}");
-            Console.WriteLine($"   Bytes Validated: {result.BytesValidated:N0} / {result.FileSize:N0} ({(result.BytesValidated * 100.0 / Math.Max(1, result.FileSize)):F1}%)");
+            WriteLine($"\n📊 Analysis Summary:");
+            WriteLine($"   File Size: {result.FileSize:N0} bytes");
+            WriteLine($"   Atoms Found: {result.Atoms.Count}");
+            WriteLine($"   Bytes Validated: {result.BytesValidated:N0} / {result.FileSize:N0} ({(result.BytesValidated * 100.0 / Math.Max(1, result.FileSize)):F1}%)");
 
             if (result.TotalDuration > 0)
             {
@@ -143,7 +178,7 @@ namespace MovFileIntegrityChecker.Core.Services
 
             if (result.Issues.Count > 0)
             {
-                Console.WriteLine($"\n⚠️  Issues Found ({result.Issues.Count}):");
+                WriteLine($"\n⚠️  Issues Found ({result.Issues.Count}):");
                 foreach (var issue in result.Issues)
                 {
                     WriteWarning($"   • {issue}");
@@ -162,12 +197,12 @@ namespace MovFileIntegrityChecker.Core.Services
 
         private void PrintDurationTimeline(FileCheckResult result)
         {
-            Console.WriteLine($"\n⏱️  Duration Timeline:");
-            Console.WriteLine($"   Total Duration: {FormatDuration(result.TotalDuration)}");
+            WriteLine($"\n⏱️  Duration Timeline:");
+            WriteLine($"   Total Duration: {FormatDuration(result.TotalDuration)}");
 
             if (result.HasIssues && result.PlayableDuration < result.TotalDuration)
             {
-                Console.WriteLine($"   Playable Duration: {FormatDuration(result.PlayableDuration)}");
+                WriteLine($"   Playable Duration: {FormatDuration(result.PlayableDuration)}");
                 double playablePercent = (result.PlayableDuration / result.TotalDuration) * 100.0;
 
                 const int barWidth = 50;
@@ -177,75 +212,75 @@ namespace MovFileIntegrityChecker.Core.Services
                 string greenBar = new string('█', greenWidth);
                 string redBar = new string('█', redWidth);
 
-                Console.Write($"   ");
+                Write($"   ");
                 WriteSuccess($"{greenBar}");
-                Console.Write($"");
+                Write($"");
                 WriteError($"{redBar}\n");
-                Console.WriteLine($"   |");
-                Console.WriteLine($"   {FormatDuration(0)}          {FormatDuration(result.PlayableDuration)} (break)          {FormatDuration(result.TotalDuration)}");
-                Console.WriteLine($"   Start           Missing: {FormatDuration(result.TotalDuration - result.PlayableDuration)}           End");
+                WriteLine($"   |");
+                WriteLine($"   {FormatDuration(0)}          {FormatDuration(result.PlayableDuration)} (break)          {FormatDuration(result.TotalDuration)}");
+                WriteLine($"   Start           Missing: {FormatDuration(result.TotalDuration - result.PlayableDuration)}           End");
             }
             else
             {
-                Console.WriteLine($"   Status: Complete playback expected");
+                WriteLine($"   Status: Complete playback expected");
                 int barWidth = 50;
                 string greenBar = new string('█', barWidth);
-                Console.Write($"   ");
+                Write($"   ");
                 WriteSuccess($"{greenBar}\n");
-                Console.WriteLine($"   |");
-                Console.WriteLine($"   {FormatDuration(0)}                                      {FormatDuration(result.TotalDuration)}");
-                Console.WriteLine($"   Start                                   End");
+                WriteLine($"   |");
+                WriteLine($"   {FormatDuration(0)}                                      {FormatDuration(result.TotalDuration)}");
+                WriteLine($"   Start                                   End");
             }
         }
 
         private void PrintAtomStructure(FileCheckResult result)
         {
-            Console.WriteLine($"\n📦 Atom Structure:");
+            WriteLine($"\n📦 Atom Structure:");
             foreach (var atom in result.Atoms)
             {
                 string status = atom.IsComplete ? "✅" : "❌";
                 string knownType = AtomConstants.ValidAtomTypes.Contains(atom.Type) ? "" : " (unknown)";
-                Console.WriteLine($"   {status} [{atom.Type}]{knownType} - Size: {atom.Size:N0} bytes, Offset: {atom.Offset:N0}");
+                WriteLine($"   {status} [{atom.Type}]{knownType} - Size: {atom.Size:N0} bytes, Offset: {atom.Offset:N0}");
             }
 
             bool hasFtyp = result.Atoms.Any(a => a.Type == "ftyp");
             bool hasMoov = result.Atoms.Any(a => a.Type == "moov");
             bool hasMdat = result.Atoms.Any(a => a.Type == "mdat");
 
-            Console.WriteLine($"\n🔍 Key Atoms:");
-            Console.WriteLine($"   ftyp (file type): {(hasFtyp ? "✅ Found" : "❌ Missing")}");
-            Console.WriteLine($"   moov (metadata): {(hasMoov ? "✅ Found" : "❌ Missing")}");
-            Console.WriteLine($"   mdat (media data): {(hasMdat ? "✅ Found" : "❌ Missing")}");
+            WriteLine($"\n🔍 Key Atoms:");
+            WriteLine($"   ftyp (file type): {(hasFtyp ? "✅ Found" : "❌ Missing")}");
+            WriteLine($"   moov (metadata): {(hasMoov ? "✅ Found" : "❌ Missing")}");
+            WriteLine($"   mdat (media data): {(hasMdat ? "✅ Found" : "❌ Missing")}");
         }
 
         public void PrintSummary(List<FileCheckResult> results, bool summaryOnly)
         {
-            Console.WriteLine($"\n{new string('=', 80)}");
-            Console.WriteLine("SUMMARY");
-            Console.WriteLine(new string('=', 80));
+            WriteLine($"\n{new string('=', 80)}");
+            WriteLine("SUMMARY");
+            WriteLine(new string('=', 80));
 
             int totalFiles = results.Count;
             int validFiles = results.Count(r => !r.HasIssues);
             int corruptedFiles = results.Count(r => r.HasIssues);
             long totalSize = results.Sum(r => r.FileSize);
 
-            Console.WriteLine($"\nTotal Files Checked: {totalFiles}");
+            WriteLine($"\nTotal Files Checked: {totalFiles}");
             WriteSuccess($"Valid Files: {validFiles} ({(validFiles * 100.0 / Math.Max(1, totalFiles)):F1}%)");
             WriteError($"Corrupted/Incomplete Files: {corruptedFiles} ({(corruptedFiles * 100.0 / Math.Max(1, totalFiles)):F1}%)");
-            Console.WriteLine($"Total Size: {totalSize:N0} bytes ({totalSize / (1024.0 * 1024.0):F2} MB)");
+            WriteLine($"Total Size: {totalSize:N0} bytes ({totalSize / (1024.0 * 1024.0):F2} MB)");
 
             if (corruptedFiles > 0)
             {
-                Console.WriteLine($"\n❌ Corrupted/Incomplete Files:");
+                WriteLine($"\n❌ Corrupted/Incomplete Files:");
                 foreach (var result in results.Where(r => r.HasIssues))
                 {
                     WriteError($"   • {Path.GetFileName(result.FilePath)}");
                     if (!summaryOnly && result.Issues.Count > 0)
                     {
                         foreach (var issue in result.Issues.Take(3))
-                            Console.WriteLine($"      - {issue}");
+                            WriteLine($"      - {issue}");
                         if (result.Issues.Count > 3)
-                            Console.WriteLine($"      ... and {result.Issues.Count - 3} more issue(s)");
+                            WriteLine($"      ... and {result.Issues.Count - 3} more issue(s)");
                     }
                 }
             }
