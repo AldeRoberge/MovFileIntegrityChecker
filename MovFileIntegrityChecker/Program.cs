@@ -55,6 +55,9 @@ namespace MovFileIntegrityChecker
 
         private static void ShowMainMenu()
         {
+            // Load user preferences
+            var preferences = UserPreferences.Load();
+            
             Console.Clear();
             Console.WriteLine("╔════════════════════════════════════════════════════════════════╗");
             Console.WriteLine("║        MOV File Integrity Checker - Analysis Mode             ║");
@@ -67,21 +70,26 @@ namespace MovFileIntegrityChecker
             Console.WriteLine("  3. Both                  - Run per-file analysis then global report");
             Console.WriteLine("  4. Exit");
             Console.WriteLine();
-            Console.Write("Enter your choice (1-4): ");
+            Console.Write($"Enter your choice (1-4, default: {preferences.LastMenuChoice}): ");
 
-            string? choice = Console.ReadLine();
+            string? input = Console.ReadLine();
+            string choice = string.IsNullOrWhiteSpace(input) ? preferences.LastMenuChoice : input.Trim();
             Console.WriteLine();
 
-            switch (choice?.Trim())
+            // Save the choice for next time
+            preferences.LastMenuChoice = choice;
+            preferences.Save();
+
+            switch (choice)
             {
                 case "1":
-                    RunPerFileAnalysisInteractive();
+                    RunPerFileAnalysisInteractive(preferences);
                     break;
                 case "2":
                     LegacyReportGenerators.RunGlobalAnalysis();
                     break;
                 case "3":
-                    RunPerFileAnalysisInteractive();
+                    RunPerFileAnalysisInteractive(preferences);
                     Console.WriteLine("\n" + new string('=', 80));
                     Console.WriteLine("Starting Global Analysis...");
                     Console.WriteLine(new string('=', 80) + "\n");
@@ -96,25 +104,46 @@ namespace MovFileIntegrityChecker
             }
         }
 
-        private static void RunPerFileAnalysisInteractive()
+        private static void RunPerFileAnalysisInteractive(UserPreferences preferences)
         {
-            Console.Write("Enter the path to a file or folder (default: DemoFiles\\Broken.mp4): ");
-            string? path = Console.ReadLine()?.Trim().Trim('"');
+            // Determine default path to show
+            string defaultPath = string.IsNullOrEmpty(preferences.LastPath) 
+                ? Path.Combine("..", "..", "..", "DemoFiles", "Broken.mp4")
+                : preferences.LastPath;
+            
+            Console.Write($"Enter the path to a file or folder (default: {defaultPath}): ");
+            string? pathInput = Console.ReadLine()?.Trim().Trim('"');
 
-            if (string.IsNullOrEmpty(path))
+            string path;
+            if (string.IsNullOrEmpty(pathInput))
             {
-                // Use relative path to DemoFiles (relative to bin output directory)
-                path = Path.Combine("..", "..", "..", "DemoFiles", "Broken.mp4");
+                path = defaultPath;
                 Console.WriteLine($"Using default path: {path}");
             }
+            else
+            {
+                path = pathInput;
+            }
 
-            Console.Write("Recursive search? (y/n, default: y): ");
-            bool recursive = Console.ReadLine()?.Trim().ToLower() != "n";
+            Console.Write($"Recursive search? (y/n, default: {(preferences.LastRecursive ? "y" : "n")}): ");
+            string? recursiveInput = Console.ReadLine()?.Trim().ToLower();
+            bool recursive = string.IsNullOrEmpty(recursiveInput) 
+                ? preferences.LastRecursive 
+                : recursiveInput == "y";
 
-            Console.Write("Delete empty folders? (y/n, default: n): ");
-            bool deleteEmpty = Console.ReadLine()?.Trim().ToLower() == "y";
+            Console.Write($"Delete empty folders? (y/n, default: {(preferences.LastDeleteEmpty ? "y" : "n")}): ");
+            string? deleteEmptyInput = Console.ReadLine()?.Trim().ToLower();
+            bool deleteEmpty = string.IsNullOrEmpty(deleteEmptyInput)
+                ? preferences.LastDeleteEmpty
+                : deleteEmptyInput == "y";
 
             Console.WriteLine();
+
+            // Save preferences for next time
+            preferences.LastPath = path;
+            preferences.LastRecursive = recursive;
+            preferences.LastDeleteEmpty = deleteEmpty;
+            preferences.Save();
 
             RunPerFileAnalysis(new[] { path }, recursive, summaryOnly: false, deleteEmpty);
         }

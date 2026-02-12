@@ -863,7 +863,7 @@ namespace MovFileIntegrityChecker
                 // Try to get a random frame as base64 (may return null)
                 string? frameBase64 = GetRandomFrameBase64(filePath);
 
-                // HTML Header with embedded CSS
+                // HTML Header with embedded CSS - Stripe-like minimalist design
                 sb.AppendLine("<!DOCTYPE html>");
                 sb.AppendLine("<html lang=\"fr\">");
                 sb.AppendLine("<head>");
@@ -873,270 +873,223 @@ namespace MovFileIntegrityChecker
                 sb.AppendLine("    <style>");
                 sb.AppendLine("        * { margin: 0; padding: 0; box-sizing: border-box; }");
                 sb.AppendLine("        body {");
-                sb.AppendLine("            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;");
-                sb.AppendLine("            background: #000000;");
+                sb.AppendLine("            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;");
+                sb.AppendLine("            background: #ffffff;");
+                sb.AppendLine("            color: #1a1f36;");
+                sb.AppendLine("            line-height: 1.6;");
                 sb.AppendLine("            min-height: 100vh;");
-                sb.AppendLine("            padding: 40px 20px;");
+                sb.AppendLine("            padding: 0;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .container {");
-                sb.AppendLine("            max-width: 1000px;");
+                sb.AppendLine("            max-width: 900px;");
                 sb.AppendLine("            margin: 0 auto;");
-                sb.AppendLine("            background: #1a1a1a;");
-                sb.AppendLine("            border-radius: 16px;");
-                sb.AppendLine("            box-shadow: 0 20px 60px rgba(0,0,0,0.5);");
-                sb.AppendLine("            overflow: hidden;");
-                sb.AppendLine("            border: 1px solid #333;");
+                sb.AppendLine("            background: #ffffff;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .header {");
-                sb.AppendLine("            background: #111111;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("            padding: 30px 40px;");
-                sb.AppendLine("            text-align: center;");
-                sb.AppendLine("            border-bottom: 2px solid #ff8c00;");
+                sb.AppendLine("            padding: 48px 32px 32px;");
+                sb.AppendLine("            border-bottom: 1px solid #e6e6e6;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .header h1 {");
-                sb.AppendLine("            font-size: 1.8em;");
-                sb.AppendLine("            margin-bottom: 15px;");
+                sb.AppendLine("            font-size: 28px;");
+                sb.AppendLine("            font-weight: 600;");
+                sb.AppendLine("            color: #0a2540;");
+                sb.AppendLine("            margin-bottom: 8px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .header .subtitle {");
-                sb.AppendLine("            font-size: 1em;");
-                sb.AppendLine("            color: #ccc;");
-                sb.AppendLine("            margin-bottom: 15px;");
+                sb.AppendLine("            font-size: 15px;");
+                sb.AppendLine("            color: #425466;");
+                sb.AppendLine("            margin-bottom: 16px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .header .warning {");
-                sb.AppendLine("            font-size: 0.95em;");
-                sb.AppendLine("            color: #ff8c00;");
-                sb.AppendLine("            line-height: 1.5;");
-                sb.AppendLine("            margin-top: 15px;");
-                sb.AppendLine("            padding-top: 15px;");
-                sb.AppendLine("            border-top: 1px solid #333;");
+                sb.AppendLine("            font-size: 14px;");
+                sb.AppendLine("            color: #cd5120;");
+                sb.AppendLine("            background: #fff4ed;");
+                sb.AppendLine("            padding: 16px;");
+                sb.AppendLine("            border-radius: 6px;");
+                sb.AppendLine("            border-left: 3px solid #cd5120;");
+                sb.AppendLine("            margin-top: 16px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .header .warning strong {");
                 sb.AppendLine("            display: block;");
-                sb.AppendLine("            margin-bottom: 8px;");
-                sb.AppendLine("            color: #ffffff;");
+                sb.AppendLine("            margin-bottom: 4px;");
+                sb.AppendLine("            color: #0a2540;");
+                sb.AppendLine("            font-weight: 600;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .content {");
-                sb.AppendLine("            padding: 40px;");
-                sb.AppendLine("            background: #1a1a1a;");
+                sb.AppendLine("            padding: 32px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .section {");
-                sb.AppendLine("            margin-bottom: 30px;");
+                sb.AppendLine("            margin-bottom: 40px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .section-title {");
-                sb.AppendLine("            font-size: 1.5em;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("            margin-bottom: 15px;");
-                sb.AppendLine("            padding-bottom: 10px;");
-                sb.AppendLine("            border-bottom: 2px solid #333;");
-                sb.AppendLine("            display: flex;");
-                sb.AppendLine("            align-items: center;");
-                sb.AppendLine("            gap: 10px;");
+                sb.AppendLine("            font-size: 16px;");
+                sb.AppendLine("            font-weight: 600;");
+                sb.AppendLine("            color: #0a2540;");
+                sb.AppendLine("            margin-bottom: 16px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .info-grid {");
                 sb.AppendLine("            display: grid;");
-                sb.AppendLine("            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));");
-                sb.AppendLine("            gap: 20px;");
-                sb.AppendLine("            margin-top: 20px;");
+                sb.AppendLine("            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));");
+                sb.AppendLine("            gap: 16px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .info-card {");
-                sb.AppendLine("            background: #222222;");
-                sb.AppendLine("            color: #ffffff;");
+                sb.AppendLine("            background: #fafbfc;");
                 sb.AppendLine("            padding: 20px;");
-                sb.AppendLine("            border-radius: 12px;");
-                sb.AppendLine("            box-shadow: 0 4px 15px rgba(0,0,0,0.5);");
-                sb.AppendLine("            border: 1px solid #333;");
-                sb.AppendLine("            border-left: 3px solid #ff8c00;");
+                sb.AppendLine("            border-radius: 6px;");
+                sb.AppendLine("            border: 1px solid #e6e6e6;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .info-card .label {");
-                sb.AppendLine("            font-size: 0.9em;");
-                sb.AppendLine("            color: #999;");
-                sb.AppendLine("            margin-bottom: 5px;");
-                sb.AppendLine("            text-transform: uppercase;");
-                sb.AppendLine("            letter-spacing: 0.5px;");
+                sb.AppendLine("            font-size: 13px;");
+                sb.AppendLine("            color: #6b7c93;");
+                sb.AppendLine("            margin-bottom: 6px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .info-card .value {");
-                sb.AppendLine("            font-size: 1.5em;");
-                sb.AppendLine("            font-weight: bold;");
-                sb.AppendLine("            color: #ffffff;");
+                sb.AppendLine("            font-size: 20px;");
+                sb.AppendLine("            font-weight: 600;");
+                sb.AppendLine("            color: #0a2540;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .issue-list {");
-                sb.AppendLine("            background: #2a1a1a;");
-                sb.AppendLine("            border-left: 4px solid #ff8c00;");
-                sb.AppendLine("            padding: 20px;");
-                sb.AppendLine("            border-radius: 8px;");
+                sb.AppendLine("            background: #fff4ed;");
+                sb.AppendLine("            border-left: 3px solid #cd5120;");
+                sb.AppendLine("            padding: 16px;");
+                sb.AppendLine("            border-radius: 6px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .issue-item {");
-                sb.AppendLine("            padding: 10px 0;");
-                sb.AppendLine("            border-bottom: 1px solid #333;");
-                sb.AppendLine("            display: flex;");
-                sb.AppendLine("            align-items: start;");
-                sb.AppendLine("            gap: 10px;");
-                sb.AppendLine("            color: #ffffff;");
+                sb.AppendLine("            padding: 8px 0;");
+                sb.AppendLine("            color: #0a2540;");
+                sb.AppendLine("            font-size: 14px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .issue-item:last-child {");
-                sb.AppendLine("            border-bottom: none;");
+                sb.AppendLine("            padding-bottom: 0;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .issue-icon {");
-                sb.AppendLine("            color: #ff8c00;");
-                sb.AppendLine("            font-weight: bold;");
-                sb.AppendLine("            flex-shrink: 0;");
+                sb.AppendLine("            color: #cd5120;");
+                sb.AppendLine("            margin-right: 8px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .atom-table {");
                 sb.AppendLine("            width: 100%;");
                 sb.AppendLine("            border-collapse: collapse;");
-                sb.AppendLine("            margin-top: 20px;");
-                sb.AppendLine("            box-shadow: 0 2px 10px rgba(0,0,0,0.5);");
-                sb.AppendLine("            border-radius: 8px;");
-                sb.AppendLine("            overflow: hidden;");
-                sb.AppendLine("            border: 1px solid #333;");
+                sb.AppendLine("            font-size: 14px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .atom-table thead {");
-                sb.AppendLine("            background: #111111;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("            border-bottom: 2px solid #ff8c00;");
+                sb.AppendLine("            border-bottom: 1px solid #e6e6e6;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .atom-table th {");
-                sb.AppendLine("            padding: 15px;");
+                sb.AppendLine("            padding: 12px 16px;");
                 sb.AppendLine("            text-align: left;");
                 sb.AppendLine("            font-weight: 600;");
+                sb.AppendLine("            color: #6b7c93;");
+                sb.AppendLine("            font-size: 13px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .atom-table td {");
-                sb.AppendLine("            padding: 12px 15px;");
-                sb.AppendLine("            border-bottom: 1px solid #333;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("        }");
-                sb.AppendLine("        .atom-table tbody tr {");
-                sb.AppendLine("            background: #1a1a1a;");
+                sb.AppendLine("            padding: 12px 16px;");
+                sb.AppendLine("            border-bottom: 1px solid #f6f9fc;");
+                sb.AppendLine("            color: #0a2540;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .atom-table tbody tr:hover {");
-                sb.AppendLine("            background: #252525;");
+                sb.AppendLine("            background: #fafbfc;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .status-badge {");
                 sb.AppendLine("            display: inline-block;");
-                sb.AppendLine("            padding: 5px 12px;");
-                sb.AppendLine("            border-radius: 20px;");
-                sb.AppendLine("            font-size: 0.85em;");
+                sb.AppendLine("            padding: 4px 10px;");
+                sb.AppendLine("            border-radius: 4px;");
+                sb.AppendLine("            font-size: 12px;");
                 sb.AppendLine("            font-weight: 600;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .status-complete {");
-                sb.AppendLine("            background: #1a3a1a;");
-                sb.AppendLine("            color: #90ee90;");
-                sb.AppendLine("            border: 1px solid #90ee90;");
+                sb.AppendLine("            background: #d4edda;");
+                sb.AppendLine("            color: #155724;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .status-incomplete {");
-                sb.AppendLine("            background: #3a1a1a;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("            border: 1px solid #ff8c00;");
+                sb.AppendLine("            background: #fff4ed;");
+                sb.AppendLine("            color: #cd5120;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .atom-type {");
-                sb.AppendLine("            font-family: 'Courier New', monospace;");
-                sb.AppendLine("            font-weight: bold;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("            font-size: 1.1em;");
+                sb.AppendLine("            font-family: 'SF Mono', Monaco, 'Courier New', monospace;");
+                sb.AppendLine("            font-weight: 600;");
+                sb.AppendLine("            color: #635bff;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .footer {");
-                sb.AppendLine("            background: #111111;");
-                sb.AppendLine("            padding: 20px 40px;");
+                sb.AppendLine("            padding: 24px 32px;");
                 sb.AppendLine("            text-align: center;");
-                sb.AppendLine("            color: #888;");
-                sb.AppendLine("            font-size: 0.9em;");
-                sb.AppendLine("            border-top: 1px solid #333;");
+                sb.AppendLine("            color: #6b7c93;");
+                sb.AppendLine("            font-size: 13px;");
+                sb.AppendLine("            border-top: 1px solid #e6e6e6;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .progress-bar {");
                 sb.AppendLine("            width: 100%;");
-                sb.AppendLine("            height: 30px;");
-                sb.AppendLine("            background: #2a2a2a;");
-                sb.AppendLine("            border-radius: 15px;");
+                sb.AppendLine("            height: 8px;");
+                sb.AppendLine("            background: #e6e6e6;");
+                sb.AppendLine("            border-radius: 4px;");
                 sb.AppendLine("            overflow: hidden;");
-                sb.AppendLine("            margin-top: 10px;");
-                sb.AppendLine("            border: 1px solid #444;");
+                sb.AppendLine("            margin-top: 16px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .progress-fill {");
                 sb.AppendLine("            height: 100%;");
-                sb.AppendLine("            background: linear-gradient(90deg, #ff8c00 0%, #ffa500 100%);");
-                sb.AppendLine("            display: flex;");
-                sb.AppendLine("            align-items: center;");
-                sb.AppendLine("            justify-content: center;");
-                sb.AppendLine("            color: #000000;");
-                sb.AppendLine("            font-weight: bold;");
-                sb.AppendLine("            font-size: 0.85em;");
+                sb.AppendLine("            background: #635bff;");
+                sb.AppendLine("            transition: width 0.3s ease;");
+                sb.AppendLine("        }");
+                sb.AppendLine("        .progress-label {");
+                sb.AppendLine("            font-size: 13px;");
+                sb.AppendLine("            color: #6b7c93;");
+                sb.AppendLine("            margin-top: 8px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .timeline-container {");
-                sb.AppendLine("            margin-top: 30px;");
+                sb.AppendLine("            margin-top: 24px;");
                 sb.AppendLine("            padding: 20px;");
-                sb.AppendLine("            background: #222222;");
-                sb.AppendLine("            border-radius: 12px;");
-                sb.AppendLine("            border: 1px solid #333;");
+                sb.AppendLine("            background: #fafbfc;");
+                sb.AppendLine("            border-radius: 6px;");
+                sb.AppendLine("            border: 1px solid #e6e6e6;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .timeline-title {");
-                sb.AppendLine("            font-size: 1.2em;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("            margin-bottom: 15px;");
+                sb.AppendLine("            font-size: 14px;");
+                sb.AppendLine("            color: #0a2540;");
+                sb.AppendLine("            margin-bottom: 12px;");
                 sb.AppendLine("            font-weight: 600;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .timeline-bar {");
                 sb.AppendLine("            width: 100%;");
-                sb.AppendLine("            height: 40px;");
-                sb.AppendLine("            background: #2a2a2a;");
-                sb.AppendLine("            border-radius: 8px;");
+                sb.AppendLine("            height: 8px;");
+                sb.AppendLine("            background: #e6e6e6;");
+                sb.AppendLine("            border-radius: 4px;");
                 sb.AppendLine("            overflow: hidden;");
                 sb.AppendLine("            display: flex;");
-                sb.AppendLine("            border: 2px solid #444;");
-                sb.AppendLine("            margin: 15px 0;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .timeline-good {");
-                sb.AppendLine("            background: linear-gradient(90deg, #00aa00 0%, #00cc00 100%);");
-                sb.AppendLine("            display: flex;");
-                sb.AppendLine("            align-items: center;");
-                sb.AppendLine("            justify-content: center;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("            font-weight: bold;");
-                sb.AppendLine("            font-size: 0.9em;");
+                sb.AppendLine("            background: #0cce6b;");
+                sb.AppendLine("            height: 100%;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .timeline-bad {");
-                sb.AppendLine("            background: linear-gradient(90deg, #cc0000 0%, #aa0000 100%);");
-                sb.AppendLine("            display: flex;");
-                sb.AppendLine("            align-items: center;");
-                sb.AppendLine("            justify-content: center;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("            font-weight: bold;");
-                sb.AppendLine("            font-size: 0.9em;");
+                sb.AppendLine("            background: #cd5120;");
+                sb.AppendLine("            height: 100%;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .timeline-labels {");
                 sb.AppendLine("            display: flex;");
                 sb.AppendLine("            justify-content: space-between;");
-                sb.AppendLine("            margin-top: 10px;");
-                sb.AppendLine("            color: #ccc;");
-                sb.AppendLine("            font-size: 0.9em;");
+                sb.AppendLine("            margin-top: 8px;");
+                sb.AppendLine("            font-size: 13px;");
+                sb.AppendLine("            color: #6b7c93;");
                 sb.AppendLine("        }");
-                sb.AppendLine("        .timeline-label {");
-                sb.AppendLine("            display: flex;");
-                sb.AppendLine("            flex-direction: column;");
-                sb.AppendLine("            align-items: center;");
-                sb.AppendLine("        }");
-                sb.AppendLine("        .timeline-label.start { align-items: flex-start; }");
-                sb.AppendLine("        .timeline-label.end { align-items: flex-end; }");
                 sb.AppendLine("        .timeline-label .time {");
-                sb.AppendLine("            font-weight: bold;");
-                sb.AppendLine("            color: #ffffff;");
-                sb.AppendLine("            font-size: 1.1em;");
+                sb.AppendLine("            font-weight: 600;");
+                sb.AppendLine("            color: #0a2540;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .timeline-info {");
-                sb.AppendLine("            margin-top: 15px;");
-                sb.AppendLine("            padding: 15px;");
-                sb.AppendLine("            background: #1a1a1a;");
-                sb.AppendLine("            border-radius: 8px;");
-                sb.AppendLine("            border-left: 3px solid #ff8c00;");
+                sb.AppendLine("            margin-top: 12px;");
+                sb.AppendLine("            padding: 12px;");
+                sb.AppendLine("            background: #ffffff;");
+                sb.AppendLine("            border-radius: 6px;");
+                sb.AppendLine("            font-size: 13px;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .timeline-info div {");
-                sb.AppendLine("            color: #ccc;");
-                sb.AppendLine("            margin: 5px 0;");
+                sb.AppendLine("            color: #425466;");
+                sb.AppendLine("            margin: 4px 0;");
                 sb.AppendLine("        }");
                 sb.AppendLine("        .timeline-info strong {");
-                sb.AppendLine("            color: #ffffff;");
+                sb.AppendLine("            color: #0a2540;");
+                sb.AppendLine("            font-weight: 600;");
                 sb.AppendLine("        }");
-                sb.AppendLine("        .preview img { max-width: 100%; border-radius: 8px; display: block; margin: 15px auto; }");
+                sb.AppendLine("        .preview img { max-width: 100%; border-radius: 6px; border: 1px solid #e6e6e6; }");
                 sb.AppendLine("    </style>");
                 sb.AppendLine("</head>");
                 sb.AppendLine("<body>");
@@ -1144,12 +1097,12 @@ namespace MovFileIntegrityChecker
 
                 // Header
                 sb.AppendLine("        <div class=\"header\">");
-                sb.AppendLine("            <h1>⚠️ Rapport d'Intégrité Fichier</h1>");
+                sb.AppendLine("            <h1>Rapport d'intégrité</h1>");
                 sb.AppendLine($"            <div class=\"subtitle\">{System.Security.SecurityElement.Escape(Path.GetFileName(filePath))}</div>");
                 sb.AppendLine("            <div class=\"warning\">");
-                sb.AppendLine("                <strong>Avertissement - Fichier potentiellement incomplet</strong>");
-                sb.AppendLine("                Ce fichier a été automatiquement détecté comme étant potentiellement incomplet. ");
-                sb.AppendLine("                Veuillez le visionner jusqu'à la fin dans VLC pour vérifier s'il se lit correctement.");
+                sb.AppendLine("                <strong>Fichier potentiellement incomplet</strong>");
+                sb.AppendLine("                Ce fichier a été détecté comme potentiellement incomplet. ");
+                sb.AppendLine("                Veuillez le vérifier dans VLC pour confirmer sa lecture.");
                 sb.AppendLine("            </div>");
                 sb.AppendLine("        </div>");
 
@@ -1160,27 +1113,27 @@ namespace MovFileIntegrityChecker
                 if (!string.IsNullOrEmpty(frameBase64))
                 {
                     sb.AppendLine("            <div class=\"section\">");
-                    sb.AppendLine("                <div class=\"section-title\">Preview</div>");
+                    sb.AppendLine("                <div class=\"section-title\">Aperçu</div>");
                     sb.AppendLine("                <div class=\"preview\">");
-                    sb.AppendLine($"                    <img src=\"data:image/png;base64,{frameBase64}\" alt=\"Preview\">");
+                    sb.AppendLine($"                    <img src=\"data:image/png;base64,{frameBase64}\" alt=\"Aperçu\">");
                     sb.AppendLine("                </div>");
                     sb.AppendLine("            </div>");
                 }
                 else
                 {
                     sb.AppendLine("            <div class=\"section\">");
-                    sb.AppendLine("                <div class=\"section-title\">Preview</div>");
+                    sb.AppendLine("                <div class=\"section-title\">Aperçu</div>");
                     sb.AppendLine("                <div class=\"issue-list\">");
                     sb.AppendLine("                    <div class=\"issue-item\">");
                     sb.AppendLine("                        <span class=\"issue-icon\">ℹ️</span>");
-                    sb.AppendLine("                        <span>Preview not available (ffmpeg/ffprobe not found or frame extraction failed).</span>");
+                    sb.AppendLine("                        <span>Aperçu non disponible (ffmpeg/ffprobe introuvable ou échec de l'extraction).</span>");
                     sb.AppendLine("                    </div>");
                     sb.AppendLine("                </div>");
                     sb.AppendLine("            </div>");
                 }
 
                 sb.AppendLine("            <div class=\"section\">");
-                sb.AppendLine("                <div class=\"section-title\">📊 Résumé Technique</div>");
+                sb.AppendLine("                <div class=\"section-title\">Résumé technique</div>");
                 sb.AppendLine("                <div class=\"info-grid\">");
                 sb.AppendLine("                    <div class=\"info-card\">");
                 sb.AppendLine("                        <div class=\"label\">Nom du fichier</div>");
@@ -1189,28 +1142,29 @@ namespace MovFileIntegrityChecker
                 sb.AppendLine("                    <div class=\"info-card\">");
                 sb.AppendLine("                        <div class=\"label\">Taille du fichier</div>");
                 sb.AppendLine($"                        <div class=\"value\">{result.FileSize:N0} octets</div>");
-                sb.AppendLine($"                        <div class=\"label\">({result.FileSize / (1024.0 * 1024.0):F2} MB)</div>");
+                sb.AppendLine($"                        <div class=\"label\" style=\"margin-top: 4px;\">({result.FileSize / (1024.0 * 1024.0):F2} MB)</div>");
                 sb.AppendLine("                    </div>");
                 sb.AppendLine("                    <div class=\"info-card\">");
                 sb.AppendLine("                        <div class=\"label\">Octets validés</div>");
                 sb.AppendLine($"                        <div class=\"value\">{result.BytesValidated:N0}</div>");
                 sb.AppendLine("                    </div>");
                 sb.AppendLine("                    <div class=\"info-card\">");
-                sb.AppendLine("                        <div class=\"label\">Atoms détectés</div>");
+                sb.AppendLine("                        <div class=\"label\">Atomes détectés</div>");
                 sb.AppendLine($"                        <div class=\"value\">{result.Atoms.Count}</div>");
                 sb.AppendLine("                    </div>");
                 sb.AppendLine("                </div>");
 
                 double validationPercent = result.FileSize > 0 ? (result.BytesValidated * 100.0 / result.FileSize) : 0;
                 sb.AppendLine("                <div class=\"progress-bar\">");
-                sb.AppendLine($"                    <div class=\"progress-fill\" style=\"width: {validationPercent.ToString("F1", CultureInfo.InvariantCulture)}%\">\n                        {validationPercent:F1}% validé\n                    </div>");
+                sb.AppendLine($"                    <div class=\"progress-fill\" style=\"width: {validationPercent.ToString("F1", CultureInfo.InvariantCulture)}%\"></div>");
                 sb.AppendLine("                </div>");
+                sb.AppendLine($"                <div class=\"progress-label\">{validationPercent:F1}% validé</div>");
 
                 // Add duration timeline if available
                 if (result.TotalDuration > 0)
                 {
                     sb.AppendLine("                <div class=\"timeline-container\">");
-                    sb.AppendLine("                    <div class=\"timeline-title\">⏱️ Chronologie de la Vidéo</div>");
+                    sb.AppendLine("                    <div class=\"timeline-title\">Chronologie de la vidéo</div>");
 
                     double playablePercent = result.TotalDuration > 0 ? (result.PlayableDuration / result.TotalDuration) * 100.0 : 0;
                     double brokenPercent = 100.0 - playablePercent;
@@ -1218,47 +1172,43 @@ namespace MovFileIntegrityChecker
                     sb.AppendLine("                    <div class=\"timeline-bar\">");
                     if (playablePercent > 0)
                     {
-                        sb.AppendLine($"                        <div class=\"timeline-good\" style=\"width: {playablePercent.ToString("F1", CultureInfo.InvariantCulture)}%\">");
-                        sb.AppendLine($"                            ✓ Lecture OK");
-                        sb.AppendLine("                        </div>");
+                        sb.AppendLine($"                        <div class=\"timeline-good\" style=\"width: {playablePercent.ToString("F1", CultureInfo.InvariantCulture)}%\"></div>");
                     }
 
                     if (brokenPercent > 0)
                     {
-                        sb.AppendLine($"                        <div class=\"timeline-bad\" style=\"width: {brokenPercent.ToString("F1", CultureInfo.InvariantCulture)}%\">");
-                        sb.AppendLine($"                            ✗ Corrompu");
-                        sb.AppendLine("                        </div>");
+                        sb.AppendLine($"                        <div class=\"timeline-bad\" style=\"width: {brokenPercent.ToString("F1", CultureInfo.InvariantCulture)}%\"></div>");
                     }
 
                     sb.AppendLine("                    </div>");
 
                     sb.AppendLine("                    <div class=\"timeline-labels\">");
-                    sb.AppendLine("                        <div class=\"timeline-label start\">");
+                    sb.AppendLine("                        <div>");
                     sb.AppendLine("                            <div class=\"time\">00:00:00</div>");
                     sb.AppendLine("                            <div>Début</div>");
                     sb.AppendLine("                        </div>");
 
                     if (result.HasIssues && result.PlayableDuration < result.TotalDuration)
                     {
-                        sb.AppendLine("                        <div class=\"timeline-label\">");
-                        sb.AppendLine($"                            <div class=\"time\">{System.Security.SecurityElement.Escape(FormatDuration(result.PlayableDuration))}</div>");
-                        sb.AppendLine("                            <div style=\"color: #ff8c00;\">⚠️ Point de rupture</div>");
+                        sb.AppendLine("                        <div style=\"text-align: center;\">");
+                    sb.AppendLine($"                            <div class=\"time\">{System.Security.SecurityElement.Escape(FormatDuration(result.PlayableDuration))}</div>");
+                        sb.AppendLine("                            <div style=\"color: #cd5120;\">Point de rupture</div>");
                         sb.AppendLine("                        </div>");
                     }
 
-                    sb.AppendLine("                        <div class=\"timeline-label end\">");
+                    sb.AppendLine("                        <div style=\"text-align: right;\">");
                     sb.AppendLine($"                            <div class=\"time\">{System.Security.SecurityElement.Escape(FormatDuration(result.TotalDuration))}</div>");
                     sb.AppendLine("                            <div>Fin</div>");
                     sb.AppendLine("                        </div>");
                     sb.AppendLine("                    </div>");
 
                     sb.AppendLine("                    <div class=\"timeline-info\">");
-                    sb.AppendLine($"                        <div><strong>Durée totale:</strong> {System.Security.SecurityElement.Escape(FormatDuration(result.TotalDuration))}</div>");
-                    sb.AppendLine($"                        <div><strong>Durée lisible:</strong> {System.Security.SecurityElement.Escape(FormatDuration(result.PlayableDuration))} ({playablePercent:F1}%)</div>");
+                    sb.AppendLine($"                        <div><strong>Durée totale :</strong> {System.Security.SecurityElement.Escape(FormatDuration(result.TotalDuration))}</div>");
+                    sb.AppendLine($"                        <div><strong>Durée lisible :</strong> {System.Security.SecurityElement.Escape(FormatDuration(result.PlayableDuration))} ({playablePercent:F1}%)</div>");
                     if (result.HasIssues && result.PlayableDuration < result.TotalDuration)
                     {
                         double missingDuration = result.TotalDuration - result.PlayableDuration;
-                        sb.AppendLine($"                        <div style=\"color: #ff8c00;\"><strong>Durée manquante:</strong> {System.Security.SecurityElement.Escape(FormatDuration(missingDuration))} ({brokenPercent:F1}%)</div>");
+                        sb.AppendLine($"                        <div style=\"color: #cd5120;\"><strong>Durée manquante :</strong> {System.Security.SecurityElement.Escape(FormatDuration(missingDuration))} ({brokenPercent:F1}%)</div>");
                     }
 
                     sb.AppendLine("                    </div>");
@@ -1269,32 +1219,58 @@ namespace MovFileIntegrityChecker
 
                 if (result.Issues.Count > 0)
                 {
-                    sb.AppendLine("            <div class=\"section\">\n                <div class=\"section-title\">❌ Problèmes Détectés</div>\n                <div class=\"issue-list\">\n");
+                    sb.AppendLine("            <div class=\"section\">");
+                    sb.AppendLine("                <div class=\"section-title\">Problèmes détectés</div>");
+                    sb.AppendLine("                <div class=\"issue-list\">");
                     foreach (var issue in result.Issues)
                     {
-                        sb.AppendLine("                    <div class=\"issue-item\">\n                        <span class=\"issue-icon\">❌</span>\n                        <span>" + System.Security.SecurityElement.Escape(issue) + "</span>\n                    </div>");
+                        sb.AppendLine("                    <div class=\"issue-item\">");
+                        sb.AppendLine("                        <span class=\"issue-icon\">•</span>");
+                        sb.AppendLine("                        <span>" + System.Security.SecurityElement.Escape(issue) + "</span>");
+                        sb.AppendLine("                    </div>");
                     }
 
-                    sb.AppendLine("                </div>\n            </div>");
+                    sb.AppendLine("                </div>");
+                    sb.AppendLine("            </div>");
                 }
 
                 if (result.Atoms.Count > 0)
                 {
-                    sb.AppendLine("            <div class=\"section\">\n                <div class=\"section-title\">📦 Structure des Atoms</div>\n                <table class=\"atom-table\">\n                    <thead>\n                        <tr>\n                            <th>Type</th>\n                            <th>Taille</th>\n                            <th>Offset</th>\n                            <th>Statut</th>\n                        </tr>\n                    </thead>\n                    <tbody>");
+                    sb.AppendLine("            <div class=\"section\">");
+                    sb.AppendLine("                <div class=\"section-title\">Structure des atomes</div>");
+                    sb.AppendLine("                <table class=\"atom-table\">");
+                    sb.AppendLine("                    <thead>");
+                    sb.AppendLine("                        <tr>");
+                    sb.AppendLine("                            <th>Type</th>");
+                    sb.AppendLine("                            <th>Taille</th>");
+                    sb.AppendLine("                            <th>Position</th>");
+                    sb.AppendLine("                            <th>Statut</th>");
+                    sb.AppendLine("                        </tr>");
+                    sb.AppendLine("                    </thead>");
+                    sb.AppendLine("                    <tbody>");
                     foreach (var atom in result.Atoms)
                     {
                         string statusClass = atom.IsComplete ? "status-complete" : "status-incomplete";
-                        string statusText = atom.IsComplete ? "✅ Complet" : "❌ Incomplet";
-                        sb.AppendLine("                        <tr>\n                            <td><span class=\"atom-type\">" + System.Security.SecurityElement.Escape(atom.Type) + "</span></td>\n                            <td>" + atom.Size.ToString("N0") + " octets</td>\n                            <td>" + atom.Offset.ToString("N0") + "</td>\n                            <td><span class=\"status-badge " + statusClass + "\">" + statusText + "</span></td>\n                        </tr>");
+                        string statusText = atom.IsComplete ? "Complet" : "Incomplet";
+                        sb.AppendLine("                        <tr>");
+                        sb.AppendLine("                            <td><span class=\"atom-type\">" + System.Security.SecurityElement.Escape(atom.Type) + "</span></td>");
+                        sb.AppendLine("                            <td>" + atom.Size.ToString("N0") + " octets</td>");
+                        sb.AppendLine("                            <td>" + atom.Offset.ToString("N0") + "</td>");
+                        sb.AppendLine("                            <td><span class=\"status-badge " + statusClass + "\">" + statusText + "</span></td>");
+                        sb.AppendLine("                        </tr>");
                     }
 
-                    sb.AppendLine("                    </tbody>\n                </table>\n            </div>");
+                    sb.AppendLine("                    </tbody>");
+                    sb.AppendLine("                </table>");
+                    sb.AppendLine("            </div>");
                 }
 
                 sb.AppendLine("        </div>");
 
                 // Footer
-                sb.AppendLine("        <div class=\"footer\">\n            Généré automatiquement le " + DateTime.Now.ToString("yyyy-MM-dd") + " à " + DateTime.Now.ToString("HH:mm:ss") + "<br>\n            Outil : MovIntegrityChecker (rapport automatique)\n        </div>");
+                sb.AppendLine("        <div class=\"footer\">");
+                sb.AppendLine("            Généré le " + DateTime.Now.ToString("dd/MM/yyyy") + " à " + DateTime.Now.ToString("HH:mm:ss") + " · MovFileIntegrityChecker");
+                sb.AppendLine("        </div>");
 
                 sb.AppendLine("    </div>");
                 sb.AppendLine("</body>");
@@ -1567,112 +1543,103 @@ namespace MovFileIntegrityChecker
             // Generate HTML
             var html = new StringBuilder();
             html.AppendLine("<!DOCTYPE html>");
-            html.AppendLine("<html lang=\"en\">");
+            html.AppendLine("<html lang=\"fr\">");
             html.AppendLine("<head>");
             html.AppendLine("    <meta charset=\"UTF-8\">");
             html.AppendLine("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-            html.AppendLine("    <title>Video Transfer Failure Analysis Dashboard</title>");
+            html.AppendLine("    <title>Tableau de bord d'analyse</title>");
             html.AppendLine("    <script src=\"https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js\"></script>");
             html.AppendLine("    <style>");
             html.AppendLine("        * { margin: 0; padding: 0; box-sizing: border-box; }");
             html.AppendLine("        body {");
             html.AppendLine("            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;");
-            html.AppendLine("            background: #0f0f1e;");
-            html.AppendLine("            color: #e0e0e0;");
-            html.AppendLine("            padding: 20px;");
+            html.AppendLine("            background: #f6f9fc;");
+            html.AppendLine("            color: #1a1f36;");
+            html.AppendLine("            padding: 32px 20px;");
             html.AppendLine("            min-height: 100vh;");
             html.AppendLine("        }");
             html.AppendLine("        .container {");
-            html.AppendLine("            max-width: 1600px;");
+            html.AppendLine("            max-width: 1400px;");
             html.AppendLine("            margin: 0 auto;");
             html.AppendLine("        }");
             html.AppendLine("        .header {");
-            html.AppendLine("            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);");
-            html.AppendLine("            padding: 40px;");
-            html.AppendLine("            border-radius: 16px;");
-            html.AppendLine("            margin-bottom: 30px;");
-            html.AppendLine("            box-shadow: 0 10px 50px rgba(102, 126, 234, 0.3);");
+            html.AppendLine("            background: #ffffff;");
+            html.AppendLine("            padding: 48px 32px;");
+            html.AppendLine("            border-radius: 8px;");
+            html.AppendLine("            margin-bottom: 24px;");
+            html.AppendLine("            border: 1px solid #e6e6e6;");
             html.AppendLine("        }");
             html.AppendLine("        .header h1 {");
-            html.AppendLine("            font-size: 2.8em;");
-            html.AppendLine("            margin-bottom: 10px;");
-            html.AppendLine("            font-weight: 700;");
+            html.AppendLine("            font-size: 32px;");
+            html.AppendLine("            margin-bottom: 8px;");
+            html.AppendLine("            font-weight: 600;");
+            html.AppendLine("            color: #0a2540;");
             html.AppendLine("        }");
             html.AppendLine("        .header .subtitle {");
-            html.AppendLine("            font-size: 1.2em;");
-            html.AppendLine("            opacity: 0.95;");
+            html.AppendLine("            font-size: 15px;");
+            html.AppendLine("            color: #425466;");
             html.AppendLine("        }");
             html.AppendLine("        .stats-grid {");
             html.AppendLine("            display: grid;");
-            html.AppendLine("            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));");
-            html.AppendLine("            gap: 20px;");
-            html.AppendLine("            margin-bottom: 30px;");
+            html.AppendLine("            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));");
+            html.AppendLine("            gap: 16px;");
+            html.AppendLine("            margin-bottom: 24px;");
             html.AppendLine("        }");
             html.AppendLine("        .stat-card {");
-            html.AppendLine("            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);");
-            html.AppendLine("            padding: 25px;");
-            html.AppendLine("            border-radius: 12px;");
-            html.AppendLine("            border: 1px solid rgba(255,255,255,0.12);");
-            html.AppendLine("            backdrop-filter: blur(10px);");
-            html.AppendLine("            transition: transform 0.2s, box-shadow 0.2s;");
-            html.AppendLine("        }");
-            html.AppendLine("        .stat-card:hover {");
-            html.AppendLine("            transform: translateY(-3px);");
-            html.AppendLine("            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);");
+            html.AppendLine("            background: #ffffff;");
+            html.AppendLine("            padding: 24px;");
+            html.AppendLine("            border-radius: 8px;");
+            html.AppendLine("            border: 1px solid #e6e6e6;");
             html.AppendLine("        }");
             html.AppendLine("        .stat-card .label {");
-            html.AppendLine("            font-size: 0.85em;");
-            html.AppendLine("            color: #999;");
+            html.AppendLine("            font-size: 13px;");
+            html.AppendLine("            color: #6b7c93;");
             html.AppendLine("            margin-bottom: 8px;");
-            html.AppendLine("            text-transform: uppercase;");
-            html.AppendLine("            letter-spacing: 1.2px;");
-            html.AppendLine("            font-weight: 600;");
             html.AppendLine("        }");
             html.AppendLine("        .stat-card .value {");
-            html.AppendLine("            font-size: 2.5em;");
-            html.AppendLine("            font-weight: 700;");
-            html.AppendLine("            color: #667eea;");
+            html.AppendLine("            font-size: 32px;");
+            html.AppendLine("            font-weight: 600;");
+            html.AppendLine("            color: #0a2540;");
             html.AppendLine("        }");
-            html.AppendLine("        .stat-card.success .value { color: #10b981; }");
-            html.AppendLine("        .stat-card.error .value { color: #ef4444; }");
-            html.AppendLine("        .stat-card.warning .value { color: #f59e0b; }");
+            html.AppendLine("        .stat-card.success .value { color: #0cce6b; }");
+            html.AppendLine("        .stat-card.error .value { color: #cd5120; }");
+            html.AppendLine("        .stat-card.warning .value { color: #635bff; }");
             html.AppendLine("        .charts-grid {");
             html.AppendLine("            display: grid;");
-            html.AppendLine("            grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));");
-            html.AppendLine("            gap: 25px;");
-            html.AppendLine("            margin-bottom: 30px;");
+            html.AppendLine("            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));");
+            html.AppendLine("            gap: 16px;");
+            html.AppendLine("            margin-bottom: 24px;");
             html.AppendLine("        }");
             html.AppendLine("        .chart-container {");
-            html.AppendLine("            background: rgba(255,255,255,0.03);");
-            html.AppendLine("            padding: 30px;");
-            html.AppendLine("            border-radius: 12px;");
-            html.AppendLine("            border: 1px solid rgba(255,255,255,0.08);");
-            html.AppendLine("            box-shadow: 0 4px 15px rgba(0,0,0,0.2);");
+            html.AppendLine("            background: #ffffff;");
+            html.AppendLine("            padding: 24px;");
+            html.AppendLine("            border-radius: 8px;");
+            html.AppendLine("            border: 1px solid #e6e6e6;");
             html.AppendLine("        }");
             html.AppendLine("        .chart-container h2 {");
-            html.AppendLine("            margin-bottom: 20px;");
-            html.AppendLine("            color: #fff;");
-            html.AppendLine("            font-size: 1.4em;");
+            html.AppendLine("            margin-bottom: 16px;");
+            html.AppendLine("            color: #0a2540;");
+            html.AppendLine("            font-size: 16px;");
             html.AppendLine("            font-weight: 600;");
             html.AppendLine("        }");
             html.AppendLine("        .chart-container canvas {");
-            html.AppendLine("            max-height: 400px;");
+            html.AppendLine("            max-height: 350px;");
             html.AppendLine("        }");
             html.AppendLine("        .full-width {");
             html.AppendLine("            grid-column: 1 / -1;");
             html.AppendLine("        }");
             html.AppendLine("        .insights {");
-            html.AppendLine("            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);");
-            html.AppendLine("            padding: 35px;");
-            html.AppendLine("            border-radius: 12px;");
-            html.AppendLine("            border-left: 5px solid #667eea;");
-            html.AppendLine("            margin-top: 30px;");
-            html.AppendLine("            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);");
+            html.AppendLine("            background: #ffffff;");
+            html.AppendLine("            padding: 32px;");
+            html.AppendLine("            border-radius: 8px;");
+            html.AppendLine("            border: 1px solid #e6e6e6;");
+            html.AppendLine("            margin-top: 24px;");
             html.AppendLine("        }");
             html.AppendLine("        .insights h2 {");
-            html.AppendLine("            margin-bottom: 20px;");
-            html.AppendLine("            color: #667eea;");
-            html.AppendLine("            font-size: 1.8em;");
+            html.AppendLine("            margin-bottom: 16px;");
+            html.AppendLine("            color: #0a2540;");
+            html.AppendLine("            font-size: 20px;");
+            html.AppendLine("            font-weight: 600;");
             html.AppendLine("        }");
             html.AppendLine("        .insights ul {");
             html.AppendLine("            list-style: none;");
@@ -1680,94 +1647,96 @@ namespace MovFileIntegrityChecker
             html.AppendLine("        }");
             html.AppendLine("        .insights li {");
             html.AppendLine("            padding: 12px 0;");
-            html.AppendLine("            border-bottom: 1px solid rgba(255,255,255,0.1);");
-            html.AppendLine("            font-size: 1.05em;");
+            html.AppendLine("            border-bottom: 1px solid #f6f9fc;");
+            html.AppendLine("            font-size: 14px;");
             html.AppendLine("            line-height: 1.6;");
+            html.AppendLine("            color: #425466;");
             html.AppendLine("        }");
             html.AppendLine("        .insights li:last-child {");
             html.AppendLine("            border-bottom: none;");
             html.AppendLine("        }");
             html.AppendLine("        .insights li:before {");
-            html.AppendLine("            content: '▸ ';");
-            html.AppendLine("            color: #667eea;");
+            html.AppendLine("            content: '• ';");
+            html.AppendLine("            color: #635bff;");
             html.AppendLine("            font-weight: bold;");
-            html.AppendLine("            margin-right: 10px;");
+            html.AppendLine("            margin-right: 8px;");
             html.AppendLine("        }");
             html.AppendLine("        .insights .conclusion {");
-            html.AppendLine("            margin-top: 20px;");
-            html.AppendLine("            padding: 20px;");
-            html.AppendLine("            background: rgba(239, 68, 68, 0.15);");
-            html.AppendLine("            border-left: 4px solid #ef4444;");
-            html.AppendLine("            border-radius: 8px;");
-            html.AppendLine("            font-size: 1.1em;");
-            html.AppendLine("            font-weight: 600;");
-            html.AppendLine("            color: #fca5a5;");
+            html.AppendLine("            margin-top: 16px;");
+            html.AppendLine("            padding: 16px;");
+            html.AppendLine("            background: #fff4ed;");
+            html.AppendLine("            border-left: 3px solid #cd5120;");
+            html.AppendLine("            border-radius: 6px;");
+            html.AppendLine("            font-size: 14px;");
+            html.AppendLine("            color: #0a2540;");
             html.AppendLine("        }");
             html.AppendLine("        .data-table {");
             html.AppendLine("            width: 100%;");
             html.AppendLine("            border-collapse: collapse;");
-            html.AppendLine("            margin-top: 20px;");
-            html.AppendLine("            font-size: 0.9em;");
+            html.AppendLine("            margin-top: 16px;");
+            html.AppendLine("            font-size: 14px;");
             html.AppendLine("        }");
             html.AppendLine("        .data-table th {");
-            html.AppendLine("            background: rgba(102, 126, 234, 0.2);");
+            html.AppendLine("            background: #fafbfc;");
             html.AppendLine("            padding: 12px;");
             html.AppendLine("            text-align: left;");
             html.AppendLine("            font-weight: 600;");
-            html.AppendLine("            color: #667eea;");
-            html.AppendLine("            border-bottom: 2px solid rgba(102, 126, 234, 0.5);");
+            html.AppendLine("            color: #6b7c93;");
+            html.AppendLine("            border-bottom: 1px solid #e6e6e6;");
+            html.AppendLine("            font-size: 13px;");
             html.AppendLine("        }");
             html.AppendLine("        .data-table td {");
-            html.AppendLine("            padding: 10px 12px;");
-            html.AppendLine("            border-bottom: 1px solid rgba(255,255,255,0.05);");
+            html.AppendLine("            padding: 12px;");
+            html.AppendLine("            border-bottom: 1px solid #f6f9fc;");
+            html.AppendLine("            color: #0a2540;");
             html.AppendLine("        }");
             html.AppendLine("        .data-table tr:hover {");
-            html.AppendLine("            background: rgba(255,255,255,0.03);");
+            html.AppendLine("            background: #fafbfc;");
             html.AppendLine("        }");
             html.AppendLine("        .corrupted-row {");
-            html.AppendLine("            color: #fca5a5;");
+            html.AppendLine("            color: #cd5120;");
             html.AppendLine("        }");
             html.AppendLine("        .valid-row {");
-            html.AppendLine("            color: #86efac;");
+            html.AppendLine("            color: #0a2540;");
             html.AppendLine("        }");
             html.AppendLine("        .status-badge {");
-            html.AppendLine("            padding: 4px 8px;");
+            html.AppendLine("            padding: 4px 10px;");
             html.AppendLine("            border-radius: 4px;");
-            html.AppendLine("            font-size: 0.85em;");
+            html.AppendLine("            font-size: 12px;");
             html.AppendLine("            font-weight: 600;");
             html.AppendLine("        }");
             html.AppendLine("        .footer {");
             html.AppendLine("            text-align: center;");
-            html.AppendLine("            margin-top: 50px;");
-            html.AppendLine("            padding: 20px;");
-            html.AppendLine("            color: #666;");
-            html.AppendLine("            font-size: 0.9em;");
+            html.AppendLine("            margin-top: 32px;");
+            html.AppendLine("            padding: 16px;");
+            html.AppendLine("            color: #6b7c93;");
+            html.AppendLine("            font-size: 13px;");
             html.AppendLine("        }");
             html.AppendLine("    </style>");
             html.AppendLine("</head>");
             html.AppendLine("<body>");
             html.AppendLine("    <div class=\"container\">");
             html.AppendLine("        <div class=\"header\">");
-            html.AppendLine("            <h1>🎥 Video Transfer Failure Analysis Dashboard</h1>");
-            html.AppendLine($"            <div class=\"subtitle\">Generated on {DateTime.Now:yyyy-MM-dd HH:mm:ss} | Analyzing {totalFiles} video files | MovFileIntegrityChecker v1.0</div>");
+            html.AppendLine("            <h1>Tableau de bord d'analyse</h1>");
+            html.AppendLine($"            <div class=\"subtitle\">Généré le {DateTime.Now:dd/MM/yyyy} à {DateTime.Now:HH:mm:ss} · {totalFiles} fichiers analysés</div>");
             html.AppendLine("        </div>");
 
             // Stats cards
             html.AppendLine("        <div class=\"stats-grid\">");
             html.AppendLine($"            <div class=\"stat-card\">");
-            html.AppendLine($"                <div class=\"label\">Total Files</div>");
+            html.AppendLine($"                <div class=\"label\">Fichiers totaux</div>");
             html.AppendLine($"                <div class=\"value\">{totalFiles}</div>");
             html.AppendLine($"            </div>");
             html.AppendLine($"            <div class=\"stat-card success\">");
-            html.AppendLine($"                <div class=\"label\">Complete Files</div>");
+            html.AppendLine($"                <div class=\"label\">Fichiers complets</div>");
             html.AppendLine($"                <div class=\"value\">{completeFiles}</div>");
             html.AppendLine($"            </div>");
             html.AppendLine($"            <div class=\"stat-card error\">");
-            html.AppendLine($"                <div class=\"label\">Corrupted Files</div>");
+            html.AppendLine($"                <div class=\"label\">Fichiers corrompus</div>");
             html.AppendLine($"                <div class=\"value\">{corruptedFiles}</div>");
             html.AppendLine($"            </div>");
             html.AppendLine($"            <div class=\"stat-card warning\">");
-            html.AppendLine($"                <div class=\"label\">Total Size</div>");
+            html.AppendLine($"                <div class=\"label\">Taille totale</div>");
             html.AppendLine($"                <div class=\"value\">{(totalGB >= 1 ? $"{totalGB:F2} GB" : $"{totalMB:F2} MB")}</div>");
             html.AppendLine($"            </div>");
             html.AppendLine("        </div>");
@@ -1777,19 +1746,19 @@ namespace MovFileIntegrityChecker
             
             // Complete vs Incomplete pie chart
             html.AppendLine("            <div class=\"chart-container\">");
-            html.AppendLine("                <h2>File Completeness Status</h2>");
+            html.AppendLine("                <h2>Statut de complétude</h2>");
             html.AppendLine("                <canvas id=\"completenessChart\"></canvas>");
             html.AppendLine("            </div>");
 
             // Corrupted vs Non-corrupted pie chart
             html.AppendLine("            <div class=\"chart-container\">");
-            html.AppendLine("                <h2>File Corruption Status</h2>");
+            html.AppendLine("                <h2>Statut de corruption</h2>");
             html.AppendLine("                <canvas id=\"corruptionChart\"></canvas>");
             html.AppendLine("            </div>");
 
             // File size vs corruption bar chart
             html.AppendLine("            <div class=\"chart-container full-width\">");
-            html.AppendLine("                <h2>Corruption Rate by File Size</h2>");
+            html.AppendLine("                <h2>Taux de corruption par taille de fichier</h2>");
             html.AppendLine("                <canvas id=\"fileSizeChart\"></canvas>");
             html.AppendLine("            </div>");
 
@@ -1797,14 +1766,14 @@ namespace MovFileIntegrityChecker
             if (reportsWithDuration.Count > 0)
             {
                 html.AppendLine("            <div class=\"chart-container full-width\">");
-                html.AppendLine("                <h2>Corruption Rate by Video Duration</h2>");
+                html.AppendLine("                <h2>Taux de corruption par durée de vidéo</h2>");
                 html.AppendLine("                <canvas id=\"durationChart\"></canvas>");
                 html.AppendLine("            </div>");
             }
 
             // Heatmap: Transfer failure by hour
             html.AppendLine("            <div class=\"chart-container full-width\">");
-            html.AppendLine("                <h2>🕐 Transfer Failure Frequency by Hour (Local Time)</h2>");
+            html.AppendLine("                <h2>Fréquence des échecs par heure</h2>");
             html.AppendLine("                <canvas id=\"hourlyHeatmap\"></canvas>");
             html.AppendLine("            </div>");
 
@@ -1812,20 +1781,20 @@ namespace MovFileIntegrityChecker
             if (scatterData.Count > 0)
             {
                 html.AppendLine("            <div class=\"chart-container\">");
-                html.AppendLine("                <h2>📊 File Size vs Playable %</h2>");
+                html.AppendLine("                <h2>Taille vs % lisible</h2>");
                 html.AppendLine("                <canvas id=\"scatterSizePlayable\"></canvas>");
                 html.AppendLine("            </div>");
             }
 
             // Scatter plot: Last modified hour vs Corruption
             html.AppendLine("            <div class=\"chart-container\">");
-            html.AppendLine("                <h2>⏰ Last Modified Hour vs Corruption Rate</h2>");
+            html.AppendLine("                <h2>Heure de modification vs Corruption</h2>");
             html.AppendLine("                <canvas id=\"scatterHourCorruption\"></canvas>");
             html.AppendLine("            </div>");
 
             // Timeline: Creation vs Last Modified
             html.AppendLine("            <div class=\"chart-container full-width\">");
-            html.AppendLine("                <h2>📅 File Creation vs Last Modification Timeline</h2>");
+            html.AppendLine("                <h2>Chronologie de création vs modification</h2>");
             html.AppendLine("                <canvas id=\"timelineChart\"></canvas>");
             html.AppendLine("            </div>");
 
@@ -1833,17 +1802,17 @@ namespace MovFileIntegrityChecker
 
             // Data table - show all files sorted by corruption percentage (corrupted first)
             html.AppendLine("        <div class=\"chart-container\">");
-            html.AppendLine("            <h2>📋 Detailed File Analysis</h2>");
+            html.AppendLine("            <h2>Analyse détaillée des fichiers</h2>");
             html.AppendLine("            <table class=\"data-table\">");
             html.AppendLine("                <thead>");
             html.AppendLine("                    <tr>");
-            html.AppendLine("                        <th>File Name</th>");
-            html.AppendLine("                        <th>Size (MB)</th>");
-            html.AppendLine("                        <th>Duration</th>");
-            html.AppendLine("                        <th>Playable %</th>");
-            html.AppendLine("                        <th>Corruption %</th>");
-            html.AppendLine("                        <th>Last Modified Hour</th>");
-            html.AppendLine("                        <th>Status</th>");
+            html.AppendLine("                        <th>Nom du fichier</th>");
+            html.AppendLine("                        <th>Taille (MB)</th>");
+            html.AppendLine("                        <th>Durée</th>");
+            html.AppendLine("                        <th>% lisible</th>");
+            html.AppendLine("                        <th>% corrompu</th>");
+            html.AppendLine("                        <th>Heure modif.</th>");
+            html.AppendLine("                        <th>Statut</th>");
             html.AppendLine("                    </tr>");
             html.AppendLine("                </thead>");
             html.AppendLine("                <tbody>");
@@ -1861,7 +1830,7 @@ namespace MovFileIntegrityChecker
                 var corruption = report.VideoDuration?.CorruptedPercentage.ToString("F1") ?? "N/A";
                 var hour = report.FileMetadata.LastModifiedTimeUtc.ToLocalTime().Hour;
                 var rowClass = report.Status.IsCorrupted ? "corrupted-row" : "valid-row";
-                var statusBadge = report.Status.IsCorrupted ? "❌ Corrupted" : "✅ Valid";
+                var statusBadge = report.Status.IsCorrupted ? "Corrompu" : "Valide";
                 
                 html.AppendLine($"                    <tr class=\"{rowClass}\">");
                 html.AppendLine($"                        <td>{System.Security.SecurityElement.Escape(report.FileMetadata.FileName)}</td>");
@@ -1880,12 +1849,12 @@ namespace MovFileIntegrityChecker
 
             // Insights section
             html.AppendLine("        <div class=\"insights\">");
-            html.AppendLine("            <h2>🔍 Key Insights & Correlations</h2>");
+            html.AppendLine("            <h2>Aperçus et corrélations clés</h2>");
             html.AppendLine("            <ul>");
 
             // Generate insights
             double corruptionRate = (double)corruptedFiles / totalFiles * 100;
-            html.AppendLine($"                <li><strong>Overall corruption rate:</strong> {corruptionRate:F1}% ({corruptedFiles} out of {totalFiles} files are corrupted or incomplete)</li>");
+            html.AppendLine($"                <li><strong>Taux de corruption global :</strong> {corruptionRate:F1}% ({corruptedFiles} sur {totalFiles} fichiers sont corrompus ou incomplets)</li>");
 
             // Hourly analysis - find peak failure times
             var peakHours = hourlyFailures
@@ -1906,11 +1875,11 @@ namespace MovFileIntegrityChecker
                         .Select(x => $"{x.Hour:D2}:00-{(x.Hour + 1) % 24:D2}:00")
                         .ToList();
                     
-                    html.AppendLine($"                <li><strong>⚠️ High-risk time window:</strong> {peakRate:F1}% of files modified at {top.Hour:D2}:00-{(top.Hour + 1) % 24:D2}:00 are corrupted (peak failure time)</li>");
+                    html.AppendLine($"                <li><strong>Fenêtre à haut risque :</strong> {peakRate:F1}% des fichiers modifiés à {top.Hour:D2}:00-{(top.Hour + 1) % 24:D2}:00 sont corrompus (pic d'échecs)</li>");
                     
                     if (timeRanges.Count > 1)
                     {
-                        html.AppendLine($"                <li><strong>Additional risk windows:</strong> {string.Join(", ", timeRanges.Skip(1))}</li>");
+                        html.AppendLine($"                <li><strong>Fenêtres de risque additionnelles :</strong> {string.Join(", ", timeRanges.Skip(1))}</li>");
                     }
                 }
             }
@@ -1924,7 +1893,7 @@ namespace MovFileIntegrityChecker
             if (highestRiskSize.Key != null)
             {
                 double riskRate = (double)highestRiskSize.Value.corrupted / highestRiskSize.Value.total * 100;
-                html.AppendLine($"                <li><strong>File size correlation:</strong> {highestRiskSize.Key} range shows highest corruption risk at {riskRate:F1}%</li>");
+                html.AppendLine($"                <li><strong>Corrélation taille de fichier :</strong> La plage {highestRiskSize.Key} présente le plus haut risque de corruption à {riskRate:F1}%</li>");
             }
 
             // Find highest risk duration range
@@ -1938,7 +1907,7 @@ namespace MovFileIntegrityChecker
                 if (highestRiskDuration.Key != null)
                 {
                     double riskRate = (double)highestRiskDuration.Value.corrupted / highestRiskDuration.Value.total * 100;
-                    html.AppendLine($"                <li><strong>Duration correlation:</strong> {highestRiskDuration.Key} videos have {riskRate:F1}% corruption rate</li>");
+                    html.AppendLine($"                <li><strong>Corrélation durée :</strong> Les vidéos de {highestRiskDuration.Key} ont un taux de corruption de {riskRate:F1}%</li>");
                 }
             }
 
@@ -1947,7 +1916,7 @@ namespace MovFileIntegrityChecker
             if (corruptedWithDuration.Count > 0)
             {
                 double avgPlayable = corruptedWithDuration.Average(r => r.VideoDuration!.PlayablePercentage);
-                html.AppendLine($"                <li><strong>Data recovery potential:</strong> Corrupted files retain {avgPlayable:F1}% playable content on average</li>");
+                html.AppendLine($"                <li><strong>Potentiel de récupération :</strong> Les fichiers corrompus conservent {avgPlayable:F1}% de contenu lisible en moyenne</li>");
             }
 
             // Transfer interruption patterns
@@ -1958,30 +1927,30 @@ namespace MovFileIntegrityChecker
             if (abruptStops > 0)
             {
                 double abruptRate = (double)abruptStops / corruptedFiles * 100;
-                html.AppendLine($"                <li><strong>Transfer interruption pattern:</strong> {abruptRate:F1}% of corrupted files show signs of abrupt transfer termination (modified within 1 hour of creation)</li>");
+                html.AppendLine($"                <li><strong>Schéma d'interruption :</strong> {abruptRate:F1}% des fichiers corrompus montrent des signes d'arrêt brutal (modifiés dans l'heure suivant la création)</li>");
             }
 
             // Most common issues
             var allIssues = reports
                 .SelectMany(r => r.IntegrityAnalysis.Issues)
                 .Where(i => !string.IsNullOrEmpty(i))
-                .GroupBy(i => i.Contains("Incomplete atom") ? "Incomplete atom" : 
-                              i.Contains("Missing") ? "Missing atom" : 
-                              i.Contains("Gap") ? "Gap after last atom" : i)
+                .GroupBy(i => i.Contains("Incomplete atom") ? "Atome incomplet" : 
+                              i.Contains("Missing") ? "Atome manquant" : 
+                              i.Contains("Gap") ? "Écart après le dernier atome" : i)
                 .OrderByDescending(g => g.Count())
                 .Take(3)
                 .ToList();
 
             if (allIssues.Count > 0)
             {
-                html.AppendLine($"                <li><strong>Most common structural issue:</strong> \"{allIssues[0].Key}\" detected in {allIssues[0].Count()} files ({(double)allIssues[0].Count() / totalFiles * 100:F1}%)</li>");
+                html.AppendLine($"                <li><strong>Problème structurel le plus courant :</strong> \"{allIssues[0].Key}\" détecté dans {allIssues[0].Count()} fichiers ({(double)allIssues[0].Count() / totalFiles * 100:F1}%)</li>");
             }
 
             html.AppendLine("            </ul>");
 
             // Root cause conclusion
             html.AppendLine("            <div class=\"conclusion\">");
-            html.AppendLine("                <strong>💡 Likely Root Cause:</strong> ");
+            html.AppendLine("                <strong>Cause probable :</strong> ");
             
             // Determine likely cause based on patterns
             if (peakHours.Any() && (double)peakHours[0].Count / peakHours[0].Total * 100 > corruptionRate * 1.5)
@@ -1989,24 +1958,24 @@ namespace MovFileIntegrityChecker
                 var topHour = peakHours[0].Hour;
                 if (topHour >= 2 && topHour <= 5)
                 {
-                    html.AppendLine("                Scheduled server maintenance or automatic shutdown during nightly hours (03:00-05:00) is likely interrupting ongoing file transfers.");
+                    html.AppendLine("                Une maintenance programmée ou un arrêt automatique durant les heures nocturnes (03:00-05:00) interrompt probablement les transferts de fichiers en cours.");
                 }
                 else if (topHour >= 12 && topHour <= 14)
                 {
-                    html.AppendLine("                Network congestion or server load during peak hours (12:00-14:00) may be causing transfer timeouts and incomplete file writes.");
+                    html.AppendLine("                La congestion réseau ou la charge serveur durant les heures de pointe (12:00-14:00) peut causer des timeouts et des écritures incomplètes.");
                 }
                 else
                 {
-                    html.AppendLine($"                Systematic failures occur predominantly at {topHour:D2}:00-{(topHour + 1) % 24:D2}:00, suggesting scheduled operations or resource constraints during this time window.");
+                    html.AppendLine($"                Des échecs systématiques se produisent principalement à {topHour:D2}:00-{(topHour + 1) % 24:D2}:00, suggérant des opérations programmées ou des contraintes de ressources durant cette fenêtre.");
                 }
             }
             else if (highestRiskSize.Key != null && highestRiskSize.Key.Contains("GB"))
             {
-                html.AppendLine("                Larger files are disproportionately affected, indicating network timeout issues or insufficient buffer sizes for large file transfers.");
+                html.AppendLine("                Les fichiers volumineux sont disproportionnellement affectés, indiquant des problèmes de timeout réseau ou des tailles de buffer insuffisantes pour les gros transferts.");
             }
             else
             {
-                html.AppendLine("                File transfers are being interrupted before completion, likely due to network instability, storage issues, or application crashes during write operations.");
+                html.AppendLine("                Les transferts de fichiers sont interrompus avant leur achèvement, probablement en raison d'instabilité réseau, de problèmes de stockage ou de plantages d'application durant l'écriture.");
             }
             
             html.AppendLine("            </div>");
@@ -2014,25 +1983,24 @@ namespace MovFileIntegrityChecker
 
             // Footer
             html.AppendLine("        <div class=\"footer\">");
-            html.AppendLine("            <p>Generated by MovFileIntegrityChecker v1.0</p>");
+            html.AppendLine("            <p>Généré par MovFileIntegrityChecker</p>");
             html.AppendLine("        </div>");
             html.AppendLine("    </div>");
 
             // Chart.js scripts
             html.AppendLine("    <script>");
-            html.AppendLine("        Chart.defaults.color = '#ffffff';");
-            html.AppendLine("        Chart.defaults.borderColor = 'rgba(255,255,255,0.1)';");
+            html.AppendLine("        Chart.defaults.color = '#6b7c93';");
+            html.AppendLine("        Chart.defaults.borderColor = '#e6e6e6';");
 
             // Completeness chart
             html.AppendLine("        new Chart(document.getElementById('completenessChart'), {");
             html.AppendLine("            type: 'pie',");
             html.AppendLine("            data: {");
-            html.AppendLine($"                labels: ['Complete ({completeFiles})', 'Incomplete ({incompleteFiles})'],");
+            html.AppendLine($"                labels: ['Complet ({completeFiles})', 'Incomplet ({incompleteFiles})'],");
             html.AppendLine("                datasets: [{");
             html.AppendLine($"                    data: [{completeFiles}, {incompleteFiles}],");
-            html.AppendLine("                    backgroundColor: ['#10b981', '#ef4444'],");
-            html.AppendLine("                    borderWidth: 2,");
-            html.AppendLine("                    borderColor: '#1a1a2e'");
+            html.AppendLine("                    backgroundColor: ['#0cce6b', '#cd5120'],");
+            html.AppendLine("                    borderWidth: 0");
             html.AppendLine("                }]");
             html.AppendLine("            },");
             html.AppendLine("            options: {");
@@ -2049,12 +2017,11 @@ namespace MovFileIntegrityChecker
             html.AppendLine("        new Chart(document.getElementById('corruptionChart'), {");
             html.AppendLine("            type: 'pie',");
             html.AppendLine("            data: {");
-            html.AppendLine($"                labels: ['Valid ({nonCorrupted})', 'Corrupted ({corruptedFiles})'],");
+            html.AppendLine($"                labels: ['Valide ({nonCorrupted})', 'Corrompu ({corruptedFiles})'],");
             html.AppendLine("                datasets: [{");
             html.AppendLine($"                    data: [{nonCorrupted}, {corruptedFiles}],");
-            html.AppendLine("                    backgroundColor: ['#10b981', '#ef4444'],");
-            html.AppendLine("                    borderWidth: 2,");
-            html.AppendLine("                    borderColor: '#1a1a2e'");
+            html.AppendLine("                    backgroundColor: ['#0cce6b', '#cd5120'],");
+            html.AppendLine("                    borderWidth: 0");
             html.AppendLine("                }]");
             html.AppendLine("            },");
             html.AppendLine("            options: {");
@@ -2078,17 +2045,15 @@ namespace MovFileIntegrityChecker
             html.AppendLine("            data: {");
             html.AppendLine($"                labels: [{sizeLabels}],");
             html.AppendLine("                datasets: [{");
-            html.AppendLine("                    label: 'Total Files',");
+            html.AppendLine("                    label: 'Fichiers totaux',");
             html.AppendLine($"                    data: [{sizeTotals}],");
-            html.AppendLine("                    backgroundColor: 'rgba(102, 126, 234, 0.6)',");
-            html.AppendLine("                    borderColor: 'rgba(102, 126, 234, 1)',");
-            html.AppendLine("                    borderWidth: 1");
+            html.AppendLine("                    backgroundColor: '#635bff',");
+            html.AppendLine("                    borderWidth: 0");
             html.AppendLine("                }, {");
-            html.AppendLine("                    label: 'Corrupted Files',");
+            html.AppendLine("                    label: 'Fichiers corrompus',");
             html.AppendLine($"                    data: [{sizeCorrupted}],");
-            html.AppendLine("                    backgroundColor: 'rgba(239, 68, 68, 0.6)',");
-            html.AppendLine("                    borderColor: 'rgba(239, 68, 68, 1)',");
-            html.AppendLine("                    borderWidth: 1");
+            html.AppendLine("                    backgroundColor: '#cd5120',");
+            html.AppendLine("                    borderWidth: 0");
             html.AppendLine("                }]");
             html.AppendLine("            },");
             html.AppendLine("            options: {");
@@ -2104,7 +2069,7 @@ namespace MovFileIntegrityChecker
             html.AppendLine("                            afterLabel: function(context) {");
             html.AppendLine($"                                const percentages = [{sizePercentages}];");
             html.AppendLine("                                if (context.datasetIndex === 1) {");
-            html.AppendLine("                                    return 'Corruption Rate: ' + percentages[context.dataIndex] + '%';");
+            html.AppendLine("                                    return 'Taux de corruption : ' + percentages[context.dataIndex] + '%';");
             html.AppendLine("                                }");
             html.AppendLine("                            }");
             html.AppendLine("                        }");
@@ -2127,17 +2092,15 @@ namespace MovFileIntegrityChecker
                 html.AppendLine("            data: {");
                 html.AppendLine($"                labels: [{durationLabels}],");
                 html.AppendLine("                datasets: [{");
-                html.AppendLine("                    label: 'Total Files',");
+                html.AppendLine("                    label: 'Fichiers totaux',");
                 html.AppendLine($"                    data: [{durationTotals}],");
-                html.AppendLine("                    backgroundColor: 'rgba(102, 126, 234, 0.6)',");
-                html.AppendLine("                    borderColor: 'rgba(102, 126, 234, 1)',");
-                html.AppendLine("                    borderWidth: 1");
+                html.AppendLine("                    backgroundColor: '#635bff',");
+                html.AppendLine("                    borderWidth: 0");
                 html.AppendLine("                }, {");
-                html.AppendLine("                    label: 'Corrupted Files',");
+                html.AppendLine("                    label: 'Fichiers corrompus',");
                 html.AppendLine($"                    data: [{durationCorrupted}],");
-                html.AppendLine("                    backgroundColor: 'rgba(239, 68, 68, 0.6)',");
-                html.AppendLine("                    borderColor: 'rgba(239, 68, 68, 1)',");
-                html.AppendLine("                    borderWidth: 1");
+                html.AppendLine("                    backgroundColor: '#cd5120',");
+                html.AppendLine("                    borderWidth: 0");
                 html.AppendLine("                }]");
                 html.AppendLine("            },");
                 html.AppendLine("            options: {");
@@ -2153,7 +2116,7 @@ namespace MovFileIntegrityChecker
                 html.AppendLine("                            afterLabel: function(context) {");
                 html.AppendLine($"                                const percentages = [{durationPercentages}];");
                 html.AppendLine("                                if (context.datasetIndex === 1) {");
-                html.AppendLine("                                    return 'Corruption Rate: ' + percentages[context.dataIndex] + '%';");
+                html.AppendLine("                                    return 'Taux de corruption : ' + percentages[context.dataIndex] + '%';");
                 html.AppendLine("                                }");
                 html.AppendLine("                            }");
                 html.AppendLine("                        }");
@@ -2175,25 +2138,23 @@ namespace MovFileIntegrityChecker
             html.AppendLine("            data: {");
             html.AppendLine($"                labels: [{hourLabels}],");
             html.AppendLine("                datasets: [{");
-            html.AppendLine("                    label: 'Total Files Modified',");
+            html.AppendLine("                    label: 'Fichiers modifiés',");
             html.AppendLine($"                    data: [{hourTotalData}],");
-            html.AppendLine("                    backgroundColor: 'rgba(102, 126, 234, 0.5)',");
-            html.AppendLine("                    borderColor: 'rgba(102, 126, 234, 1)',");
-            html.AppendLine("                    borderWidth: 1");
+            html.AppendLine("                    backgroundColor: '#635bff',");
+            html.AppendLine("                    borderWidth: 0");
             html.AppendLine("                }, {");
-            html.AppendLine("                    label: 'Failed/Corrupted Files',");
+            html.AppendLine("                    label: 'Fichiers corrompus',");
             html.AppendLine($"                    data: [{hourFailureData}],");
-            html.AppendLine("                    backgroundColor: 'rgba(239, 68, 68, 0.7)',");
-            html.AppendLine("                    borderColor: 'rgba(239, 68, 68, 1)',");
-            html.AppendLine("                    borderWidth: 1");
+            html.AppendLine("                    backgroundColor: '#cd5120',");
+            html.AppendLine("                    borderWidth: 0");
             html.AppendLine("                }]");
             html.AppendLine("            },");
             html.AppendLine("            options: {");
             html.AppendLine("                responsive: true,");
             html.AppendLine("                maintainAspectRatio: true,");
             html.AppendLine("                scales: {");
-            html.AppendLine("                    y: { beginAtZero: true, title: { display: true, text: 'Number of Files' } },");
-            html.AppendLine("                    x: { title: { display: true, text: 'Hour of Day (Local Time)' } }");
+            html.AppendLine("                    y: { beginAtZero: true, title: { display: true, text: 'Nombre de fichiers' } },");
+            html.AppendLine("                    x: { title: { display: true, text: 'Heure de la journée' } }");
             html.AppendLine("                },");
             html.AppendLine("                plugins: {");
             html.AppendLine("                    legend: { position: 'top' },");
@@ -2202,7 +2163,7 @@ namespace MovFileIntegrityChecker
             html.AppendLine("                            afterLabel: function(context) {");
             html.AppendLine($"                                const percentages = [{hourPercentages}];");
             html.AppendLine("                                if (context.datasetIndex === 1) {");
-            html.AppendLine("                                    return 'Failure Rate: ' + percentages[context.dataIndex] + '%';");
+            html.AppendLine("                                    return 'Taux d\\'échec : ' + percentages[context.dataIndex] + '%';");
             html.AppendLine("                                }");
             html.AppendLine("                            }");
             html.AppendLine("                        }");
@@ -2224,36 +2185,32 @@ namespace MovFileIntegrityChecker
                 html.AppendLine("            type: 'scatter',");
                 html.AppendLine("            data: {");
                 html.AppendLine("                datasets: [{");
-                html.AppendLine("                    label: 'Valid Files (100% Playable)',");
+                html.AppendLine("                    label: 'Fichiers valides (100%)',");
                 html.AppendLine($"                    data: [{scatterPointsValid}],");
-                html.AppendLine("                    backgroundColor: 'rgba(16, 185, 129, 0.6)',");
-                html.AppendLine("                    borderColor: 'rgba(16, 185, 129, 1)',");
-                html.AppendLine("                    borderWidth: 1,");
-                html.AppendLine("                    pointRadius: 6,");
-                html.AppendLine("                    pointHoverRadius: 8");
+                html.AppendLine("                    backgroundColor: '#0cce6b',");
+                html.AppendLine("                    borderWidth: 0,");
+                html.AppendLine("                    pointRadius: 5");
                 html.AppendLine("                }, {");
-                html.AppendLine("                    label: 'Corrupted Files',");
+                html.AppendLine("                    label: 'Fichiers corrompus',");
                 html.AppendLine($"                    data: [{scatterPointsCorrupted}],");
-                html.AppendLine("                    backgroundColor: 'rgba(239, 68, 68, 0.6)',");
-                html.AppendLine("                    borderColor: 'rgba(239, 68, 68, 1)',");
-                html.AppendLine("                    borderWidth: 1,");
-                html.AppendLine("                    pointRadius: 6,");
-                html.AppendLine("                    pointHoverRadius: 8");
+                html.AppendLine("                    backgroundColor: '#cd5120',");
+                html.AppendLine("                    borderWidth: 0,");
+                html.AppendLine("                    pointRadius: 5");
                 html.AppendLine("                }]");
                 html.AppendLine("            },");
                 html.AppendLine("            options: {");
                 html.AppendLine("                responsive: true,");
                 html.AppendLine("                maintainAspectRatio: true,");
                 html.AppendLine("                scales: {");
-                html.AppendLine("                    x: { title: { display: true, text: 'File Size (MB)' }, beginAtZero: true },");
-                html.AppendLine("                    y: { title: { display: true, text: 'Playable Percentage (%)' }, beginAtZero: true, max: 100 }");
+                html.AppendLine("                    x: { title: { display: true, text: 'Taille (MB)' }, beginAtZero: true },");
+                html.AppendLine("                    y: { title: { display: true, text: 'Pourcentage lisible (%)' }, beginAtZero: true, max: 100 }");
                 html.AppendLine("                },");
                 html.AppendLine("                plugins: {");
                 html.AppendLine("                    legend: { display: true, position: 'top' },");
                 html.AppendLine("                    tooltip: {");
                 html.AppendLine("                        callbacks: {");
                 html.AppendLine("                            label: function(context) {");
-                html.AppendLine("                                return context.raw.label + ': ' + context.parsed.y.toFixed(1) + '% playable';");
+                html.AppendLine("                                return context.raw.label + ' : ' + context.parsed.y.toFixed(1) + '% lisible';");
                 html.AppendLine("                            }");
                 html.AppendLine("                        }");
                 html.AppendLine("                    }");
@@ -2280,26 +2237,26 @@ namespace MovFileIntegrityChecker
             html.AppendLine("            type: 'bubble',");
             html.AppendLine("            data: {");
             html.AppendLine($"                datasets: [{{");
-            html.AppendLine("                    label: 'Corruption Rate by Hour',");
+            html.AppendLine("                    label: 'Taux de corruption par heure',");
             html.AppendLine($"                    data: [{hourScatterPoints}],");
-            html.AppendLine("                    backgroundColor: 'rgba(245, 158, 11, 0.5)',");
-            html.AppendLine("                    borderColor: 'rgba(245, 158, 11, 1)',");
-            html.AppendLine("                    borderWidth: 1");
+            html.AppendLine("                    backgroundColor: 'rgba(99, 91, 255, 0.6)',");
+            html.AppendLine("                    borderColor: '#635bff',");
+            html.AppendLine("                    borderWidth: 0");
             html.AppendLine("                }]");
             html.AppendLine("            },");
             html.AppendLine("            options: {");
             html.AppendLine("                responsive: true,");
             html.AppendLine("                maintainAspectRatio: true,");
             html.AppendLine("                scales: {");
-            html.AppendLine("                    x: { title: { display: true, text: 'Hour of Day (0-23)' }, min: 0, max: 23, ticks: { stepSize: 1 } },");
-            html.AppendLine("                    y: { title: { display: true, text: 'Corruption Rate (%)' }, beginAtZero: true, max: 100 }");
+            html.AppendLine("                    x: { title: { display: true, text: 'Heure (0-23)' }, min: 0, max: 23, ticks: { stepSize: 1 } },");
+            html.AppendLine("                    y: { title: { display: true, text: 'Taux de corruption (%)' }, beginAtZero: true, max: 100 }");
             html.AppendLine("                },");
             html.AppendLine("                plugins: {");
             html.AppendLine("                    legend: { display: false },");
             html.AppendLine("                    tooltip: {");
             html.AppendLine("                        callbacks: {");
             html.AppendLine("                            label: function(context) {");
-            html.AppendLine("                                return 'Hour ' + context.parsed.x + ':00 - ' + context.parsed.y.toFixed(1) + '% corruption rate';");
+            html.AppendLine("                                return 'Heure ' + context.parsed.x + ':00 - ' + context.parsed.y.toFixed(1) + '% corruption';");
             html.AppendLine("                            }");
             html.AppendLine("                        }");
             html.AppendLine("                    }");
@@ -2317,17 +2274,17 @@ namespace MovFileIntegrityChecker
             html.AppendLine("            type: 'scatter',");
             html.AppendLine("            data: {");
             html.AppendLine("                datasets: [{");
-            html.AppendLine("                    label: 'File Creation Time',");
+            html.AppendLine("                    label: 'Création de fichier',");
             html.AppendLine($"                    data: [{timelineCreationData}],");
-            html.AppendLine("                    backgroundColor: 'rgba(16, 185, 129, 0.6)',");
-            html.AppendLine("                    borderColor: 'rgba(16, 185, 129, 1)',");
+            html.AppendLine("                    backgroundColor: '#0cce6b',");
+            html.AppendLine("                    borderWidth: 0,");
             html.AppendLine("                    pointRadius: 4,");
             html.AppendLine("                    showLine: false");
             html.AppendLine("                }, {");
-            html.AppendLine("                    label: 'Last Modified (Corrupted Files)',");
+            html.AppendLine("                    label: 'Modification (corrompus)',");
             html.AppendLine($"                    data: [{timelineModifiedData}],");
-            html.AppendLine("                    backgroundColor: 'rgba(239, 68, 68, 0.6)',");
-            html.AppendLine("                    borderColor: 'rgba(239, 68, 68, 1)',");
+            html.AppendLine("                    backgroundColor: '#cd5120',");
+            html.AppendLine("                    borderWidth: 0,");
             html.AppendLine("                    pointRadius: 4,");
             html.AppendLine("                    showLine: false");
             html.AppendLine("                }]");
@@ -2336,7 +2293,7 @@ namespace MovFileIntegrityChecker
             html.AppendLine("                responsive: true,");
             html.AppendLine("                maintainAspectRatio: true,");
             html.AppendLine("                scales: {");
-            html.AppendLine("                    x: { type: 'time', time: { unit: 'day' }, title: { display: true, text: 'Date & Time' } },");
+            html.AppendLine("                    x: { type: 'time', time: { unit: 'day' }, title: { display: true, text: 'Date et heure' } },");
             html.AppendLine("                    y: { display: false, min: 0, max: 3 }");
             html.AppendLine("                },");
             html.AppendLine("                plugins: {");
@@ -2344,7 +2301,7 @@ namespace MovFileIntegrityChecker
             html.AppendLine("                    tooltip: {");
             html.AppendLine("                        callbacks: {");
             html.AppendLine("                            label: function(context) {");
-            html.AppendLine("                                return context.dataset.label + ': ' + context.parsed.x;");
+            html.AppendLine("                                return context.dataset.label + ' : ' + context.parsed.x;");
             html.AppendLine("                            }");
             html.AppendLine("                        }");
             html.AppendLine("                    }");
