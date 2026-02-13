@@ -3,6 +3,7 @@
 @using MovFileIntegrityChecker.Core.Models
 @using MovFileIntegrityChecker.Core.Utilities
 @using System.Diagnostics
+@using System.Threading
 @implements IDisposable
 @inject ScannerService ScannerService
 @inject LogService LogService
@@ -45,9 +46,17 @@
                 <div class="col-md-4 d-flex align-items-end gap-2">
                     @if (!ScannerService.IsScanning)
                     {
-                        <button class="btn btn-primary flex-grow-1" @onclick="StartScan">
-                            <i class="bi bi-play-fill me-1"></i> Start Scan
-                        </button>
+                        <div class="d-flex flex-column flex-grow-1">
+                             @if (ScannerService.IsAutoScanEnabled && ScannerService.NextAutoScanTime.HasValue)
+                            {
+                                <div class="text-muted small mb-1 text-end">
+                                    Next scan in: <span class="fw-bold text-primary">@_timeUntilNextScan</span>
+                                </div>
+                            }
+                            <button class="btn btn-primary" @onclick="StartScan">
+                                <i class="bi bi-play-fill me-1"></i> Start Scan
+                            </button>
+                        </div>
                     }
                     else
                     {
@@ -67,7 +76,7 @@
                 </div>
                 <div class="input-group input-group-sm" style="width: 200px;">
                     <span class="input-group-text">Every</span>
-                    <input type="number" class="form-control" @bind="_autoScanInterval" min="1" disabled="@(!ScannerService.IsAutoScanEnabled)">
+                    <input type="number" class="form-control" @bind="_autoScanInterval" @bind:event="oninput" @bind:after="OnIntervalChanged" min="1" disabled="@(!ScannerService.IsAutoScanEnabled)">
                     <span class="input-group-text">hours</span>
                 </div>
                 @if (ScannerService.IsAutoScanEnabled && ScannerService.NextAutoScanTime.HasValue)
@@ -175,56 +184,20 @@
 
 
 
-@if (_showFolderPicker)
-{
-    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Select Folder</h5>
-                    <button type="button" class="btn-close" @onclick="ClosePicker"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="input-group mb-3">
-                        <button class="btn btn-outline-secondary" @onclick="NavigateUp" disabled="@(_currentPickerPath.Length <= 3)">
-                            <i class="bi bi-arrow-up"></i> Up
-                        </button>
-                        <input type="text" class="form-control" value="@_currentPickerPath" readonly>
-                    </div>
-                    <div class="list-group" style="max-height: 400px; overflow-y: auto;">
-                        @if (_folders.Count == 0)
-                        {
-                            <div class="text-muted p-3">No accessible folders found.</div>
-                        }
-                        @foreach (var folder in _folders)
-                        {
-                            <button type="button" class="list-group-item list-group-item-action" @onclick="() => NavigateTo(folder)">
-                                <i class="bi bi-folder-fill text-warning me-2"></i> @Path.GetFileName(folder)
-                            </button>
-                        }
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="ClosePicker">Cancel</button>
-                    <button type="button" class="btn btn-primary" @onclick="SelectFolder">Select Current</button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
 @code {
     private string _path = @"T:\SPT\SP\Mont\Prod2\2_COU\_DL";
     private bool _recursive = true;
     private int _autoScanInterval = 24;
     private List<LogEntry> _logs = new();
     private List<FileCheckResult> _results = new();
-    private ElementReference _consoleWindow;
+
     
-    // Folder Picker State
-    private bool _showFolderPicker = false;
-    private string _currentPickerPath = "";
-    private List<string> _folders = new();
+    // Countdown state
+    private System.Threading.Timer? _countdownTimer;
+    private string _timeUntilNextScan = "--:--:--";
+    
+    // Folder Picker State (Native)
+    // private bool _showFolderPicker = false; // Removed in favor of native dialog
 
     protected override void OnInitialized()
     {
@@ -234,6 +207,26 @@
         
         _logs = LogService.GetLogs();
         _results = ScannerService.RecentResults.ToList();
+
+        // Start countdown timer
+        _countdownTimer = new System.Threading.Timer(UpdateCountdown, null, 0, 1000);
+    }
+    
+    private void UpdateCountdown(object? state)
+    {
+        if (ScannerService.IsAutoScanEnabled && ScannerService.NextAutoScanTime.HasValue)
+        {
+            var remaining = ScannerService.NextAutoScanTime.Value - DateTime.Now;
+            if (remaining.TotalSeconds > 0)
+            {
+                _timeUntilNextScan = remaining.ToString(@"hh\:mm\:ss");
+            }
+            else
+            {
+                _timeUntilNextScan = "Starting...";
+            }
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     private async void UpdateState()
@@ -275,6 +268,11 @@
         ScannerService.ToggleAutoScan(enable, _autoScanInterval, _path);
     }
 
+    private void OnIntervalChanged()
+    {
+        ScannerService.UpdateAutoScanInterval(_autoScanInterval, _path);
+    }
+
     private void ClearLogs()
     {
         LogService.Clear();
@@ -286,66 +284,31 @@
         _results.Clear();
     }
     
-    // Folder Picker Logic
+    // Native Folder Picker Logic
     private void OpenFolderDialog()
     {
-        _currentPickerPath = Directory.Exists(_path) ? _path : @"C:\";
-        LoadFolders();
-        _showFolderPicker = true;
-    }
-
-    private void ClosePicker()
-    {
-        _showFolderPicker = false;
-    }
-
-    private void SelectFolder()
-    {
-        _path = _currentPickerPath;
-        _showFolderPicker = false;
-    }
-
-    private void NavigateUp()
-    {
-        try
+        var thread = new Thread(() =>
         {
-            var parent = Directory.GetParent(_currentPickerPath);
-            if (parent != null)
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
-                _currentPickerPath = parent.FullName;
-                LoadFolders();
-            }
-            else
-            {
-                // Verify if we are at root, maybe list drives?
-                // For simplicity, just stay at root or do nothing
-            }
-        }
-        catch { }
-    }
+                dialog.Description = "Select Scan Directory";
+                dialog.ShowNewFolderButton = false;
+                if (Directory.Exists(_path))
+                {
+                    dialog.InitialDirectory = _path;
+                }
 
-    private void NavigateTo(string path)
-    {
-        _currentPickerPath = path;
-        LoadFolders();
-    }
+                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    _path = dialog.SelectedPath;
+                    InvokeAsync(StateHasChanged);
+                }
+            }
+        });
 
-    private void LoadFolders()
-    {
-        _folders.Clear();
-        try
-        {
-            var options = new EnumerationOptions { IgnoreInaccessible = true };
-            _folders = Directory.GetDirectories(_currentPickerPath, "*", options).ToList();
-        }
-        catch (UnauthorizedAccessException)
-        {
-            // Ignore
-        }
-        catch (Exception)
-        {
-            // Fallback or empty
-        }
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join(); // Wait for user to pick folder
     }
 
     private void OpenReport(FileCheckResult result)
@@ -392,5 +355,6 @@
         ScannerService.OnStatusChanged -= UpdateState;
         ScannerService.OnResultAdded -= OnResultAdded;
         LogService.OnLogAdded -= UpdateLogs;
+        _countdownTimer?.Dispose();
     }
 }

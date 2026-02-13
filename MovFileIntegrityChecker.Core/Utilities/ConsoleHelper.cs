@@ -44,19 +44,6 @@ namespace MovFileIntegrityChecker.Core.Utilities
             OnLog?.Invoke(message, ConsoleColor.Cyan);
         }
 
-        public static void WriteLine(string message = "")
-        {
-            Console.WriteLine(message);
-            // Use White (default) for standard output
-            OnLog?.Invoke(message, ConsoleColor.White);
-        }
-
-        public static void Write(string message)
-        {
-            Console.Write(message);
-            OnLog?.Invoke(message, ConsoleColor.White);
-        }
-
         public static string FormatDuration(double seconds)
         {
             if (seconds <= 0) return "00:00:00";

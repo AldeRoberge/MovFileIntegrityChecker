@@ -1,7 +1,7 @@
-using MovFileIntegrityChecker.Core.Services;
-using MovFileIntegrityChecker.Core.Utilities;
 using MovFileIntegrityChecker.Core;
 using MovFileIntegrityChecker.Core.Models;
+using MovFileIntegrityChecker.Core.Services;
+using MovFileIntegrityChecker.Core.Utilities;
 
 namespace MovFileIntegrityChecker.Web.Services
 {
@@ -10,14 +10,14 @@ namespace MovFileIntegrityChecker.Web.Services
         private CancellationTokenSource? _cts;
         private Task? _currentScanTask;
         private readonly LogService _logService;
-        
+
         public bool IsScanning => _currentScanTask != null && !_currentScanTask.IsCompleted;
         public string Status { get; private set; } = "Ready";
         public event Action? OnStatusChanged;
         public event Action<FileCheckResult>? OnResultAdded;
 
         // Auto-scan properties
-        private Timer? _autoScanTimer;
+        private System.Threading.Timer? _autoScanTimer;
         public bool IsAutoScanEnabled { get; private set; }
         public int AutoScanIntervalHours { get; private set; } = 24;
         public DateTime? NextAutoScanTime { get; private set; }
@@ -67,7 +67,7 @@ namespace MovFileIntegrityChecker.Web.Services
             try
             {
                 var orchestrator = new AnalysisOrchestrator();
-                
+
                 // We use a callback that respects the cancellation token if possible
                 // Note: The current AnalysisOrchestrator doesn't accept a CancellationToken directly in AnalyzePaths
                 // but we can wrap the execution somewhat.
@@ -77,26 +77,26 @@ namespace MovFileIntegrityChecker.Web.Services
                 // Wait! AnalysisOrchestrator is synchronous. We can't cancel it easily unless we modify it.
                 // Refactoring AnalysisOrchestrator to be async or accept CT is a good next step, 
                 // but let's stick to the plan.
-                
+
                 // Create a wrapper for the report generator
                 Action<FileCheckResult> reportGenerator = (result) =>
                 {
                     if (token.IsCancellationRequested) return;
                     LegacyReportGenerator.CreateErrorReport(result);
                     LegacyReportGenerator.CreateJsonReport(result);
-                    
+
                     RecentResults.Enqueue(result);
                     OnResultAdded?.Invoke(result);
                     OnStatusChanged?.Invoke();
                 };
 
                 ConsoleHelper.WriteInfo($"Starting scan on: {path}");
-                
+
                 // TODO: Update AnalysisOrchestrator to be async/cancellable
                 var results = orchestrator.AnalyzePaths(
-                    new[] { path }, 
-                    recursive, 
-                    summaryOnly: false, 
+                    new[] { path },
+                    recursive,
+                    summaryOnly: false,
                     deleteEmpty: false,
                     htmlReportGenerator: reportGenerator
                 );
@@ -146,21 +146,34 @@ namespace MovFileIntegrityChecker.Web.Services
             OnStatusChanged?.Invoke();
         }
 
+        public void UpdateAutoScanInterval(int intervalHours, string path)
+        {
+            if (AutoScanIntervalHours == intervalHours) return; // No change
+
+            AutoScanIntervalHours = intervalHours;
+            if (IsAutoScanEnabled)
+            {
+                ConsoleHelper.WriteInfo($"Auto-scan interval updated to {intervalHours} hours.");
+                ScheduleNextScan(path);
+            }
+            OnStatusChanged?.Invoke();
+        }
+
         private void ScheduleNextScan(string path)
         {
             _autoScanTimer?.Dispose();
             NextAutoScanTime = DateTime.Now.AddHours(AutoScanIntervalHours);
-            
+
             var delay = NextAutoScanTime.Value - DateTime.Now;
             if (delay < TimeSpan.Zero) delay = TimeSpan.Zero;
 
-            _autoScanTimer = new Timer(async _ =>
+            _autoScanTimer = new System.Threading.Timer(async _ =>
             {
                 if (!IsScanning)
                 {
-                   ConsoleHelper.WriteInfo("Starting scheduled auto-scan...");
-                   await StartScanAsync(path);
-                   ScheduleNextScan(path); // Re-schedule
+                    ConsoleHelper.WriteInfo("Starting scheduled auto-scan...");
+                    await StartScanAsync(path);
+                    ScheduleNextScan(path); // Re-schedule
                 }
                 else
                 {
@@ -168,7 +181,7 @@ namespace MovFileIntegrityChecker.Web.Services
                     ScheduleNextScan(path); // Try again later
                 }
             }, null, delay, Timeout.InfiniteTimeSpan);
-            
+
             OnStatusChanged?.Invoke();
         }
     }
