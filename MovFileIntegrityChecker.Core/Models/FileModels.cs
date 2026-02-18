@@ -27,8 +27,9 @@ namespace MovFileIntegrityChecker.Core.Models
         public List<AudioTrackInfo> AudioTracks { get; set; } = new();
         public string? HtmlReportPath { get; set; }
         public string? JsonReportPath { get; set; }
-        
+
         // AJA integration - store download URL if file came from AJA server
+
         public string? AjaDownloadUrl { get; set; }
         public string? AjaServerName { get; set; }
     }
@@ -53,7 +54,8 @@ namespace MovFileIntegrityChecker.Core.Models
         public required string Interlace { get; set; }
         public required string ServerName { get; set; }
         public required string ServerUrl { get; set; }
-        
+
+
         public string DownloadUrl => $"{ServerUrl}media/{ClipName}";
     }
 
@@ -64,6 +66,12 @@ namespace MovFileIntegrityChecker.Core.Models
         public string? LocalPath { get; set; }
         public bool? IsCorrupted { get; set; }
         public FileCheckResult? CheckResult { get; set; }
+
+        // Download status
+
+        public bool IsDownloading { get; set; }
+        public double DownloadProgress { get; set; }
+        public string? DownloadError { get; set; }
     }
 }
 

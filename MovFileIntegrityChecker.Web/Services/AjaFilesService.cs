@@ -278,5 +278,98 @@ namespace MovFileIntegrityChecker.Web.Services
             FileStatuses.Clear();
             OnStatusChanged?.Invoke();
         }
+
+        public async Task DownloadClipToFileAsync(AjaFileStatus status)
+        {
+            if (status.IsDownloading) return;
+
+            string? targetPath = status.LocalPath;
+
+            // If we don't have a local path yet (missing file), try to find a suitable folder
+            if (string.IsNullOrEmpty(targetPath))
+            {
+                var baseFolder = LocalScanFolders.FirstOrDefault(f => Directory.Exists(f));
+                if (baseFolder != null)
+                {
+                    targetPath = Path.Combine(baseFolder, status.Clip.ClipName);
+                }
+                else
+                {
+                    status.DownloadError = "Aucun dossier de destination valide trouvé.";
+                    OnStatusChanged?.Invoke();
+                    return;
+                }
+            }
+
+            try
+            {
+                status.IsDownloading = true;
+                status.DownloadProgress = 0;
+                status.DownloadError = null;
+                OnStatusChanged?.Invoke();
+
+                ConsoleHelper.WriteInfo($"Downloading {status.Clip.ClipName} to {targetPath}...");
+
+                using var response = await _httpClient.GetAsync(status.Clip.DownloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+                var totalBytes = response.Content.Headers.ContentLength ?? -1L;
+
+                using var contentStream = await response.Content.ReadAsStreamAsync();
+
+                // Ensure directory exists
+                var directory = Path.GetDirectoryName(targetPath);
+                if (directory != null && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                // Download to a temporary file first
+                var tempPath = targetPath + ".download";
+                using (var fileStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                {
+                    var buffer = new byte[8192];
+                    var totalRead = 0L;
+                    int read;
+
+                    while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        await fileStream.WriteAsync(buffer, 0, read);
+                        totalRead += read;
+
+                        if (totalBytes != -1)
+                        {
+                            var progress = (double)totalRead / totalBytes * 100;
+                            if (progress - status.DownloadProgress >= 1 || progress >= 100)
+                            {
+                                status.DownloadProgress = progress;
+                                OnStatusChanged?.Invoke();
+                            }
+                        }
+                    }
+                }
+
+                // Move temp file to final location
+                if (File.Exists(targetPath)) File.Delete(targetPath);
+                File.Move(tempPath, targetPath);
+
+                status.IsDownloading = false;
+                status.DownloadProgress = 100;
+                status.ExistsLocally = true;
+                status.LocalPath = targetPath;
+
+                ConsoleHelper.WriteSuccess($"Downloaded {status.Clip.ClipName} successfully.");
+            }
+            catch (Exception ex)
+            {
+                status.IsDownloading = false;
+                status.DownloadError = ex.Message;
+                ConsoleHelper.WriteError($"Failed to download {status.Clip.ClipName}: {ex.Message}");
+            }
+            finally
+            {
+                OnStatusChanged?.Invoke();
+            }
+        }
     }
 }
