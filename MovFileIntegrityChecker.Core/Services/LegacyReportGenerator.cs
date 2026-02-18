@@ -99,12 +99,12 @@ namespace MovFileIntegrityChecker.Core.Services
                         {
                             string stderr = p.StandardError.ReadToEnd();
                             string stdout = p.StandardOutput.ReadToEnd();
-                            
+
                             if (!p.WaitForExit(10000))
                             {
                                 try { p.Kill(true); } catch { }
                             }
-                            
+
                             // Log any errors for debugging
                             if (!string.IsNullOrWhiteSpace(stderr))
                             {
@@ -146,7 +146,7 @@ namespace MovFileIntegrityChecker.Core.Services
                 FileInfo fileInfo = new FileInfo(filePath);
 
                 string jsonReportDir;
-                
+
                 // Use custom folder if provided and exists
                 if (!string.IsNullOrWhiteSpace(customOutputFolder) && Directory.Exists(customOutputFolder))
                 {
@@ -254,7 +254,7 @@ namespace MovFileIntegrityChecker.Core.Services
 
                 string jsonContent = JsonSerializer.Serialize(jsonReport, options);
                 File.WriteAllText(jsonReportPath, jsonContent, Encoding.UTF8);
-                
+
                 // Store the report path in the result
                 result.JsonReportPath = jsonReportPath;
 
@@ -272,14 +272,14 @@ namespace MovFileIntegrityChecker.Core.Services
             {
                 string filePath = result.FilePath;
                 string baseName = Path.GetFileNameWithoutExtension(filePath);
-                
+
                 // Use custom folder if provided, otherwise use the same folder as the video file
                 string folder = !string.IsNullOrWhiteSpace(customOutputFolder) && Directory.Exists(customOutputFolder)
                     ? customOutputFolder
                     : Path.GetDirectoryName(filePath)!;
-                    
+
                 string reportPath = Path.Combine(folder, $"{baseName}-Incomplet.html");
-                
+
                 // Store the report path in the result
                 result.HtmlReportPath = reportPath;
 
@@ -670,7 +670,7 @@ namespace MovFileIntegrityChecker.Core.Services
                     sb.AppendLine($"                Télécharger depuis {System.Security.SecurityElement.Escape(serverName)}");
                     sb.AppendLine("            </a>");
                 }
-                
+
                 sb.AppendLine("        </div>");
 
                 sb.AppendLine("        <div class=\"content\">");
@@ -784,14 +784,14 @@ namespace MovFileIntegrityChecker.Core.Services
                         sb.AppendLine("                    <div class=\"audio-track\">");
                         sb.AppendLine("                        <div class=\"audio-track-header\">");
                         sb.AppendLine($"                            <div class=\"audio-track-title\">Piste {i + 1} - {System.Security.SecurityElement.Escape(track.Codec.ToUpper())}</div>");
-                        
+
                         if (!track.HasAudio)
                         {
                             sb.AppendLine("                            <span class=\"no-audio-badge\">Sans audio</span>");
                         }
-                        
+
                         sb.AppendLine("                        </div>");
-                        
+
                         string channelLabel = track.Channels switch
                         {
                             1 => "Mono",
@@ -800,7 +800,7 @@ namespace MovFileIntegrityChecker.Core.Services
                             8 => "7.1",
                             _ => $"{track.Channels} canaux"
                         };
-                        
+
                         sb.AppendLine($"                        <div class=\"audio-track-info\">");
                         sb.AppendLine($"                            {channelLabel} • {track.SampleRate / 1000.0:F1} kHz");
                         if (!string.IsNullOrEmpty(track.Bitrate))
@@ -812,17 +812,17 @@ namespace MovFileIntegrityChecker.Core.Services
                             sb.AppendLine($" • Langue: {System.Security.SecurityElement.Escape(track.Language)}");
                         }
                         sb.AppendLine("                        </div>");
-                        
+
                         // Waveform visualization
                         sb.AppendLine("                        <div class=\"audio-waveform\">");
                         sb.AppendLine("                            <svg viewBox=\"0 0 200 60\" preserveAspectRatio=\"none\">");
-                        
+
                         if (track.WaveformData != null && track.WaveformData.Count > 0)
                         {
                             // Generate waveform path
                             var pathData = new StringBuilder();
                             pathData.Append("M 0 30 ");
-                            
+
                             for (int j = 0; j < track.WaveformData.Count; j++)
                             {
                                 float amplitude = track.WaveformData[j];
@@ -830,7 +830,7 @@ namespace MovFileIntegrityChecker.Core.Services
                                 float y = 30 - (amplitude * 25); // Center at 30, scale amplitude
                                 pathData.Append($"L {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} ");
                             }
-                            
+
                             // Mirror for bottom half
                             for (int j = track.WaveformData.Count - 1; j >= 0; j--)
                             {
@@ -839,12 +839,12 @@ namespace MovFileIntegrityChecker.Core.Services
                                 float y = 30 + (amplitude * 25);
                                 pathData.Append($"L {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} ");
                             }
-                            
+
                             pathData.Append("Z");
-                            
+
                             string fillColor = track.HasAudio ? "#635bff" : "#e6e6e6";
                             sb.AppendLine($"                                <path d=\"{pathData}\" fill=\"{fillColor}\" opacity=\"0.8\" />");
-                            
+
                             // Center line
                             sb.AppendLine("                                <line x1=\"0\" y1=\"30\" x2=\"200\" y2=\"30\" stroke=\"#a0a0a0\" stroke-width=\"0.5\" opacity=\"0.3\" />");
                         }
@@ -853,12 +853,12 @@ namespace MovFileIntegrityChecker.Core.Services
                             // No waveform data - show flat line
                             sb.AppendLine("                                <line x1=\"0\" y1=\"30\" x2=\"200\" y2=\"30\" stroke=\"#e6e6e6\" stroke-width=\"2\" />");
                         }
-                        
+
                         sb.AppendLine("                            </svg>");
                         sb.AppendLine("                        </div>");
                         sb.AppendLine("                    </div>");
                     }
-                    
+
                     sb.AppendLine("                </div>");
                 }
                 else if (result.TotalDuration > 0)
@@ -871,8 +871,9 @@ namespace MovFileIntegrityChecker.Core.Services
 
                 if (result.Issues.Count > 0)
                 {
-                    sb.AppendLine("            <div class=\"section\">");
+                    sb.AppendLine("            <div class=\"section collapsible-section collapsed\">");
                     sb.AppendLine("                <div class=\"section-title\">Problèmes détectés</div>");
+                    sb.AppendLine("                <div class=\"collapsible-content\">");
                     sb.AppendLine("                <div class=\"issue-list\">");
                     foreach (var issue in result.Issues)
                     {
@@ -883,7 +884,8 @@ namespace MovFileIntegrityChecker.Core.Services
                     }
 
                     sb.AppendLine("                </div>");
-                    sb.AppendLine("            </div>");
+                    sb.AppendLine("                </div>"); // Close collapsible-content
+                    sb.AppendLine("            </div>"); // Close section
                 }
 
                 if (result.Atoms.Count > 0)
@@ -926,7 +928,7 @@ namespace MovFileIntegrityChecker.Core.Services
                 sb.AppendLine("        </div>");
 
                 sb.AppendLine("    </div>");
-                
+
                 sb.AppendLine("    <script>");
                 sb.AppendLine("        document.addEventListener('DOMContentLoaded', function() {");
                 sb.AppendLine("            const collapsibleSections = document.querySelectorAll('.collapsible-section');");
@@ -940,7 +942,7 @@ namespace MovFileIntegrityChecker.Core.Services
                 sb.AppendLine("            });");
                 sb.AppendLine("        });");
                 sb.AppendLine("    </script>");
-                
+
                 sb.AppendLine("</body>");
                 sb.AppendLine("</html>");
 
