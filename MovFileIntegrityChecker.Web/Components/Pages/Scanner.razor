@@ -69,6 +69,34 @@
             </div>
 
             <hr class="my-3"/>
+            
+            <!-- Custom Report Folder -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-12">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="customReportSwitch" @bind="_useCustomReportFolder">
+                        <label class="form-check-label" for="customReportSwitch">@L["SaveReportsElsewhere"]</label>
+                    </div>
+                </div>
+                @if (_useCustomReportFolder)
+                {
+                    <div class="col-md-12">
+                        <label class="form-label">@L["ReportFolder"]</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" @bind="_customReportFolder" placeholder="C:\Reports"/>
+                            <button class="btn btn-outline-secondary" @onclick="OpenReportFolderDialog" type="button">📂</button>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(_customReportFolder) && !Directory.Exists(_customReportFolder))
+                        {
+                            <div class="form-text text-warning">
+                                <i class="bi bi-exclamation-triangle"></i> Ce dossier n'existe pas. Il sera créé lors de la génération des rapports.
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <hr class="my-3"/>
 
             <div class="d-flex align-items-center gap-3">
                 <div class="form-check form-switch">
@@ -92,29 +120,8 @@
     </div>
 
     <div class="row">
-        <!-- Console Output -->
-        <div class="col-md-12 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                    <span class="small"><i class="bi bi-terminal me-2"></i>Console Output</span>
-                    <button class="btn btn-sm btn-outline-light py-0" @onclick="ClearLogs">Clear</button>
-                </div>
-                <div class="card-body bg-black p-0" style="height: 300px; overflow-y: auto;" id="console-window">
-                    <div class="p-2 font-monospace small">
-                        @foreach (var log in _logs)
-                        {
-                            <div class="@log.CssClass">
-                                <span class="text-secondary me-2">[@log.Timestamp.ToString("HH:mm:ss")]</span>
-                                @log.Message
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Results -->
-        <div class="col-md-12">
+        <div class="col-md-12 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span><i class="bi bi-table me-2"></i>Results</span>
@@ -169,6 +176,12 @@
                                         @if (result.HasIssues)
                                         {
                                             <span class="badge bg-danger">@L["Corrupted"]</span>
+                                            @if (!string.IsNullOrEmpty(result.AjaDownloadUrl))
+                                            {
+                                                <span class="badge bg-info text-white ms-1" title="Available on @result.AjaServerName">
+                                                    <i class="bi bi-cloud-download"></i> AJA
+                                                </span>
+                                            }
                                         }
                                         else
                                         {
@@ -195,6 +208,13 @@
                                                         @onclick="() => OpenReport(result)">
                                                     <i class="bi bi-file-earmark-text"></i> @L["Report"]
                                                 </button>
+                                                
+                                                @if (!string.IsNullOrEmpty(result.AjaDownloadUrl))
+                                                {
+                                                    <a href="@result.AjaDownloadUrl" class="btn btn-sm btn-outline-success" target="_blank" title="Download from @result.AjaServerName">
+                                                        <i class="bi bi-download"></i> @L["Download"]
+                                                    </a>
+                                                }
                                             }
                                             <button class="btn btn-sm btn-outline-secondary"
                                                     @onclick="() => OpenFolder(result)">
@@ -225,6 +245,27 @@
                 </div>
             </div>
         </div>
+
+        <!-- Console Output -->
+        <div class="col-md-12">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <span class="small"><i class="bi bi-terminal me-2"></i>Console Output</span>
+                    <button class="btn btn-sm btn-outline-light py-0" @onclick="ClearLogs">Clear</button>
+                </div>
+                <div class="card-body bg-black p-0" style="height: 300px; overflow-y: auto;" id="console-window">
+                    <div class="p-2 font-monospace small">
+                        @foreach (var log in _logs)
+                        {
+                            <div class="@log.CssClass">
+                                <span class="text-secondary me-2">[@log.Timestamp.ToString("HH:mm:ss")]</span>
+                                @log.Message
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -237,6 +278,10 @@
     private List<LogEntry> _logs = new();
     private List<FileCheckResult> _results = new();
     private FilterMode _filterMode = FilterMode.All;
+    
+    // Custom report folder settings
+    private bool _useCustomReportFolder = false;
+    private string _customReportFolder = @"C:\Reports";
 
     private enum FilterMode
     {
@@ -317,10 +362,15 @@
     {
         if (string.IsNullOrWhiteSpace(_path)) return;
 
+        // Determine custom report folder
+        string? reportFolder = _useCustomReportFolder && !string.IsNullOrWhiteSpace(_customReportFolder) 
+            ? _customReportFolder 
+            : null;
+
         // Clear previous results? maybe not if we want history
         // ScannerService.ClearResults(); 
 
-        await ScannerService.StartScanAsync(_path, _recursive);
+        await ScannerService.StartScanAsync(_path, _recursive, reportFolder);
     }
 
     private void StopScan()
@@ -376,11 +426,50 @@
         thread.Start();
         thread.Join(); // Wait for user to pick folder
     }
+    
+    private void OpenReportFolderDialog()
+    {
+        var thread = new Thread(() =>
+        {
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                dialog.Description = L["SelectReportFolder"];
+                dialog.ShowNewFolderButton = true;
+                if (Directory.Exists(_customReportFolder))
+                {
+                    dialog.InitialDirectory = _customReportFolder;
+                }
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    _customReportFolder = dialog.SelectedPath;
+                    InvokeAsync(StateHasChanged);
+                }
+            }
+        });
+
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join(); // Wait for user to pick folder
+    }
 
     private void OpenReport(FileCheckResult result)
     {
         try
         {
+            // First try to use the stored HTML report path
+            if (!string.IsNullOrWhiteSpace(result.HtmlReportPath) && File.Exists(result.HtmlReportPath))
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = result.HtmlReportPath,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+                return;
+            }
+            
+            // Fallback: Try to find the report in the default location (same folder as video)
             string folder = Path.GetDirectoryName(result.FilePath)!;
             string baseName = Path.GetFileNameWithoutExtension(result.FilePath);
             string reportPath = Path.Combine(folder, $"{baseName}-Incomplet.html");
@@ -394,10 +483,23 @@
                 };
                 Process.Start(psi);
             }
+            else if (!string.IsNullOrWhiteSpace(result.JsonReportPath) && File.Exists(result.JsonReportPath))
+            {
+                // Try to open JSON report as fallback
+                var psi = new ProcessStartInfo
+                {
+                    FileName = result.JsonReportPath,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            }
             else
             {
-                // Try JSON report? or just open folder?
-                Process.Start("explorer.exe", folder);
+                // If no report found, open the folder where reports should be
+                string reportFolder = !string.IsNullOrWhiteSpace(result.HtmlReportPath) 
+                    ? Path.GetDirectoryName(result.HtmlReportPath)! 
+                    : folder;
+                Process.Start("explorer.exe", reportFolder);
             }
         }
         catch

@@ -14,20 +14,13 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MovFileIntegrityChecker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MovFileIntegrityChecker/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/DemoFiles/Broken-Incomplet.html" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/DemoFiles/Broken-Incomplet.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Models/FileModels.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Models/FileModels.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/AnalysisOrchestrator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/AnalysisOrchestrator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/FileAnalyzer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/FileAnalyzer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/GlobalReportGenerator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/GlobalReportGenerator.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/LegacyReportGenerator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/LegacyReportGenerator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/VideoAnalyzer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/VideoAnalyzer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Utilities/FfmpegHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Utilities/FfmpegHelper.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Layout/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Layout/MainLayout.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Error.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Error.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Scanner.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Scanner.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/_Imports.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/_Imports.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/MovFileIntegrityChecker.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/MovFileIntegrityChecker.Web.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Services/LocalizationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Services/LocalizationService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Services/ScannerService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Services/ScannerService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PROJECT_STRUCTURE.md" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +48,7 @@
     <setting file="file://$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Services/LegacyReportGenerators.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MovFileIntegrityChecker.CLI/Utilities/UserPreferences.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MovFileIntegrityChecker.Core/Constants/AtomConstants.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MovFileIntegrityChecker.Web/Services/AjaFilesService.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -188,7 +182,7 @@
       <option name="presentableId" value="Default" />
       <updated>1770834511444</updated>
       <workItem from="1770834512723" duration="15010000" />
-      <workItem from="1771422014844" duration="2517000" />
+      <workItem from="1771422014844" duration="4725000" />
     </task>
     <servers />
   </component>

@@ -10,6 +10,7 @@ namespace MovFileIntegrityChecker.Web.Services
         private Task? _currentScanTask;
         private readonly LogService _logService;
         private readonly LocalizationService _localizer;
+        private readonly AjaFilesService _ajaFilesService;
 
         public bool IsScanning => _currentScanTask != null && !_currentScanTask.IsCompleted;
         public string Status { get; private set; } = "";
@@ -21,15 +22,23 @@ namespace MovFileIntegrityChecker.Web.Services
         public bool IsAutoScanEnabled { get; private set; }
         public int AutoScanIntervalHours { get; private set; } = 24;
         public DateTime? NextAutoScanTime { get; private set; }
+        
+        // Dictionary to lookup AJA download URLs by file path
+        private Dictionary<string, (string DownloadUrl, string ServerName)> _ajaFileMap = new();
 
-        public ScannerService(LogService logService, LocalizationService localizer)
+        public ScannerService(LogService logService, LocalizationService localizer, AjaFilesService ajaFilesService)
         {
             _logService = logService;
             _localizer = localizer;
+            _ajaFilesService = ajaFilesService;
             Status = _localizer["Ready"];
         }
 
         public System.Collections.Concurrent.ConcurrentQueue<FileCheckResult> RecentResults { get; } = new();
+
+        // Custom report folder settings
+        public string? CustomReportFolder { get; set; }
+        public bool UseCustomReportFolder { get; set; }
 
         public void ClearResults()
         {
@@ -37,7 +46,7 @@ namespace MovFileIntegrityChecker.Web.Services
             OnStatusChanged?.Invoke();
         }
 
-        public async Task StartScanAsync(string path, bool recursive = true)
+        public async Task StartScanAsync(string path, bool recursive = true, string? customReportFolder = null)
         {
             if (IsScanning)
             {
@@ -49,7 +58,69 @@ namespace MovFileIntegrityChecker.Web.Services
             Status = _localizer["Scanning"];
             OnStatusChanged?.Invoke();
 
-            _currentScanTask = Task.Run(() => RunScan(path, recursive, _cts.Token));
+            // Try to load AJA files with timeout (don't block scan if it hangs)
+            try
+            {
+                if (!_ajaFilesService.FileStatuses.Any())
+                {
+                    ConsoleHelper.WriteInfo("Loading AJA server information (with 10s timeout)...");
+                    
+                    var ajaLoadTask = _ajaFilesService.StartScanAsync();
+                    var completedTask = await Task.WhenAny(ajaLoadTask, Task.Delay(10000));
+                    
+                    if (completedTask == ajaLoadTask)
+                    {
+                        // Wait for the scan to complete (with another timeout)
+                        var startWait = DateTime.Now;
+                        while (_ajaFilesService.IsScanning && (DateTime.Now - startWait).TotalSeconds < 30)
+                        {
+                            await Task.Delay(500);
+                        }
+                        
+                        if (_ajaFilesService.IsScanning)
+                        {
+                            ConsoleHelper.WriteWarning("AJA scan timed out after 30s - continuing without AJA data");
+                        }
+                    }
+                    else
+                    {
+                        ConsoleHelper.WriteWarning("AJA scan start timed out - continuing without AJA data");
+                    }
+                }
+                
+                // Build AJA file lookup map (even if partial data)
+                _ajaFileMap.Clear();
+                foreach (var status in _ajaFilesService.FileStatuses)
+                {
+                    if (status.ExistsLocally && !string.IsNullOrEmpty(status.LocalPath))
+                    {
+                        try
+                        {
+                            var normalizedPath = Path.GetFullPath(status.LocalPath);
+                            _ajaFileMap[normalizedPath] = (status.Clip.DownloadUrl, status.Clip.ServerName);
+                        }
+                        catch
+                        {
+                            // Skip files with invalid paths
+                        }
+                    }
+                }
+                
+                if (_ajaFileMap.Any())
+                {
+                    ConsoleHelper.WriteInfo($"Loaded {_ajaFileMap.Count} AJA file references");
+                }
+                else
+                {
+                    ConsoleHelper.WriteInfo("No AJA file references loaded - continuing without download links");
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.WriteWarning($"Failed to load AJA data: {ex.Message} - continuing without download links");
+            }
+
+            _currentScanTask = Task.Run(() => RunScan(path, recursive, customReportFolder, _cts.Token));
             await Task.CompletedTask; // Return immediately to let UI update
         }
 
@@ -64,7 +135,7 @@ namespace MovFileIntegrityChecker.Web.Services
             }
         }
 
-        private void RunScan(string path, bool recursive, CancellationToken token)
+        private void RunScan(string path, bool recursive, string? customReportFolder, CancellationToken token)
         {
             try
             {
@@ -74,14 +145,22 @@ namespace MovFileIntegrityChecker.Web.Services
                 Action<FileCheckResult> reportGenerator = (result) =>
                 {
                     if (token.IsCancellationRequested) return;
-                    LegacyReportGenerator.CreateErrorReport(result);
-                    LegacyReportGenerator.CreateJsonReport(result);
+                    LegacyReportGenerator.CreateErrorReport(result, customReportFolder);
+                    LegacyReportGenerator.CreateJsonReport(result, customReportFolder);
                 };
 
                 // Create a streaming callback that adds results as they're generated
                 Action<FileCheckResult> streamingCallback = (result) =>
                 {
                     if (token.IsCancellationRequested) return;
+                    
+                    // Check if this file is from an AJA server and populate download info
+                    var normalizedPath = Path.GetFullPath(result.FilePath);
+                    if (_ajaFileMap.TryGetValue(normalizedPath, out var ajaInfo))
+                    {
+                        result.AjaDownloadUrl = ajaInfo.DownloadUrl;
+                        result.AjaServerName = ajaInfo.ServerName;
+                    }
                     
                     RecentResults.Enqueue(result);
                     OnResultAdded?.Invoke(result);

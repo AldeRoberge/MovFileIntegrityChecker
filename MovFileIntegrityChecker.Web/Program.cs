@@ -7,11 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Add HTTP client for AJA server communication
+builder.Services.AddHttpClient();
+
 // Add custom localization service (French)
 builder.Services.AddSingleton<LocalizationService>();
 
 builder.Services.AddSingleton<LogService>();
 builder.Services.AddSingleton<ScannerService>();
+builder.Services.AddSingleton<AjaFilesService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,295 @@
+@page "/aja"
+@using MovFileIntegrityChecker.Web.Services
+@using MovFileIntegrityChecker.Core.Models
+@using System.Diagnostics
+@implements IDisposable
+@inject AjaFilesService AjaService
+@inject LogService LogService
+@inject LocalizationService L
+@rendermode InteractiveServer
+
+<PageTitle>@L["AjaScanner"] - MovFileIntegrityChecker</PageTitle>
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">@L["AjaScanner"]</h1>
+            <div class="text-muted small">Vérification des fichiers AJA</div>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="badge @GetStatusBadgeClass() p-2 fs-6">
+                @AjaService.Status
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Serveurs AJA Configurés</label>
+                    <div class="text-muted small">@AjaService.AjaServers.Count serveurs configurés</div>
+                </div>
+                <div class="col-md-6 d-flex align-items-end gap-2">
+                    @if (!AjaService.IsScanning)
+                    {
+                        <button class="btn btn-primary flex-grow-1" @onclick="StartScan">
+                            <i class="bi bi-cloud-download me-1"></i> @L["ScanAjaServers"]
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-danger flex-grow-1" @onclick="StopScan">
+                            <i class="bi bi-stop-fill me-1"></i> @L["StopScan"]
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Server Summary -->
+    @if (_fileStatuses.Any())
+    {
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <i class="bi bi-server me-2"></i>Résumé par Serveur
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            @foreach (var serverGroup in _fileStatuses.GroupBy(s => s.Clip.ServerName))
+                            {
+                                var totalClips = serverGroup.Count();
+                                var missingClips = serverGroup.Count(s => !s.ExistsLocally);
+                                var serverType = AjaService.AjaServers.FirstOrDefault(srv => srv.Name == serverGroup.Key)?.Type ?? "Unknown";
+                                
+                                <div class="col-md-3">
+                                    <div class="card border-@(missingClips > 0 ? "warning" : "success")">
+                                        <div class="card-body p-2">
+                                            <div class="fw-bold small">@serverGroup.Key</div>
+                                            <div class="badge bg-secondary small">@L[serverType]</div>
+                                            <div class="mt-2 small">
+                                                <div>@L["Total"] @totalClips</div>
+                                                <div class="text-warning">@L["Missing"] @missingClips</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Results Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-table me-2"></i>@L["Results"]</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-secondary">@L["Total"] @_fileStatuses.Count</span>
+                        <span class="badge bg-success">@L["Available"] @_fileStatuses.Count(r => r.ExistsLocally)</span>
+                        <span class="badge bg-warning text-dark">@L["Missing"] @_fileStatuses.Count(r => !r.ExistsLocally)</span>
+                        
+                        <div class="btn-group btn-group-sm" role="group">
+                            <input type="radio" class="btn-check" name="filterOptions" id="filterAll" checked="@(_filterMode == FilterMode.All)" @onchange="() => SetFilter(FilterMode.All)">
+                            <label class="btn btn-outline-secondary" for="filterAll">@L["All"]</label>
+                            
+                            <input type="radio" class="btn-check" name="filterOptions" id="filterMissing" checked="@(_filterMode == FilterMode.Missing)" @onchange="() => SetFilter(FilterMode.Missing)">
+                            <label class="btn btn-outline-warning" for="filterMissing">@L["Missing"]</label>
+                            
+                            <input type="radio" class="btn-check" name="filterOptions" id="filterAvailable" checked="@(_filterMode == FilterMode.Available)" @onchange="() => SetFilter(FilterMode.Available)">
+                            <label class="btn btn-outline-success" for="filterAvailable">@L["Available"]</label>
+                        </div>
+                        
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="ClearResults">@L["Clear"]</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>@L["ClipName"]</th>
+                                <th>@L["Server"]</th>
+                                <th>Timestamp</th>
+                                <th>@L["Resolution"]</th>
+                                <th>@L["FrameRate"]</th>
+                                <th>@L["FrameCount"]</th>
+                                <th>@L["LocalStatus"]</th>
+                                <th>@L["Actions"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (FilteredResults.Any())
+                            {
+                                @foreach (var status in FilteredResults.OrderByDescending(s => !s.ExistsLocally).ThenBy(s => s.Clip.ClipName))
+                                {
+                                    <tr class="@(status.ExistsLocally ? "" : "table-warning")">
+                                        <td>
+                                            <div class="fw-bold small">@status.Clip.ClipName</div>
+                                            @if (!string.IsNullOrEmpty(status.LocalPath))
+                                            {
+                                                <div class="text-muted" style="font-size: 0.7rem;">@status.LocalPath</div>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="small">@status.Clip.ServerName</div>
+                                            <div class="badge bg-secondary" style="font-size: 0.65rem;">@AjaService.AjaServers.FirstOrDefault(s => s.Name == status.Clip.ServerName)?.Type</div>
+                                        </td>
+                                        <td class="small">@status.Clip.Timestamp</td>
+                                        <td class="small">@status.Clip.Width x @status.Clip.Height</td>
+                                        <td class="small">@status.Clip.FrameRate fps</td>
+                                        <td class="small">@status.Clip.FrameCount</td>
+                                        <td>
+                                            @if (status.ExistsLocally)
+                                            {
+                                                <span class="badge bg-success">@L["Available"]</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark">@L["Missing"]</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                @if (!status.ExistsLocally)
+                                                {
+                                                    <a href="@status.Clip.DownloadUrl" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                        <i class="bi bi-download"></i> @L["Download"]
+                                                    </a>
+                                                }
+                                                @if (status.ExistsLocally && !string.IsNullOrEmpty(status.LocalPath))
+                                                {
+                                                    <button class="btn btn-sm btn-outline-secondary" @onclick="() => OpenFolder(status.LocalPath)">
+                                                        <i class="bi bi-folder2-open"></i> @L["Folder"]
+                                                    </button>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        @if (_fileStatuses.Any())
+                                        {
+                                            <text>@L["NoResultsFilter"]</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Aucun résultat pour le moment. Cliquez sur "Scanner les Serveurs AJA" pour commencer.</text>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<AjaFileStatus> _fileStatuses = new();
+    private FilterMode _filterMode = FilterMode.All;
+
+    private enum FilterMode
+    {
+        All,
+        Missing,
+        Available
+    }
+
+    private IEnumerable<AjaFileStatus> FilteredResults => _filterMode switch
+    {
+        FilterMode.Missing => _fileStatuses.Where(r => !r.ExistsLocally),
+        FilterMode.Available => _fileStatuses.Where(r => r.ExistsLocally),
+        _ => _fileStatuses
+    };
+
+    private void SetFilter(FilterMode mode)
+    {
+        _filterMode = mode;
+    }
+
+    protected override void OnInitialized()
+    {
+        AjaService.OnStatusChanged += UpdateState;
+        AjaService.OnFileStatusAdded += OnFileStatusAdded;
+        
+        _fileStatuses = AjaService.FileStatuses.ToList();
+    }
+
+    private async void UpdateState()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnFileStatusAdded(AjaFileStatus status)
+    {
+        _fileStatuses = AjaService.FileStatuses.ToList();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task StartScan()
+    {
+        await AjaService.StartScanAsync();
+    }
+
+    private void StopScan()
+    {
+        AjaService.StopScan();
+    }
+
+    private void ClearResults()
+    {
+        AjaService.ClearResults();
+        _fileStatuses.Clear();
+    }
+
+    private void OpenFolder(string filePath)
+    {
+        try
+        {
+            Process.Start("explorer.exe", $"/select,\"{filePath}\"");
+        }
+        catch
+        {
+            try
+            {
+                string folder = Path.GetDirectoryName(filePath)!;
+                Process.Start("explorer.exe", folder);
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+    }
+
+    private string GetStatusBadgeClass() => AjaService.Status switch
+    {
+        "Analyse des serveurs AJA..." => "bg-primary",
+        "Terminé" => "bg-success",
+        "Erreur" => "bg-danger",
+        "Annulé" => "bg-warning text-dark",
+        "Arrêt en cours..." => "bg-warning text-dark",
+        _ => "bg-secondary"
+    };
+
+    public void Dispose()
+    {
+        AjaService.OnStatusChanged -= UpdateState;
+        AjaService.OnFileStatusAdded -= OnFileStatusAdded;
+    }
+}
+

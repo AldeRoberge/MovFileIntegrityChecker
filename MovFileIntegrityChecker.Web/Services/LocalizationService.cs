@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 namespace MovFileIntegrityChecker.Web.Services
 {
     public class LocalizationService
@@ -21,8 +21,8 @@ namespace MovFileIntegrityChecker.Web.Services
             { "Clear", "Effacer" },
             { "Results", "Résultats" },
             { "Total", "Total :" },
-            { "Valid", "Valides :" },
-            { "Corrupted", "Corrompus :" },
+            { "Valid", "Valide" },
+            { "Corrupted", "Corrompu" },
             { "All", "Tous" },
             { "File", "Fichier" },
             { "Size", "Taille" },
@@ -50,7 +50,33 @@ namespace MovFileIntegrityChecker.Web.Services
             { "DevelopmentModeDescription2", "L'environnement de développement ne doit pas être activé pour les applications déployées. Cela peut entraîner l'affichage d'informations sensibles provenant d'exceptions aux utilisateurs finaux. Pour le débogage local, activez l'environnement de développement en définissant la variable d'environnement ASPNETCORE_ENVIRONMENT sur Development et en redémarrant l'application." },
             // Layout
             { "UnhandledError", "Une erreur non gérée s'est produite." },
-            { "Reload", "Recharger" }
+            { "Reload", "Recharger" },
+            
+            // AJA Files
+            { "AjaFiles", "Fichiers AJA" },
+            { "AjaScanner", "Scanner AJA" },
+            { "ScanAjaServers", "Scanner les Serveurs AJA" },
+            { "Server", "Serveur" },
+            { "ClipsFound", "Clips Trouvés" },
+            { "MissingLocally", "Manquants Localement" },
+            { "Download", "Télécharger" },
+            { "ScanningAjaServers", "Analyse des serveurs AJA..." },
+            { "AjaScanComplete", "Analyse AJA terminée" },
+            { "ClipName", "Nom du Clip" },
+            { "Resolution", "Résolution" },
+            { "FrameCount", "Nombre d'Images" },
+            { "FrameRate", "Fréquence d'Images" },
+            { "LocalStatus", "État Local" },
+            { "Available", "Disponible" },
+            { "Missing", "Manquant" },
+            { "Unknown", "Inconnu" },
+            { "Master", "Principal" },
+            { "Backup", "Sauvegarde" },
+            
+            // Report Settings
+            { "SaveReportsElsewhere", "Enregistrer les rapports ailleurs" },
+            { "ReportFolder", "Dossier des Rapports" },
+            { "SelectReportFolder", "Sélectionner le Dossier des Rapports" }
         };
         public string this[string key]
         {

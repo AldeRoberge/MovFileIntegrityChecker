@@ -1,8 +1,36 @@
 ﻿@using MovFileIntegrityChecker.Web.Services
 @inject LocalizationService L
+@using MovFileIntegrityChecker.Web.Services
 @inherits LayoutComponentBase
 
-@Body
+<div class="page">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">MovFileIntegrityChecker</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-speedometer2"></i> @L["ScannerDashboard"]
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/aja">
+                            <i class="bi bi-cloud"></i> @L["AjaFiles"]
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        @Body
+    </main>
+</div>
 
 <div id="blazor-error-ui" data-nosnippet>
     @L["UnhandledError"]
