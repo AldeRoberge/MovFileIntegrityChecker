@@ -170,6 +170,16 @@ namespace MovFileIntegrityChecker.Web.Services
                         result.AjaDownloadUrl = ajaInfo.DownloadUrl;
                         result.AjaServerName = ajaInfo.ServerName;
                     }
+                    else
+                    {
+                        // Try fuzzy matching
+                        var fuzzyMatch = _ajaFileMap.FirstOrDefault(m => AjaMatchingHelper.IsMatch(fileName, m.Key));
+                        if (fuzzyMatch.Key != null)
+                        {
+                            result.AjaDownloadUrl = fuzzyMatch.Value.DownloadUrl;
+                            result.AjaServerName = fuzzyMatch.Value.ServerName;
+                        }
+                    }
 
                     LegacyReportGenerator.CreateErrorReport(result, customReportFolder);
                     LegacyReportGenerator.CreateJsonReport(result, customReportFolder);

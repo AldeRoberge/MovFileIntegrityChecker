@@ -1,8 +1,8 @@
+using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 using MovFileIntegrityChecker.Core.Models;
 using MovFileIntegrityChecker.Core.Services;
 using MovFileIntegrityChecker.Core.Utilities;
-using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
 
 namespace MovFileIntegrityChecker.Web.Services
 {
@@ -231,10 +231,28 @@ namespace MovFileIntegrityChecker.Web.Services
                 {
                     if (token.IsCancellationRequested) break;
 
+                    // First try exact match
+                    bool exists = localFiles.TryGetValue(clip.ClipName, out var localPath);
+
+                    // If not found, try fuzzy matching (local files might have a suffix like _5)
+                    if (!exists)
+                    {
+                        // This is a bit reversal: AJA clip name is the "base", local file might be "base_suffix"
+                        // So we look for any local file that, when normalized, matches the clip name
+                        var matchingLocal = localFiles.FirstOrDefault(f =>
+                            AjaMatchingHelper.IsMatch(f.Key, clip.ClipName));
+
+                        if (matchingLocal.Key != null)
+                        {
+                            exists = true;
+                            localPath = matchingLocal.Value;
+                        }
+                    }
+
                     var status = new AjaFileStatus
                     {
                         Clip = clip,
-                        ExistsLocally = localFiles.TryGetValue(clip.ClipName, out var localPath),
+                        ExistsLocally = exists,
                         LocalPath = localPath
                     };
 
