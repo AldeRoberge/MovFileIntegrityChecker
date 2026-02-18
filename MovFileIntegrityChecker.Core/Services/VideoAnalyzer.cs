@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using System.Globalization;
+using MovFileIntegrityChecker.Core.Utilities;
 
 namespace MovFileIntegrityChecker.Core.Services
 {
@@ -15,7 +16,7 @@ namespace MovFileIntegrityChecker.Core.Services
             {
                 var psi = new ProcessStartInfo
                 {
-                    FileName = "ffprobe",
+                    FileName = FfmpegHelper.GetFfprobePath(),
                     Arguments = $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"{filePath}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

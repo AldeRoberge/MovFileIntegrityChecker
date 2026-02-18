@@ -224,6 +224,83 @@
             font-weight: 600;
         }
         .preview img { max-width: 100%; border-radius: 6px; border: 1px solid #e6e6e6; }
+        .audio-tracks-container {
+            margin-top: 24px;
+            padding: 20px;
+            background: #fafbfc;
+            border-radius: 6px;
+            border: 1px solid #e6e6e6;
+        }
+        .audio-track {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #ffffff;
+            border-radius: 6px;
+            border: 1px solid #e6e6e6;
+        }
+        .audio-track:last-child {
+            margin-bottom: 0;
+        }
+        .audio-track-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .audio-track-title {
+            font-weight: 600;
+            color: #0a2540;
+            font-size: 14px;
+        }
+        .audio-track-info {
+            font-size: 12px;
+            color: #6b7c93;
+            margin-bottom: 12px;
+        }
+        .audio-waveform {
+            width: 100%;
+            height: 60px;
+            background: #f6f9fc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .audio-waveform svg {
+            width: 100%;
+            height: 100%;
+        }
+        .no-audio-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #fff4ed;
+            color: #cd5120;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .teams-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #6264A7;
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        .teams-button:hover {
+            background: #464775;
+        }
+        .teams-button svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
     </style>
 </head>
 <body>
@@ -234,7 +311,6 @@
             <div class="warning">
                 <strong>Fichier potentiellement incomplet</strong>
                 Ce fichier a été détecté comme potentiellement incomplet. 
-                Veuillez le vérifier dans VLC pour confirmer sa lecture.
             </div>
         </div>
         <div class="content">
@@ -247,8 +323,9 @@
                     </div>
                 </div>
             </div>
-            <div class="section">
+            <div class="section collapsible-section collapsed">
                 <div class="section-title">Résumé technique</div>
+                <div class="collapsible-content">
                 <div class="info-grid">
                     <div class="info-card">
                         <div class="label">Nom du fichier</div>
@@ -272,6 +349,7 @@
                     <div class="progress-fill" style="width: 0.0%"></div>
                 </div>
                 <div class="progress-label">0,0% validé</div>
+                </div>
             </div>
             <div class="section">
                 <div class="section-title">Problèmes détectés</div>
@@ -290,8 +368,9 @@
                     </div>
                 </div>
             </div>
-            <div class="section">
+            <div class="section collapsible-section collapsed">
                 <div class="section-title">Structure des atomes</div>
+                <div class="collapsible-content">
                 <table class="atom-table">
                     <thead>
                         <tr>
@@ -322,10 +401,11 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
         <div class="footer">
-            Généré le 12-02-2026 à 09:53:26 · MovFileIntegrityChecker
+            Généré le 18-02-2026 à 09:06:31 · MovFileIntegrityChecker
         </div>
     </div>
 </body>

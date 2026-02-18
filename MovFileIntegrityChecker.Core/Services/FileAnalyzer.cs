@@ -189,6 +189,9 @@ namespace MovFileIntegrityChecker.Core.Services
                 var videoAnalyzer = new VideoAnalyzer();
                 result.TotalDuration = videoAnalyzer.GetVideoDuration(filePath);
 
+                // Analyze audio tracks
+                result.AudioTracks = AudioAnalyzer.AnalyzeAudioTracks(filePath);
+
                 // Estimate playable duration based on bytes validated
                 if (result.TotalDuration > 0 && result.FileSize > 0)
                 {

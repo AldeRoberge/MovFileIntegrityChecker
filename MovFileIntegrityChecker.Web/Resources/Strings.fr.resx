@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ScannerDashboard" xml:space="preserve"><value>Tableau de Bord</value></data>
+  <data name="ScanPath" xml:space="preserve"><value>Chemin d'Analyse</value></data>
+  <data name="Options" xml:space="preserve"><value>Options</value></data>
+  <data name="Recursive" xml:space="preserve"><value>Récursif</value></data>
+  <data name="StartScan" xml:space="preserve"><value>Démarrer l'Analyse</value></data>
+  <data name="StopScan" xml:space="preserve"><value>Arrêter l'Analyse</value></data>
+  <data name="NextScanIn" xml:space="preserve"><value>Prochaine analyse dans :</value></data>
+  <data name="AutomaticMode" xml:space="preserve"><value>Mode Automatique</value></data>
+  <data name="Every" xml:space="preserve"><value>Toutes les</value></data>
+  <data name="Hours" xml:space="preserve"><value>heures</value></data>
+  <data name="NextScan" xml:space="preserve"><value>Prochaine analyse :</value></data>
+  <data name="ConsoleOutput" xml:space="preserve"><value>Sortie Console</value></data>
+  <data name="Clear" xml:space="preserve"><value>Effacer</value></data>
+  <data name="Results" xml:space="preserve"><value>Résultats</value></data>
+  <data name="Total" xml:space="preserve"><value>Total :</value></data>
+  <data name="Valid" xml:space="preserve"><value>Valides :</value></data>
+  <data name="Corrupted" xml:space="preserve"><value>Corrompus :</value></data>
+  <data name="All" xml:space="preserve"><value>Tous</value></data>
+  <data name="File" xml:space="preserve"><value>Fichier</value></data>
+  <data name="Size" xml:space="preserve"><value>Taille</value></data>
+  <data name="Status" xml:space="preserve"><value>État</value></data>
+  <data name="Validation" xml:space="preserve"><value>Validation</value></data>
+  <data name="Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Report" xml:space="preserve"><value>Rapport</value></data>
+  <data name="Folder" xml:space="preserve"><value>Dossier</value></data>
+  <data name="NoResultsFilter" xml:space="preserve"><value>Aucun résultat ne correspond au filtre actuel.</value></data>
+  <data name="NoResultsYet" xml:space="preserve"><value>Aucun résultat pour le moment. Démarrez une analyse pour voir les données.</value></data>
+  <data name="Ready" xml:space="preserve"><value>Prêt</value></data>
+  <data name="Scanning" xml:space="preserve"><value>Analyse en cours...</value></data>
+  <data name="Completed" xml:space="preserve"><value>Terminé</value></data>
+  <data name="Error" xml:space="preserve"><value>Erreur</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Annulé</value></data>
+  <data name="Stopping" xml:space="preserve"><value>Arrêt en cours...</value></data>
+  <data name="SelectScanDirectory" xml:space="preserve"><value>Sélectionner le Répertoire d'Analyse</value></data>
+  <data name="ErrorTitle" xml:space="preserve"><value>Erreur</value></data>
+  <data name="ErrorMessage" xml:space="preserve"><value>Une erreur s'est produite lors du traitement de votre demande.</value></data>
+  <data name="RequestId" xml:space="preserve"><value>ID de Demande :</value></data>
+  <data name="DevelopmentMode" xml:space="preserve"><value>Mode Développement</value></data>
+  <data name="DevelopmentModeDescription1" xml:space="preserve"><value>Le passage à l'environnement de développement affichera des informations plus détaillées sur l'erreur qui s'est produite.</value></data>
+  <data name="DevelopmentModeDescription2" xml:space="preserve"><value>L'environnement de développement ne doit pas être activé pour les applications déployées. Cela peut entraîner l'affichage d'informations sensibles provenant d'exceptions aux utilisateurs finaux. Pour le débogage local, activez l'environnement de développement en définissant la variable d'environnement ASPNETCORE_ENVIRONMENT sur Development et en redémarrant l'application.</value></data>
+  <data name="UnhandledError" xml:space="preserve"><value>Une erreur non gérée s'est produite.</value></data>
+  <data name="Reload" xml:space="preserve"><value>Recharger</value></data>
+</root>

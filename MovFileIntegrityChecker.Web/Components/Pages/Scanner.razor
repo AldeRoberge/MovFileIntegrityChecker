@@ -1,21 +1,20 @@
-@page "/"
+﻿@page "/"
 @using MovFileIntegrityChecker.Web.Services
 @using MovFileIntegrityChecker.Core.Models
-@using MovFileIntegrityChecker.Core.Utilities
 @using System.Diagnostics
 @using System.Threading
 @implements IDisposable
 @inject ScannerService ScannerService
 @inject LogService LogService
-@inject IJSRuntime JS
-@rendermode RenderMode.InteractiveServer
+@inject LocalizationService L
+@rendermode InteractiveServer
 
-<PageTitle>Scanner - MovFileIntegrityChecker</PageTitle>
+<PageTitle>@L["ScannerDashboard"] - MovFileIntegrityChecker</PageTitle>
 
 <div class="container-fluid p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1">Scanner Dashboard</h1>
+            <h1 class="h3 mb-1">@L["ScannerDashboard"]</h1>
             <div class="text-muted small">MovFileIntegrityChecker v1.0</div>
         </div>
         <div class="d-flex align-items-center gap-3">
@@ -30,58 +29,63 @@
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label">Scan Path</label>
+                    <label class="form-label">@L["ScanPath"]</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" @bind="_path" placeholder="C:\Videos" />
-                        <button class="btn btn-outline-secondary" @onclick="OpenFolderDialog" type="button">📂</button>
+                        <input type="text" class="form-control" @bind="_path" placeholder="C:\Videos"/>
+                        <button class="btn btn-outline-secondary" @onclick="OpenFolderDialog" type="button">ðŸ“‚
+                        </button>
                     </div>
                 </div>
-                 <div class="col-md-2">
-                    <label class="form-label">Options</label>
+                <div class="col-md-2">
+                    <label class="form-label">@L["Options"]</label>
                     <div class="form-check mt-2">
                         <input class="form-check-input" type="checkbox" @bind="_recursive" id="recursiveCheck">
-                        <label class="form-check-label" for="recursiveCheck">Recursive</label>
+                        <label class="form-check-label" for="recursiveCheck">@L["Recursive"]</label>
                     </div>
                 </div>
                 <div class="col-md-4 d-flex align-items-end gap-2">
                     @if (!ScannerService.IsScanning)
                     {
                         <div class="d-flex flex-column flex-grow-1">
-                             @if (ScannerService.IsAutoScanEnabled && ScannerService.NextAutoScanTime.HasValue)
+                            @if (ScannerService.IsAutoScanEnabled && ScannerService.NextAutoScanTime.HasValue)
                             {
                                 <div class="text-muted small mb-1 text-end">
-                                    Next scan in: <span class="fw-bold text-primary">@_timeUntilNextScan</span>
+                                    @L["NextScanIn"] <span
+                                        class="fw-bold text-primary">@_timeUntilNextScan</span>
                                 </div>
                             }
                             <button class="btn btn-primary" @onclick="StartScan">
-                                <i class="bi bi-play-fill me-1"></i> Start Scan
+                                <i class="bi bi-play-fill me-1"></i> @L["StartScan"]
                             </button>
                         </div>
                     }
                     else
                     {
                         <button class="btn btn-danger flex-grow-1" @onclick="StopScan">
-                            <i class="bi bi-stop-fill me-1"></i> Stop Scan
+                            <i class="bi bi-stop-fill me-1"></i> @L["StopScan"]
                         </button>
                     }
                 </div>
             </div>
-            
+
             <hr class="my-3"/>
-            
+
             <div class="d-flex align-items-center gap-3">
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="autoScanSwitch" checked="@ScannerService.IsAutoScanEnabled" @onchange="ToggleAutoScan">
-                    <label class="form-check-label" for="autoScanSwitch">Automatic Mode</label>
+                    <input class="form-check-input" type="checkbox" id="autoScanSwitch"
+                           checked="@ScannerService.IsAutoScanEnabled" @onchange="ToggleAutoScan">
+                    <label class="form-check-label" for="autoScanSwitch">@L["AutomaticMode"]</label>
                 </div>
                 <div class="input-group input-group-sm" style="width: 200px;">
-                    <span class="input-group-text">Every</span>
-                    <input type="number" class="form-control" @bind="_autoScanInterval" @bind:event="oninput" @bind:after="OnIntervalChanged" min="1" disabled="@(!ScannerService.IsAutoScanEnabled)">
-                    <span class="input-group-text">hours</span>
+                    <span class="input-group-text">@L["Every"]</span>
+                    <input type="number" class="form-control" @bind="_autoScanInterval" @bind:event="oninput"
+                           @bind:after="OnIntervalChanged" min="1" disabled="@(!ScannerService.IsAutoScanEnabled)">
+                    <span class="input-group-text">@L["Hours"]</span>
                 </div>
                 @if (ScannerService.IsAutoScanEnabled && ScannerService.NextAutoScanTime.HasValue)
                 {
-                    <span class="text-muted small">Next scan: @ScannerService.NextAutoScanTime.Value.ToString("g")</span>
+                    <span
+                        class="text-muted small">@L["NextScan"] @ScannerService.NextAutoScanTime.Value.ToString("g")</span>
                 }
             </div>
         </div>
@@ -108,72 +112,114 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Results -->
         <div class="col-md-12">
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span><i class="bi bi-table me-2"></i>Results</span>
-                     <div>
-                        <span class="badge bg-secondary me-2">Total: @_results.Count</span>
-                         <button class="btn btn-sm btn-outline-secondary" @onclick="ClearResults">Clear</button>
-                     </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-secondary">Total: @_results.Count</span>
+                        <span class="badge bg-success">Valid: @_results.Count(r => !r.HasIssues)</span>
+                        <span class="badge bg-danger">Corrupted: @_results.Count(r => r.HasIssues)</span>
+
+                        <div class="btn-group btn-group-sm" role="group">
+                            <input type="radio" class="btn-check" name="filterOptions" id="filterAll"
+                                   checked="@(_filterMode == FilterMode.All)"
+                                   @onchange="() => SetFilter(FilterMode.All)">
+                            <label class="btn btn-outline-secondary" for="filterAll">All</label>
+
+                            <input type="radio" class="btn-check" name="filterOptions" id="filterCorrupted"
+                                   checked="@(_filterMode == FilterMode.Corrupted)"
+                                   @onchange="() => SetFilter(FilterMode.Corrupted)">
+                            <label class="btn btn-outline-danger" for="filterCorrupted">Corrupted</label>
+
+                            <input type="radio" class="btn-check" name="filterOptions" id="filterValid"
+                                   checked="@(_filterMode == FilterMode.Valid)"
+                                   @onchange="() => SetFilter(FilterMode.Valid)">
+                            <label class="btn btn-outline-success" for="filterValid">Valid</label>
+                        </div>
+
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="ClearResults">Clear</button>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover table-sm mb-0">
                         <thead class="table-light">
-                            <tr>
-                                <th>File</th>
-                                <th>Size</th>
-                                <th>Status</th>
-                                <th>Validation</th>
-                                <th>Actions</th>
-                            </tr>
+                        <tr>
+                            <th>@L["File"]</th>
+                            <th>@L["Size"]</th>
+                            <th>@L["Status"]</th>
+                            <th>@L["Validation"]</th>
+                            <th>@L["Actions"]</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            @if (_results.Any())
+                        @if (FilteredResults.Any())
+                        {
+                            @foreach (var result in FilteredResults.OrderByDescending(r => r.HasIssues))
                             {
-                                @foreach (var result in _results.OrderByDescending(r => r.HasIssues))
-                                {
-                                    <tr class="@(result.HasIssues ? "table-danger" : "")">
-                                        <td>
-                                            <div class="fw-bold">@Path.GetFileName(result.FilePath)</div>
-                                            <div class="small text-muted">@Path.GetDirectoryName(result.FilePath)</div>
-                                        </td>
-                                        <td>@((result.FileSize / (1024.0 * 1024.0)).ToString("F2")) MB</td>
-                                        <td>
+                                <tr class="@(result.HasIssues ? "table-danger" : "table-success-subtle")">
+                                    <td>
+                                        <div class="fw-bold">@Path.GetFileName(result.FilePath)</div>
+                                        <div class="small text-muted">@Path.GetDirectoryName(result.FilePath)</div>
+                                    </td>
+                                    <td>@((result.FileSize / (1024.0 * 1024.0)).ToString("F2")) MB</td>
+                                    <td>
+                                        @if (result.HasIssues)
+                                        {
+                                            <span class="badge bg-danger">@L["Corrupted"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">@L["Valid"]</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1" style="height: 6px;">
+                                                <div
+                                                    class="progress-bar @(result.HasIssues ? "bg-danger" : "bg-success")"
+                                                    role="progressbar"
+                                                    style="width: @((result.FileSize > 0 ? result.BytesValidated * 100.0 / result.FileSize : 0).ToString("F0", System.Globalization.CultureInfo.InvariantCulture))%"></div>
+                                            </div>
+                                            <span
+                                                class="ms-2 small">@((result.FileSize > 0 ? result.BytesValidated * 100.0 / result.FileSize : 0).ToString("F0"))%</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
                                             @if (result.HasIssues)
                                             {
-                                                <span class="badge bg-danger">Corrupted</span>
+                                                <button class="btn btn-sm btn-outline-primary"
+                                                        @onclick="() => OpenReport(result)">
+                                                    <i class="bi bi-file-earmark-text"></i> @L["Report"]
+                                                </button>
                                             }
-                                            else
-                                            {
-                                                <span class="badge bg-success">Valid</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="progress flex-grow-1" style="height: 6px;">
-                                                    <div class="progress-bar @(result.HasIssues ? "bg-danger" : "bg-success")" role="progressbar" 
-                                                         style="width: @((result.FileSize > 0 ? result.BytesValidated * 100.0 / result.FileSize : 0).ToString("F0", System.Globalization.CultureInfo.InvariantCulture))%"></div>
-                                                </div>
-                                                <span class="ms-2 small">@((result.FileSize > 0 ? result.BytesValidated * 100.0 / result.FileSize : 0).ToString("F0"))%</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary" @onclick="() => OpenReport(result)">
-                                                <i class="bi bi-file-earmark-text"></i> Report
+                                            <button class="btn btn-sm btn-outline-secondary"
+                                                    @onclick="() => OpenFolder(result)">
+                                                <i class="bi bi-folder2-open"></i> @L["Folder"]
                                             </button>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">No results yet. Start a scan to see data.</td>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    @if (_results.Any())
+                                    {
+                                        <text>@L["NoResultsFilter"]</text>
+                                    }
+                                    else
+                                    {
+                                        <text>@L["NoResultsYet"]</text>
+                                    }
+                                </td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
                 </div>
@@ -190,12 +236,31 @@
     private int _autoScanInterval = 24;
     private List<LogEntry> _logs = new();
     private List<FileCheckResult> _results = new();
+    private FilterMode _filterMode = FilterMode.All;
 
-    
+    private enum FilterMode
+    {
+        All,
+        Corrupted,
+        Valid
+    }
+
+    private IEnumerable<FileCheckResult> FilteredResults => _filterMode switch
+    {
+        FilterMode.Corrupted => _results.Where(r => r.HasIssues),
+        FilterMode.Valid => _results.Where(r => !r.HasIssues),
+        _ => _results
+    };
+
+    private void SetFilter(FilterMode mode)
+    {
+        _filterMode = mode;
+    }
+
     // Countdown state
     private System.Threading.Timer? _countdownTimer;
     private string _timeUntilNextScan = "--:--:--";
-    
+
     // Folder Picker State (Native)
     // private bool _showFolderPicker = false; // Removed in favor of native dialog
 
@@ -204,14 +269,14 @@
         ScannerService.OnStatusChanged += UpdateState;
         ScannerService.OnResultAdded += OnResultAdded;
         LogService.OnLogAdded += UpdateLogs;
-        
+
         _logs = LogService.GetLogs();
         _results = ScannerService.RecentResults.ToList();
 
         // Start countdown timer
         _countdownTimer = new System.Threading.Timer(UpdateCountdown, null, 0, 1000);
     }
-    
+
     private void UpdateCountdown(object? state)
     {
         if (ScannerService.IsAutoScanEnabled && ScannerService.NextAutoScanTime.HasValue)
@@ -225,6 +290,7 @@
             {
                 _timeUntilNextScan = "Starting...";
             }
+
             InvokeAsync(StateHasChanged);
         }
     }
@@ -250,10 +316,10 @@
     private async Task StartScan()
     {
         if (string.IsNullOrWhiteSpace(_path)) return;
-        
+
         // Clear previous results? maybe not if we want history
         // ScannerService.ClearResults(); 
-        
+
         await ScannerService.StartScanAsync(_path, _recursive);
     }
 
@@ -261,7 +327,7 @@
     {
         ScannerService.StopScan();
     }
-    
+
     private void ToggleAutoScan(ChangeEventArgs e)
     {
         bool enable = (bool)(e.Value ?? false);
@@ -283,7 +349,7 @@
         ScannerService.ClearResults();
         _results.Clear();
     }
-    
+
     // Native Folder Picker Logic
     private void OpenFolderDialog()
     {
@@ -291,7 +357,7 @@
         {
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
-                dialog.Description = "Select Scan Directory";
+                dialog.Description = L["SelectScanDirectory"];
                 dialog.ShowNewFolderButton = false;
                 if (Directory.Exists(_path))
                 {
@@ -340,13 +406,34 @@
         }
     }
 
+    private void OpenFolder(FileCheckResult result)
+    {
+        try
+        {
+            Process.Start("explorer.exe", $"/select,\"{result.FilePath}\"");
+        }
+        catch
+        {
+            // Fallback to just opening the folder
+            try
+            {
+                string folder = Path.GetDirectoryName(result.FilePath)!;
+                Process.Start("explorer.exe", folder);
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+    }
+
     private string GetStatusBadgeClass() => ScannerService.Status switch
     {
-        "Scanning..." => "bg-primary",
-        "Completed" => "bg-success",
-        "Error" => "bg-danger",
-        "Cancelled" => "bg-warning text-dark",
-        "Stopping..." => "bg-warning text-dark",
+        "Scanning..." or "Analyse en cours..." => "bg-primary",
+        "Completed" or "TerminÃ©" => "bg-success",
+        "Error" or "Erreur" => "bg-danger",
+        "Cancelled" or "AnnulÃ©" => "bg-warning text-dark",
+        "Stopping..." or "ArrÃªt en cours..." => "bg-warning text-dark",
         _ => "bg-secondary"
     };
 
@@ -357,4 +444,5 @@
         LogService.OnLogAdded -= UpdateLogs;
         _countdownTimer?.Dispose();
     }
+
 }

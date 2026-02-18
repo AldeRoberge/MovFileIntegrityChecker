@@ -12,10 +12,22 @@
   <component name="ChangeListManager">
     <list default="true" id="eb20a909-6dc9-4813-8a15-f8d058c7983a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MovFileIntegrityChecker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MovFileIntegrityChecker/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/DemoFiles/Broken-Incomplet.html" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.CLI/DemoFiles/Broken-Incomplet.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Models/FileModels.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Models/FileModels.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/AnalysisOrchestrator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/AnalysisOrchestrator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Utilities/ConsoleHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Utilities/ConsoleHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/FileAnalyzer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/FileAnalyzer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/GlobalReportGenerator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/GlobalReportGenerator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/LegacyReportGenerator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/LegacyReportGenerator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/VideoAnalyzer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Services/VideoAnalyzer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Utilities/FfmpegHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Core/Utilities/FfmpegHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Layout/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Layout/MainLayout.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Error.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Error.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Scanner.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/Pages/Scanner.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/_Imports.razor" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Components/_Imports.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/MovFileIntegrityChecker.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/MovFileIntegrityChecker.Web.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Services/ScannerService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MovFileIntegrityChecker.Web/Services/ScannerService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PROJECT_STRUCTURE.md" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,29 +72,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.MovFileIntegrityChecker.Web: http.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Project.MovFileIntegrityChecker.CLI.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Project.MovFileIntegrityChecker.executor&quot;: &quot;Debug&quot;,
-    &quot;Publish to folder.Publish MovFileIntegrityChecker to folder.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.MovFileIntegrityChecker.Web: http.executor": "Run",
+    ".NET Project.MovFileIntegrityChecker.CLI.executor": "Run",
+    ".NET Project.MovFileIntegrityChecker.executor": "Debug",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Publish to folder.Publish MovFileIntegrityChecker to folder.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.MovFileIntegrityChecker.Web: http">
     <configuration name="Publish MovFileIntegrityChecker to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish target_folder="$PROJECT_DIR$/MovFileIntegrityChecker/bin/net9.0/publish" target_framework="net9.0" uuid_high="-1064793404666786891" uuid_low="-5407014387979127373">
@@ -174,7 +187,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1770834511444</updated>
-      <workItem from="1770834512723" duration="13307000" />
+      <workItem from="1770834512723" duration="15010000" />
+      <workItem from="1771422014844" duration="2517000" />
     </task>
     <servers />
   </component>

@@ -291,6 +291,64 @@ namespace MovFileIntegrityChecker.Core.Utilities
                 CopyDirectory(subDir, destSubDir);
             }
         }
+
+        /// <summary>
+        /// Gets the full path to the ffmpeg executable.
+        /// Returns "ffmpeg" if it's in PATH, or the full path to the local installation.
+        /// </summary>
+        public static string GetFfmpegPath()
+        {
+            // Check if ffmpeg is in PATH
+            if (IsCommandAvailable("ffmpeg"))
+            {
+                return "ffmpeg";
+            }
+
+            // Check local installation
+            string localPath = Path.Combine(FfmpegFolder, "bin", "ffmpeg.exe");
+            if (File.Exists(localPath))
+            {
+                // Add local bin folder to PATH for DLL dependencies
+                AddLocalFfmpegToPath();
+                return localPath;
+            }
+
+            // Fallback to just "ffmpeg" (will fail but at least shows the command)
+            return "ffmpeg";
+        }
+
+        /// <summary>
+        /// Gets the full path to the ffprobe executable.
+        /// Returns "ffprobe" if it's in PATH, or the full path to the local installation.
+        /// </summary>
+        public static string GetFfprobePath()
+        {
+            // Check if ffprobe is in PATH
+            if (IsCommandAvailable("ffprobe"))
+            {
+                return "ffprobe";
+            }
+
+            // Check local installation
+            string localPath = Path.Combine(FfmpegFolder, "bin", "ffprobe.exe");
+            if (File.Exists(localPath))
+            {
+                // Add local bin folder to PATH for DLL dependencies
+                AddLocalFfmpegToPath();
+                return localPath;
+            }
+
+            // Fallback to just "ffprobe" (will fail but at least shows the command)
+            return "ffprobe";
+        }
+
+        /// <summary>
+        /// Checks if ffmpeg and ffprobe are available (either in PATH or locally installed).
+        /// </summary>
+        public static bool IsFfmpegAvailable()
+        {
+            return IsFfmpegInPath() || IsFfmpegInLocalFolder();
+        }
     }
 }
 

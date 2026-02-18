@@ -7,10 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Add custom localization service (French)
+builder.Services.AddSingleton<LocalizationService>();
+
 builder.Services.AddSingleton<LogService>();
 builder.Services.AddSingleton<ScannerService>();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -14,7 +14,8 @@ namespace MovFileIntegrityChecker.Core.Services
         private readonly JsonReportGenerator _jsonReportGenerator = new();
 
         public List<FileCheckResult> AnalyzePaths(string[] paths, bool recursive, bool summaryOnly, bool deleteEmpty,
-            Action<FileCheckResult>? htmlReportGenerator = null)
+            Action<FileCheckResult>? htmlReportGenerator = null,
+            Action<FileCheckResult>? onResultCallback = null)
         {
             var results = new List<FileCheckResult>();
 
@@ -22,11 +23,11 @@ namespace MovFileIntegrityChecker.Core.Services
             {
                 if (File.Exists(path))
                 {
-                    results.AddRange(AnalyzeSingleFile(path, summaryOnly, htmlReportGenerator));
+                    results.AddRange(AnalyzeSingleFile(path, summaryOnly, htmlReportGenerator, onResultCallback));
                 }
                 else if (Directory.Exists(path))
                 {
-                    results.AddRange(AnalyzeDirectory(path, recursive, summaryOnly, deleteEmpty, htmlReportGenerator));
+                    results.AddRange(AnalyzeDirectory(path, recursive, summaryOnly, deleteEmpty, htmlReportGenerator, onResultCallback));
                 }
                 else
                 {
@@ -39,7 +40,8 @@ namespace MovFileIntegrityChecker.Core.Services
         }
 
         private List<FileCheckResult> AnalyzeSingleFile(string filePath, bool summaryOnly,
-            Action<FileCheckResult>? htmlReportGenerator)
+            Action<FileCheckResult>? htmlReportGenerator,
+            Action<FileCheckResult>? onResultCallback)
         {
             WriteInfo($"\nChecking file: {filePath}\n");
             var result = _fileAnalyzer.CheckFileIntegrity(filePath);
@@ -51,6 +53,9 @@ namespace MovFileIntegrityChecker.Core.Services
                 htmlReportGenerator?.Invoke(result);
             }
 
+            // Invoke callback for every result (streaming)
+            onResultCallback?.Invoke(result);
+
             if (!summaryOnly)
             {
                 PrintDetailedResult(result);
@@ -60,7 +65,8 @@ namespace MovFileIntegrityChecker.Core.Services
         }
 
         private List<FileCheckResult> AnalyzeDirectory(string dirPath, bool recursive, bool summaryOnly,
-            bool deleteEmpty, Action<FileCheckResult>? htmlReportGenerator)
+            bool deleteEmpty, Action<FileCheckResult>? htmlReportGenerator,
+            Action<FileCheckResult>? onResultCallback)
         {
             var results = new List<FileCheckResult>();
 
@@ -97,6 +103,9 @@ namespace MovFileIntegrityChecker.Core.Services
                 {
                     htmlReportGenerator?.Invoke(result);
                 }
+
+                // Invoke callback for every result (streaming)
+                onResultCallback?.Invoke(result);
 
                 if (!summaryOnly)
                 {
