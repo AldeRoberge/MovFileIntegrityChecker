@@ -1,18 +1,28 @@
 using System.Text.Json;
 
-namespace MovFileIntegrityChecker.CLI.Utilities
+namespace MovFileIntegrityChecker.Core.Utilities
 {
     /// <summary>
     /// Manages user preferences and settings, persisted to a JSON file.
+    /// This is shared between CLI and Web projects.
     /// </summary>
     public class UserPreferences
     {
         private const string PreferencesFileName = "user_preferences.json";
-        
+
+        // CLI Settings
         public string LastPath { get; set; } = string.Empty;
         public bool LastRecursive { get; set; } = true;
         public bool LastDeleteEmpty { get; set; }
         public string LastMenuChoice { get; set; } = "1";
+
+        // Web Settings
+        public string WebLastScanPath { get; set; } = @"T:\SPT\SP\Mont\Prod2\2_COU\_DL";
+        public bool WebLastRecursive { get; set; } = true;
+        public int WebAutoScanInterval { get; set; } = 24;
+        public bool WebAutoScanEnabled { get; set; } = false;
+        public bool WebUseCustomReportFolder { get; set; } = false;
+        public string WebCustomReportFolder { get; set; } = @"C:\Reports";
 
         /// <summary>
         /// Gets the path to the preferences file in the user's application data folder.
@@ -20,6 +30,7 @@ namespace MovFileIntegrityChecker.CLI.Utilities
         private static string GetPreferencesFilePath()
         {
             // Store in same directory as executable for simplicity
+            // In a real web app this might need to be a fixed path, but for this tool it works well
             string appDir = AppDomain.CurrentDomain.BaseDirectory;
             return Path.Combine(appDir, PreferencesFileName);
         }
@@ -30,7 +41,7 @@ namespace MovFileIntegrityChecker.CLI.Utilities
         public static UserPreferences Load()
         {
             string filePath = GetPreferencesFilePath();
-            
+
             try
             {
                 if (File.Exists(filePath))
@@ -42,7 +53,8 @@ namespace MovFileIntegrityChecker.CLI.Utilities
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Warning: Could not load preferences: {ex.Message}");
+                // In console apps this is visible, in web apps it goes to the logs
+                System.Diagnostics.Debug.WriteLine($"Warning: Could not load preferences: {ex.Message}");
             }
 
             return new UserPreferences();
@@ -54,7 +66,7 @@ namespace MovFileIntegrityChecker.CLI.Utilities
         public void Save()
         {
             string filePath = GetPreferencesFilePath();
-            
+
             try
             {
                 var options = new JsonSerializerOptions { WriteIndented = true };
@@ -63,9 +75,8 @@ namespace MovFileIntegrityChecker.CLI.Utilities
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Warning: Could not save preferences: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Warning: Could not save preferences: {ex.Message}");
             }
         }
     }
 }
-

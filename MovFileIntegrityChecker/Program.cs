@@ -1,5 +1,6 @@
 using MovFileIntegrityChecker.Services;
 using MovFileIntegrityChecker.Utilities;
+using MovFileIntegrityChecker.Core.Utilities;
 using static MovFileIntegrityChecker.Utilities.ConsoleHelper;
 
 namespace MovFileIntegrityChecker

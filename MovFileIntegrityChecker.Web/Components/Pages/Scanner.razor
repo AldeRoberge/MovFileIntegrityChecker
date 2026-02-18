@@ -272,7 +272,7 @@
 
 
 @code {
-    private string _path = @"T:\SPT\SP\Mont\Prod2\2_COU\_DL";
+    private string _path = "";
     private bool _recursive = true;
     private int _autoScanInterval = 24;
     private List<LogEntry> _logs = new();
@@ -280,8 +280,16 @@
     private FilterMode _filterMode = FilterMode.All;
     
     // Custom report folder settings
-    private bool _useCustomReportFolder = false;
-    private string _customReportFolder = @"C:\Reports";
+    private bool _useCustomReportFolder 
+    { 
+        get => ScannerService.UseCustomReportFolder; 
+        set => ScannerService.UseCustomReportFolder = value; 
+    }
+    private string _customReportFolder 
+    { 
+        get => ScannerService.CustomReportFolder ?? @"C:\Reports"; 
+        set => ScannerService.CustomReportFolder = value; 
+    }
 
     private enum FilterMode
     {
@@ -317,6 +325,11 @@
 
         _logs = LogService.GetLogs();
         _results = ScannerService.RecentResults.ToList();
+        
+        // Load initial values from persisted settings
+        _path = ScannerService.LastScanPath;
+        _recursive = ScannerService.LastRecursive;
+        _autoScanInterval = ScannerService.AutoScanIntervalHours;
 
         // Start countdown timer
         _countdownTimer = new System.Threading.Timer(UpdateCountdown, null, 0, 1000);

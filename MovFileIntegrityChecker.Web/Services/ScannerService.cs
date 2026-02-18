@@ -11,6 +11,7 @@ namespace MovFileIntegrityChecker.Web.Services
         private readonly LogService _logService;
         private readonly LocalizationService _localizer;
         private readonly AjaFilesService _ajaFilesService;
+        private readonly UserPreferences _preferences;
 
         public bool IsScanning => _currentScanTask != null && !_currentScanTask.IsCompleted;
         public string Status { get; private set; } = "";
@@ -19,8 +20,8 @@ namespace MovFileIntegrityChecker.Web.Services
 
         // Auto-scan properties
         private System.Threading.Timer? _autoScanTimer;
-        public bool IsAutoScanEnabled { get; private set; }
-        public int AutoScanIntervalHours { get; private set; } = 24;
+        public bool IsAutoScanEnabled => _preferences.WebAutoScanEnabled;
+        public int AutoScanIntervalHours => _preferences.WebAutoScanInterval;
         public DateTime? NextAutoScanTime { get; private set; }
 
         // Dictionary to lookup AJA download URLs by file path
@@ -31,14 +32,35 @@ namespace MovFileIntegrityChecker.Web.Services
             _logService = logService;
             _localizer = localizer;
             _ajaFilesService = ajaFilesService;
+            _preferences = UserPreferences.Load();
             Status = _localizer["Ready"];
         }
 
         public System.Collections.Concurrent.ConcurrentQueue<FileCheckResult> RecentResults { get; } = new();
 
         // Custom report folder settings
-        public string? CustomReportFolder { get; set; }
-        public bool UseCustomReportFolder { get; set; }
+        public string? CustomReportFolder
+        {
+            get => _preferences.WebCustomReportFolder;
+            set { _preferences.WebCustomReportFolder = value ?? @"C:\Reports"; _preferences.Save(); }
+        }
+        public bool UseCustomReportFolder
+        {
+            get => _preferences.WebUseCustomReportFolder;
+            set { _preferences.WebUseCustomReportFolder = value; _preferences.Save(); }
+        }
+
+        public string LastScanPath
+        {
+            get => _preferences.WebLastScanPath;
+            set { _preferences.WebLastScanPath = value; _preferences.Save(); }
+        }
+
+        public bool LastRecursive
+        {
+            get => _preferences.WebLastRecursive;
+            set { _preferences.WebLastRecursive = value; _preferences.Save(); }
+        }
 
         public void ClearResults()
         {
@@ -111,6 +133,11 @@ namespace MovFileIntegrityChecker.Web.Services
             }
 
             _currentScanTask = Task.Run(() => RunScan(path, recursive, customReportFolder, _cts.Token));
+
+            // Save last used path and recursive setting
+            LastScanPath = path;
+            LastRecursive = recursive;
+
             await Task.CompletedTask; // Return immediately to let UI update
         }
 
@@ -203,8 +230,9 @@ namespace MovFileIntegrityChecker.Web.Services
 
         public void ToggleAutoScan(bool enable, int intervalHours, string path)
         {
-            IsAutoScanEnabled = enable;
-            AutoScanIntervalHours = intervalHours;
+            _preferences.WebAutoScanEnabled = enable;
+            _preferences.WebAutoScanInterval = intervalHours;
+            _preferences.Save();
 
             if (IsAutoScanEnabled)
             {
@@ -226,7 +254,9 @@ namespace MovFileIntegrityChecker.Web.Services
         {
             if (AutoScanIntervalHours == intervalHours) return; // No change
 
-            AutoScanIntervalHours = intervalHours;
+            _preferences.WebAutoScanInterval = intervalHours;
+            _preferences.Save();
+
             if (IsAutoScanEnabled)
             {
                 ConsoleHelper.WriteInfo($"Auto-scan interval updated to {intervalHours} hours.");
