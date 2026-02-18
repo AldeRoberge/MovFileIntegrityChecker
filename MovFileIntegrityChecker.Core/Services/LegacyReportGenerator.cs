@@ -924,7 +924,7 @@ namespace MovFileIntegrityChecker.Core.Services
                 sb.AppendLine("        </div>");
 
                 sb.AppendLine("        <div class=\"footer\">");
-                sb.AppendLine("            Généré le " + DateTime.Now.ToString("dd/MM/yyyy") + " à " + DateTime.Now.ToString("HH:mm:ss") + " · MovFileIntegrityChecker");
+                sb.AppendLine("            Généré automatiquement le " + DateTime.Now.ToString("dd/MM/yyyy") + " à " + DateTime.Now.ToString("HH:mm:ss"));
                 sb.AppendLine("        </div>");
 
                 sb.AppendLine("    </div>");

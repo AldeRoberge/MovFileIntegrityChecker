@@ -22,7 +22,7 @@ namespace MovFileIntegrityChecker.Web.Services
         public bool IsAutoScanEnabled { get; private set; }
         public int AutoScanIntervalHours { get; private set; } = 24;
         public DateTime? NextAutoScanTime { get; private set; }
-        
+
         // Dictionary to lookup AJA download URLs by file path
         private Dictionary<string, (string DownloadUrl, string ServerName)> _ajaFileMap = new();
 
@@ -64,10 +64,10 @@ namespace MovFileIntegrityChecker.Web.Services
                 if (!_ajaFilesService.FileStatuses.Any())
                 {
                     ConsoleHelper.WriteInfo("Loading AJA server information (with 10s timeout)...");
-                    
+
                     var ajaLoadTask = _ajaFilesService.StartScanAsync();
                     var completedTask = await Task.WhenAny(ajaLoadTask, Task.Delay(10000));
-                    
+
                     if (completedTask == ajaLoadTask)
                     {
                         // Wait for the scan to complete (with another timeout)
@@ -76,7 +76,7 @@ namespace MovFileIntegrityChecker.Web.Services
                         {
                             await Task.Delay(500);
                         }
-                        
+
                         if (_ajaFilesService.IsScanning)
                         {
                             ConsoleHelper.WriteWarning("AJA scan timed out after 30s - continuing without AJA data");
@@ -87,25 +87,15 @@ namespace MovFileIntegrityChecker.Web.Services
                         ConsoleHelper.WriteWarning("AJA scan start timed out - continuing without AJA data");
                     }
                 }
-                
+
                 // Build AJA file lookup map (even if partial data)
                 _ajaFileMap.Clear();
                 foreach (var status in _ajaFilesService.FileStatuses)
                 {
-                    if (status.ExistsLocally && !string.IsNullOrEmpty(status.LocalPath))
-                    {
-                        try
-                        {
-                            var normalizedPath = Path.GetFullPath(status.LocalPath);
-                            _ajaFileMap[normalizedPath] = (status.Clip.DownloadUrl, status.Clip.ServerName);
-                        }
-                        catch
-                        {
-                            // Skip files with invalid paths
-                        }
-                    }
+                    // Use filename as key for more robust matching regardless of local path
+                    _ajaFileMap[status.Clip.ClipName] = (status.Clip.DownloadUrl, status.Clip.ServerName);
                 }
-                
+
                 if (_ajaFileMap.Any())
                 {
                     ConsoleHelper.WriteInfo($"Loaded {_ajaFileMap.Count} AJA file references");
@@ -145,6 +135,15 @@ namespace MovFileIntegrityChecker.Web.Services
                 Action<FileCheckResult> reportGenerator = (result) =>
                 {
                     if (token.IsCancellationRequested) return;
+
+                    // Enrich with AJA info before generating the report
+                    var fileName = Path.GetFileName(result.FilePath);
+                    if (_ajaFileMap.TryGetValue(fileName, out var ajaInfo))
+                    {
+                        result.AjaDownloadUrl = ajaInfo.DownloadUrl;
+                        result.AjaServerName = ajaInfo.ServerName;
+                    }
+
                     LegacyReportGenerator.CreateErrorReport(result, customReportFolder);
                     LegacyReportGenerator.CreateJsonReport(result, customReportFolder);
                 };
@@ -153,15 +152,15 @@ namespace MovFileIntegrityChecker.Web.Services
                 Action<FileCheckResult> streamingCallback = (result) =>
                 {
                     if (token.IsCancellationRequested) return;
-                    
+
                     // Check if this file is from an AJA server and populate download info
-                    var normalizedPath = Path.GetFullPath(result.FilePath);
-                    if (_ajaFileMap.TryGetValue(normalizedPath, out var ajaInfo))
+                    var fileName = Path.GetFileName(result.FilePath);
+                    if (_ajaFileMap.TryGetValue(fileName, out var ajaInfo))
                     {
                         result.AjaDownloadUrl = ajaInfo.DownloadUrl;
                         result.AjaServerName = ajaInfo.ServerName;
                     }
-                    
+
                     RecentResults.Enqueue(result);
                     OnResultAdded?.Invoke(result);
                 };
