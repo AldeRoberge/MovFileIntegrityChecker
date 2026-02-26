@@ -6,6 +6,7 @@ using MovFileIntegrityChecker.Core.Services;
 using MovFileIntegrityChecker.Core.Utilities;
 using MovFileIntegrityChecker.CLI.Utilities;
 using static MovFileIntegrityChecker.Core.Utilities.ConsoleHelper;
+using UserPreferences = MovFileIntegrityChecker.Core.Utilities.UserPreferences;
 
 namespace MovFileIntegrityChecker.CLI
 {
