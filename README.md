@@ -1,3 +1,5 @@
+<!-- lang -->**Français** | [English](README.en.md)
+
 # Vérificateur de fichiers MOV / MP4
 
 Cet outil vérifie si des fichiers vidéo (.mov, .mp4, etc.) sont endommagés ou incomplets :
